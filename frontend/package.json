@@ -12,9 +12,11 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
-    "@primevue/themes": "^4.0.4",
+    "axios": "^1.7.3",
+    "oh-vue-icons": "^1.0.0-rc3",
     "pinia": "^2.1.7",
-    "primevue": "^4.0.4",
+    "primeicons": "^7.0.0",
+    "primevue": "^3.53.0",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"
   },
