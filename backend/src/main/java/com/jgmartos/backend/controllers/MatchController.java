@@ -27,11 +27,6 @@ public class MatchController {
         return matchService.createMatch(match);
     }
 
-    @GetMapping
-    public List<Match> getAllMatches() {
-        return matchService.getAllMatches();
-    }
-
     @GetMapping("/{id}")
     public Match getMatch(@PathVariable Integer id) {
         return matchService.getMatch(id);
@@ -46,6 +41,11 @@ public class MatchController {
     @DeleteMapping("/{id}")
     public void deleteMatch(@PathVariable Integer id) {
         matchService.deleteMatch(id);
+    }
+
+    @GetMapping
+    public List<Match> getAllMatches() {
+        return matchService.getAllMatches();
     }
 
 }

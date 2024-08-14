@@ -1,7 +1,13 @@
 package com.jgmartos.backend.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@ToString
 @Entity
 @Table(name = "competitions")
 public class Competition {
@@ -17,23 +23,6 @@ public class Competition {
     public Competition() {}
 
     public Competition(String name) {
-        this.name = name;
-    }
-
-    // Getters and Setters
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
         this.name = name;
     }
 }

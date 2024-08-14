@@ -28,11 +28,6 @@ public class PlayerController {
         return playerService.createPlayer(player);
     }
 
-    @GetMapping
-    public List<Player> getAllPlayers() {
-        return playerService.getAllPlayers();
-    }
-
     @GetMapping("/{id}")
     public Player getPlayer(@PathVariable Integer id) {
         return playerService.getPlayer(id);
@@ -47,6 +42,11 @@ public class PlayerController {
     @DeleteMapping("/{id}")
     public void deletePlayer(@PathVariable Integer id) {
         playerService.deletePlayer(id);
+    }
+
+    @GetMapping
+    public List<Player> getAllPlayers() {
+        return playerService.getAllPlayers();
     }
 
 

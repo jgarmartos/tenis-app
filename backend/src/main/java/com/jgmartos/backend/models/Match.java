@@ -1,9 +1,16 @@
 package com.jgmartos.backend.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.util.Date;
 import java.util.List;
 
+@Getter
+@Setter
+@ToString
 @Entity
 @Table(name = "matches")
 public class Match {
@@ -44,94 +51,18 @@ public class Match {
     @OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MatchSet> matchSets;
 
-    // Getters and Setters
+    public Match() {}
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getPlayer1() {
-        return player1;
-    }
-
-    public void setPlayer1(int player1) {
+    public Match(int player1, int player2, String result, int place, int competition, Date date, Date time, int numSets, int winner) {
         this.player1 = player1;
-    }
-
-    public int getPlayer2() {
-        return player2;
-    }
-
-    public void setPlayer2(int player2) {
         this.player2 = player2;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
         this.result = result;
-    }
-
-    public int getPlace() {
-        return place;
-    }
-
-    public void setPlace(int place) {
         this.place = place;
-    }
-
-    public int getCompetition() {
-        return competition;
-    }
-
-    public void setCompetition(int competition) {
         this.competition = competition;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
         this.date = date;
-    }
-
-    public Date getTime() {
-        return time;
-    }
-
-    public void setTime(Date time) {
         this.time = time;
-    }
-
-    public int getNumSets() {
-        return numSets;
-    }
-
-    public void setNumSets(int numSets) {
         this.numSets = numSets;
-    }
-
-    public int getWinner() {
-        return winner;
-    }
-
-    public void setWinner(int winner) {
         this.winner = winner;
-    }
-
-    public List<MatchSet> getMatchSets() {
-        return matchSets;
-    }
-
-    public void setMatchSets(List<MatchSet> matchSets) {
-        this.matchSets = matchSets;
     }
 }
 

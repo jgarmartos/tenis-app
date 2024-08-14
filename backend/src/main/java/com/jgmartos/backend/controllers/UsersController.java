@@ -10,41 +10,40 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jgmartos.backend.models.Place;
-import com.jgmartos.backend.services.PlaceService;
+import com.jgmartos.backend.models.User;
+import com.jgmartos.backend.services.UserService;
 
 @RestController
-@RequestMapping("/places")
-public class PlaceController {
+@RequestMapping("/users")
+public class UsersController {
 
     @Autowired
-    private PlaceService placeService;
+    private UserService userService;
 
     @PostMapping
-    public Place createPlace(Place place) {
-        return placeService.createPlace(place);
+    public User createUser(User user) {
+        return userService.createUser(user);
     }
 
     @GetMapping("/{id}")
-    public Place getPlace(Integer id) {
-        return placeService.getPlace(id);
+    public User getUser(Integer id) {
+        return userService.getUser(id);
     }
 
     @PutMapping("/{id}")
-    public Place updatePlace(Place place) {
-        return placeService.updatePlace(place);
+    public User updateUser(User user) {
+        return userService.updateUser(user);
     }
 
     @DeleteMapping("/{id}")
-    public void deletePlace(Integer id) {
-        placeService.deletePlace(id);;
+    public void deleteUser(Integer id) {
+        userService.deleteUser(id);
     }
 
     @GetMapping
-    public List<Place> getAllPlaces() {
-        return placeService.getAllPlaces();
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
     }
 
-
-
+    
 }

@@ -23,5 +23,12 @@ public class Player {
     private String name;
 
     private String forehand;
+
+    public Player() {}
+
+    public Player(String name, String forehand) {
+        this.name = name;
+        this.forehand = forehand;
+    }
     
 }

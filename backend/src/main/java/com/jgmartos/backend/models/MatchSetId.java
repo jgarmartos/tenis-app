@@ -1,9 +1,16 @@
 package com.jgmartos.backend.models;
 
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@Getter
+@Setter
+@ToString
 @Embeddable
 public class MatchSetId implements Serializable {
 
@@ -15,24 +22,6 @@ public class MatchSetId implements Serializable {
 
     public MatchSetId(int matchId, int setId) {
         this.matchId = matchId;
-        this.setId = setId;
-    }
-
-    // Getters and Setters
-
-    public int getMatchId() {
-        return matchId;
-    }
-
-    public void setMatchId(int matchId) {
-        this.matchId = matchId;
-    }
-
-    public int getSetId() {
-        return setId;
-    }
-
-    public void setSetId(int setId) {
         this.setId = setId;
     }
 
