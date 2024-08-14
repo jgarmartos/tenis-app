@@ -36,6 +36,11 @@ const headerCategories = ref([
         </Button>
         
       </div>
+
+      <div>
+        <img src="@/assets/tennis-court-game-field-grass-512.webp" alt="logo" style="width: 80px; height: 80px;" />
+      </div>
+
       <div class="header-auth">
         <Button label="Sign In" icon="pi pi-arrow-right" class="sign-in-button" />
         <Button label="Register" icon="pi pi-user-plus"  class="register-button" />
@@ -85,7 +90,7 @@ const headerCategories = ref([
 .header .navigation-pill-list {
   display: flex;
   align-items: flex-start;
-  gap: 32px;
+  gap: 30px;
   flex: 1;
   flex-grow: 1;
   background-color: #ffffff;
@@ -98,7 +103,7 @@ const headerCategories = ref([
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 8px;
+  /* padding: 8px; */
   position: relative;
   flex: 0 0 auto;
   border-radius: 8px;

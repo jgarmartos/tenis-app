@@ -1,5 +1,9 @@
+<script setup lang="ts">
+
+</script>
+
 <template>
-    <Panel toggleable class="panel">
+    <Panel class="panel-match">
         <template #header>
             <div class="title">
                 <i class="pi pi-user" />
@@ -11,7 +15,7 @@
 </template>
 
 <style scoped>
-.panel { 
+.panel-match { 
     border-radius: 10px;
   /* overflow: hidden; */
   border-bottom-width: 1px;
@@ -33,6 +37,3 @@
 
 </style>
 
-<script setup lang="ts">
-
-</script>

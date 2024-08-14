@@ -1,6 +1,11 @@
 export interface Player {
-    id: Number,
-    name: String,
-    forehand: String
+    id: number,
+    name: string,
+    forehand: string
+}
+
+export interface PlayerSubmit {
+    name: string,
+    forehand: string
 }
 

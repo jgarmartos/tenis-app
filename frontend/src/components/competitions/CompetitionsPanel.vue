@@ -1,5 +1,9 @@
+<script setup lang="ts">
+
+</script>
+
 <template>
-    <Panel toggleable class="panel">
+    <Panel class="panel">
         <template #header>
             <div class="title">
                 <i class="pi pi-user" />
@@ -32,7 +36,3 @@
 
 
 </style>
-
-<script setup lang="ts">
-
-</script>
