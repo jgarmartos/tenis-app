@@ -1,29 +1,27 @@
 package com.jgmartos.backend.models;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
-@Getter
-@Setter
-@ToString
+import java.util.Date;
+
 @Entity
 @Table(name = "competitions")
+@Data
 public class Competition {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "name", nullable = false, length = 45)
+    @Column(nullable = false)
     private String name;
 
-    // Constructors
-    public Competition() {}
+    @Column(name = "start_date", nullable = false)
+    private Date startDate;
 
-    public Competition(String name) {
-        this.name = name;
-    }
+    @Column(name = "end_date", nullable = false)
+    private Date endDate;
 }
+
 

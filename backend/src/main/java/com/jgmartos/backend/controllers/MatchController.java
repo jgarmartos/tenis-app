@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jgmartos.backend.models.Match;
+import com.jgmartos.backend.models.requests.MatchRequest;
+import com.jgmartos.backend.repositories.CompetitionRepository;
+import com.jgmartos.backend.repositories.PlaceRepository;
+import com.jgmartos.backend.repositories.PlayerRepository;
 import com.jgmartos.backend.services.MatchService;
 
 @RestController
@@ -22,8 +26,28 @@ public class MatchController {
     @Autowired
     private MatchService matchService;
 
+    @Autowired
+    private PlayerRepository playerRepository;
+
+    @Autowired
+    private PlaceRepository placeRepository;
+
+    @Autowired
+    private CompetitionRepository competitionRepository;
+
     @PostMapping
-    public Match createMatch(Match match) {
+    public Match createMatch(@RequestBody MatchRequest matchRequest) {
+        Match match = new Match();
+
+        match.setPlayer1(playerRepository.findById(matchRequest.getPlayer1()).orElse(null));
+        match.setPlayer2(playerRepository.findById(matchRequest.getPlayer2()).orElse(null));
+        match.setCompetition(competitionRepository.findById(matchRequest.getCompetition()).orElse(null));
+        match.setPlace(placeRepository.findById(matchRequest.getPlace()).orElse(null));
+        match.setDate(matchRequest.getDate());
+        match.setStartTime(matchRequest.getStartTime());
+        match.setEndTime(matchRequest.getEndTime());
+        match.setWinner(playerRepository.findById(matchRequest.getWinnerId()).orElse(null));
+
         return matchService.createMatch(match);
     }
 

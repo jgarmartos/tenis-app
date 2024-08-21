@@ -1,16 +1,10 @@
 package com.jgmartos.backend.models;
-
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
-
-@Getter
-@Setter
-@ToString
 @Entity
 @Table(name = "games")
+@Data
 public class Game {
 
     @Id
@@ -18,22 +12,28 @@ public class Game {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "set", nullable = false)
+    @JoinColumn(name = "set_id", nullable = false)
     private Set set;
 
-    @Column(name = "result", nullable = false, length = 45)
-    private String result;
+    @Column(name = "game_number", nullable = false)
+    private int gameNumber;
 
-    @Column(name = "winner", nullable = false)
-    private int winner;
+    @ManyToOne
+    @JoinColumn(name = "winner_player_id")
+    private Player winner;
 
-    // Constructors
-    public Game() {}
+    @Column(name = "player_1_points")
+    private Integer player1Points;
 
-    public Game(Set set, String result, int winner) {
-        this.set = set;
-        this.result = result;
-        this.winner = winner;
-    }
+    @Column(name = "player_2_points")
+    private Integer player2Points;
+
+    @Column(name = "player_1_score", nullable = false)
+    private String player1Score;
+
+    @Column(name = "player_2_score", nullable = false)
+    private String player2Score;
+
+    @Column(nullable = false)
+    private String type;
 }
-

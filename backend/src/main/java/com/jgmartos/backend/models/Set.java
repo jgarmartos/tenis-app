@@ -1,33 +1,33 @@
 package com.jgmartos.backend.models;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
-@Getter
-@Setter
-@ToString
 @Entity
 @Table(name = "sets")
+@Data
 public class Set {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "winner", nullable = false)
-    private int winner;
+    @ManyToOne
+    @JoinColumn(name = "match_id", nullable = false)
+    private Match match;
 
-    @Column(name = "result", nullable = false, length = 45)
-    private String result;
+    @Column(name = "number_set", nullable = false)
+    private int numberSet;
 
-    // Constructors
-    public Set() {}
+    @ManyToOne
+    @JoinColumn(name = "winner_player_id")
+    private Player winner;
 
-    public Set(int winner, String result) {
-        this.winner = winner;
-        this.result = result;
-    }
+    @Column(name = "player_1_score", nullable = false)
+    private int player1Score;
+
+    @Column(name = "player_2_score", nullable = false)
+    private int player2Score;
 }
+
 
