@@ -21,8 +21,8 @@
   border-bottom-width: 1px;
   border-bottom-style: solid;
   border-color: #d9d9d9;
-  max-width: 33%;
-  min-width: 375px;
+  /* max-width: 33%; */
+  min-width: 33%;
 }
 
 .title {
