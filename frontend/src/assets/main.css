@@ -1,20 +1,16 @@
 /* @import './base.css'; */
 
-
-
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
-  /* background-color: rgb(169, 222, 169); */
-  /* display: flex; */
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 2rem;
+    font-weight: normal;
+    /* background-color: rgb(169, 222, 169); */
+    /* display: flex; */
 }
 
 body {
-  align-items: right;
-  display: flex;
-  background-color: rgb(169, 222, 169);
+    /* align-items: right; */
+    /* display: flex; */
+    background-color: rgb(169, 222, 169);
 }
-
-
