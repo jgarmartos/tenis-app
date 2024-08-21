@@ -1,28 +1,26 @@
 import api from "@/api/api";
+import type { Competition } from "@/interfaces/CompetitionsIntercfaces";
+import type { Match } from "@/interfaces/MatchesInterfaces";
+import type { Place } from "@/interfaces/PlacesInterfaces";
 import type { Player } from "@/interfaces/PlayerInterfaces";
-import type { get } from "node_modules/axios/index.cjs";
-import { useQuery } from "@tanstack/vue-query";
 
 
-const getPlayersData = async () => {
-    //make a custom requets
-    const response = await api.get<Player[]>('/players');
-    return response.data;
-}
+const initialPlayersData = async () => await api.get<Player[]>("/players");
 
+const initialMatchesData = async () => await api.get<Match[]>("/matches");
 
+const initialCompetitionsData = async () => await api.get<Competition[]>("/competitions");
 
-const getPlayersQuery = () => useQuery({
-    queryKey: ['players'],
-    queryFn: getPlayersData,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    // cacheTime: 1000 * 60 * 30, // 30 minutes
-    refetchOnWindowFocus: true,
-    refetchOnMount: true
-})
+const initialPlacesData = async () => await api.get<Place[]>("/places");
 
 
 export default {
-    getPlayersData
+    initialPlayersData,
+
+    initialMatchesData,
+
+    initialCompetitionsData,
+
+    initialPlacesData
 }
 
