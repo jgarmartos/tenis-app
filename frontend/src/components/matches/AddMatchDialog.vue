@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, onUpdated, ref, watch, type Ref } from "vue";
-import getInitialData from "@/services/getInitialData";
-import { useQuery } from "@tanstack/vue-query";
-import { useCreateMatchStore } from "@/stores/createMatch";
+import { computed } from "vue";
+import { useCreateMatchStore } from "@/stores/createMatchStore";
 import MatchTabView from "./MatchTabView.vue";
+import { useInitialData } from "@/services/useInitialData";
+import { useDataStore } from "@/stores/useDataStore";
 
 const props = defineProps<{
   visible: boolean;
@@ -11,60 +11,35 @@ const props = defineProps<{
   retry: () => void;
 }>();
 
+const { matchesQuery } = useInitialData();
+
 const saveMatch = () => {
-  props.retry()
-  props.setVisible(false)
-  if ( !selectedPlace.value || !startTime.value || !endTime.value) {
-    return;
-  }
-  useCreateMatchStore().saveMatch(
-    selectedCompetition.value,
-    selectedPlace.value,
-    startTime.value,
-    endTime.value)
+  
+
 }
 
+const handleSaveMatch = async () => {
+  props.setVisible(false);
+  await useCreateMatchStore().saveMatch(); // Guardar el partido
+  await matchesQuery.refetch(); // Esperar a que la refetch complete
+  console.log(useDataStore().matches); // Verificar si los datos han cambiado
+};
 
-const playersFn = useQuery({
-  queryKey: ["players"],
-  queryFn: getInitialData.initialPlayersData,
-});
+
 
 /**
  * Competitions
  */
-const competitionsFn = useQuery({
-  queryKey: ["competitions"],
-  queryFn: getInitialData.initialCompetitionsData,
-});
+ const { competitionsQuery } = useInitialData();
 
-const competitions = computed(() => {
-  return competitionsFn.data.value?.data;
-});
-
-const selectedCompetition = ref(competitions.value?.[0]);
+const competitions = computed(() => useDataStore().matches);
 
 /**
  * Places
  */
-const placesFn = useQuery({
-  queryKey: ["places"],
-  queryFn: getInitialData.initialPlacesData,
-});
+const { placesQuery } = useInitialData();
 
-const places = computed(() => {
-  return placesFn.data.value?.data;
-});
-
-const selectedPlace = ref(places.value?.[0]);
-
-
-/**
- * Start and end time
- */
-const startTime = ref();
-
-const endTime = ref();
+const places = computed(() => useDataStore().places);
 
 
 </script>
@@ -79,16 +54,8 @@ const endTime = ref();
     <div class="dialog-content">
       <div class="add-player-line" name="competition">
         <label for="competition" class="font-semibold w-6rem">Competición</label>
-        <Dropdown v-model="selectedCompetition" :options="competitions" filter optionLabel="name"
+        <Dropdown v-model="useCreateMatchStore().selectedCompetition" :options="competitions" filter optionLabel="name"
           placeholder="Selecciona una competición: " class="right-side">
-          <template #value="slotProps">
-            <div v-if="slotProps.value" class="flex align-items-center">
-              <div>{{ slotProps.value.name }}</div>
-            </div>
-            <span v-else>
-              {{ slotProps.placeholder }}
-            </span>
-          </template>
           <template #option="slotProps">
             <div class="flex align-items-center">
               <div>{{ slotProps.option.name }}</div>
@@ -98,16 +65,8 @@ const endTime = ref();
       </div>
       <div class="add-player-line" name="place">
         <label for="place" class="font-semibold w-6rem">Lugar</label>
-        <Dropdown v-model="selectedPlace" :options="places" filter optionLabel="name"
+        <Dropdown v-model="useCreateMatchStore().selectedPlace" :options="places" filter optionLabel="name"
           placeholder="Selecciona un lugar: " class="right-side">
-          <template #value="slotProps">
-            <div v-if="slotProps.value" class="flex align-items-center">
-              <div>{{ slotProps.value.name }}</div>
-            </div>
-            <span v-else>
-              {{ slotProps.placeholder }}
-            </span>
-          </template>
           <template #option="slotProps">
             <div class="flex align-items-center">
               <div>{{ slotProps.option.name }}</div>
@@ -117,20 +76,20 @@ const endTime = ref();
       </div>
       <div class="add-player-line" name="startDate">
         <label for="date" class="font-semibold w-6rem">Fecha Inicio</label>
-        <Calendar v-model="startTime" showIcon :showOnFocus="false" dateFormat="dd/mm/yy" />
+        <Calendar v-model="useCreateMatchStore().startTime" showIcon :showOnFocus="false" dateFormat="dd/mm/yy" />
       </div>
       <div class="add-player-line" name="endDate">
         <label for="date" class="font-semibold w-6rem">Fecha Final</label>
-        <Calendar v-model="endTime" showIcon :showOnFocus="false" dateFormat="dd/mm/yy" />
+        <Calendar v-model="useCreateMatchStore().endTime" showIcon :showOnFocus="false" dateFormat="dd/mm/yy" />
       </div>
       <div class="add-player-line" name="resultTitle">
         <label for="date" class="font-semibold w-6rem">Resultado</label>
       </div>
-      <MatchTabView :players="playersFn.data.value?.data"/>
+      <MatchTabView/>
     </div>
     <template #footer>
       <Button label="Cancelar" text severity="secondary" @click="setVisible(false)" autofocus />
-      <Button label="Guardar" outlined severity="secondary" @click="saveMatch" autofocus />
+      <Button label="Guardar" outlined severity="secondary" @click="handleSaveMatch" autofocus />
     </template>
   </Dialog>
 </template>

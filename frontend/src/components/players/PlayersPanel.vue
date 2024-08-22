@@ -1,32 +1,25 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import getInitialData from "@/services/getInitialData";
 import type { Player, PlayerSubmit } from "@/interfaces/PlayerInterfaces";
 import saveData from "@/services/saveData";
 import AddPlayerDialog from "./AddPlayerDialog.vue";
 import api from "@/api/api";
 import { useQuery } from "@tanstack/vue-query";
+import { useInitialData } from "@/services/useInitialData";
+import { useDataStore } from "@/stores/useDataStore";
 
-const initialData = async () => await api.get<Player[]>("/players");
+const { playersQuery } = useInitialData();
 
-const { isPending, isError, isFetching, data, error, refetch } = useQuery({
-  queryKey: ["posts"],
-  queryFn: initialData,
-});
+const players = computed(() => useDataStore().players);
 
 const lastFivePlayers = computed(() => {
-  return data.value?.data.slice(-5).reverse() || [];
+  return players.value?.slice(-5).reverse() || [];
 });
 
 const columns = [
   { field: "name", sortable: true },
   { field: "forehand", sortable: true },
 ];
-
-const retry = () => {
-  refetch();
-  console.log(data);
-};
 
 const visible = ref(false);
 
@@ -48,8 +41,8 @@ const setVisible = (value: boolean) => {
         </div>
       </div>
     </template>
-    <AddPlayerDialog v-bind:visible="visible" :setVisible="setVisible" :retry="refetch" />
-    <div v-if="isPending" class="p-text-center">
+    <AddPlayerDialog v-bind:visible="visible" :setVisible="setVisible" :retry="playersQuery.refetch" />
+    <!-- <div v-if="isPending" class="p-text-center">
       <ProgressSpinner />
     </div>
     <div v-if="isError" class="p-text-center">
@@ -58,8 +51,8 @@ const setVisible = (value: boolean) => {
     </div>
     <div v-else-if="isFetching" class="p-text-center">
       <ProgressSpinner />
-    </div>
-    <DataTable v-else :value="lastFivePlayers" size="small" :loading="isFetching">
+    </div> -->
+    <DataTable :value="lastFivePlayers" size="small" :loading="playersQuery.isFetching.value">
       <Column>
         <template #body="playersResponse">
           <Avatar :label="playersResponse.data.name.charAt(0).toUpperCase()" class="mr-2" size="normal" />

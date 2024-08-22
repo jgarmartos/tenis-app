@@ -9,10 +9,6 @@ const props = defineProps<{
   retry: () => void;
 }>();
 
-const localVisible = ref(props.visible);
-
-// const emits = defineEmits(["update:visible", "retry"]);
-
 const player = ref<PlayerSubmit>({
   name: "",
   forehand: "",

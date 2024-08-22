@@ -1,52 +1,42 @@
 <script setup lang="ts">
-import api from '@/api/api';
 import { computed, ref } from 'vue';
-import getData from '@/services/getInitialData';
-import { get } from 'node_modules/axios/index.cjs';
-import { useQuery } from '@tanstack/vue-query';
 import AddMatchDialog from './AddMatchDialog.vue';
-import getInitialData from '@/services/getInitialData';
+import { useInitialData } from "@/services/useInitialData";
+import { useDataStore } from '@/stores/useDataStore';
 
-/**
- * @function {function} initialData
- * @description Get the initial data from Matches
- */
-const initialData = getData.initialMatchesData;
 
-/**
- * @description useQuery hook to get the data  and manage the state
- */
-const { isPending, isError, isFetching, data, error, refetch } = useQuery({
-    queryKey: ['matches'],
-    queryFn: initialData,
-});
+const { matchesQuery } = useInitialData();
 
-// const competitionsFn = getInitialData.initialCompetitionsData;
-
-// const placesFn = getInitialData.initialPlacesData;
-
-// const competitionsResponse = useQuery({
-//     queryKey: ['competitions'],
-//     queryFn: competitionsFn,
-// });
-
-// const placesResponse = useQuery({
-//     queryKey: ['places'],
-//     queryFn: placesFn,
-// });
-
-// const competitions = ref(competitionsResponse.data.value?.data || []);
-
-// const places = ref(placesResponse.data.value?.data);
+const matches = computed(() => useDataStore().matches);
 
 /**
  * @description Setting the name of the columns
  */
 const columns = [
-    { field: "player1"},
-    { field: "player2"},
-    { field: "competition" },
-    { field: "result" }
+    { field: {
+        header: "Jugador 1",
+        value: "player1.name"
+    } },
+    { field: {
+        header: "Jugador 2",
+        value: "player2.name"
+    } },
+    { field: {
+        header: "Pista",
+        value: "place.name"
+    } },
+    // { field: {
+    //     header: "Competición",
+    //     value: "competition.name"
+    // } },
+    // { field: {
+    //     header: "Fecha",
+    //     value: "date"
+    // } },
+    // { field: {
+    //     header: "Hora",
+    //     value: "time"
+    // } }
 ]
 
 /**
@@ -54,7 +44,7 @@ const columns = [
  * @returns {Array} Array of the last five matches
  */
 const lastFiveMatches = computed(() => {
-    return data.value?.data.slice(-5).reverse() || [];
+    return matches.value.slice(-5).reverse() || [];
 });
 
 /**
@@ -66,7 +56,7 @@ const visible = ref(false);
 
 
 const setVisible = (value: boolean) => {
-  visible.value = value;
+    visible.value = value;
 };
 </script>
 
@@ -84,58 +74,52 @@ const setVisible = (value: boolean) => {
                 </div>
             </div>
         </template>
-        <AddMatchDialog v-bind:visible="visible" :setVisible="setVisible" :retry="refetch" />
-        <div v-if="isPending" class="p-text-center">
+        <AddMatchDialog v-bind:visible="visible" :setVisible="setVisible" :retry="matchesQuery.refetch" />
+        <!-- <div v-if="matchesQuery.isLoading" class="p-text-center">
             <ProgressSpinner />
         </div>
-        <div v-if="isError" class="p-text-center">
-            <span>Error: {{ error?.message }}</span>
-            <Button @click="refetch()">Retry</Button>
+        <div v-if="matchesQuery.isError" class="p-text-center">
+            <span>Error: {{ matchesQuery.error?.value?.message }}</span>
+            <Button @click="matchesQuery.refetch()">Retry</Button>
+        </div> -->
+        <div>
+            <DataTable :value="lastFiveMatches" size="small">
+                <Column v-for="col in columns" :field="col.field.value" :header="col.field.header" sortable />
+            </DataTable>
         </div>
-        <div v-else-if="isFetching" class="p-text-center">
-            <ProgressSpinner />
-        </div>
-        <DataTable v-else :value="lastFiveMatches" size="small" :loading="isFetching">
-            <Column>
-                <template #body="matchesResponse">
-                    <!-- <Avatar :label="matchesResponse.data.name.charAt(0).toUpperCase()" class="mr-2" size="normal" /> -->
-                </template>
-            </Column>
-            <Column v-for="col in columns" :field="col.field" sortable />
-        </DataTable>
     </Panel>
 </template>
 
 <style scoped>
 .panel {
-  border-radius: 10px;
-  /* overflow: hidden; */
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-  border-color: #d9d9d9;
-  /* max-width: 50%; */
-  /* min-width: 33%;; */
-  width: 33%;
+    border-radius: 10px;
+    /* overflow: hidden; */
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-color: #d9d9d9;
+    /* max-width: 50%; */
+    /* min-width: 33%;; */
+    width: 33%;
 }
 
 .player-field {
-  /* flex-direction: row; */
-  display: flex;
-  /* align-items: center; */
-  gap: 20px;
-  padding: 14px;
-  font-size: small;
+    /* flex-direction: row; */
+    display: flex;
+    /* align-items: center; */
+    gap: 20px;
+    padding: 14px;
+    font-size: small;
 }
 
 .title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px;
-  width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    width: 100%;
 }
 
 .right-side {
-  margin-left: auto;
+    margin-left: auto;
 }
 </style>

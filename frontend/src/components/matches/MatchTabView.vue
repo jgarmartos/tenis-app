@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { useCreateMatchStore } from '@/stores/createMatch';
-import { watch } from 'vue'
+import { useCreateMatchStore } from '@/stores/createMatchStore';
+import { useDataStore } from '@/stores/useDataStore';
+import { computed, watch } from 'vue'
 
-defineProps<{
-  players: any;
-}>()
+const players = computed(() => useDataStore().players);
 
 useCreateMatchStore().sets.forEach((set) => {
     watch(
