@@ -3,6 +3,7 @@ import type { Competition } from "@/interfaces/CompetitionsIntercfaces";
 import type { Match } from "@/interfaces/MatchesInterfaces";
 import type { Place } from "@/interfaces/PlacesInterfaces";
 import type { Player } from "@/interfaces/PlayerInterfaces";
+import type { Set, SetResponse } from "@/interfaces/SetsInterfaces";
 
 export const useDataStore = defineStore("dataStore", {
     state: () => ({
@@ -10,6 +11,7 @@ export const useDataStore = defineStore("dataStore", {
         matches: [] as Match[],
         competitions: [] as Competition[],
         places: [] as Place[],
+        sets: [] as SetResponse[],
     }),
     actions: {
         setPlayers(players: Player[]) {
@@ -24,5 +26,8 @@ export const useDataStore = defineStore("dataStore", {
         setPlaces(places: Place[]) {
             this.places = places;
         },
+        setSets(sets: SetResponse[]) {
+            this.sets = sets;
+        }
     },
 });

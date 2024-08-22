@@ -5,6 +5,7 @@ import type { Competition } from "@/interfaces/CompetitionsIntercfaces";
 import type { Match } from "@/interfaces/MatchesInterfaces";
 import type { Place } from "@/interfaces/PlacesInterfaces";
 import type { Player } from "@/interfaces/PlayerInterfaces";
+import type { Set, SetResponse } from "@/interfaces/SetsInterfaces";
 
 
 export function useInitialData() {
@@ -46,10 +47,20 @@ export function useInitialData() {
         },
     });
 
+    const setsQuery = useQuery({
+        queryKey: ["sets"],
+        queryFn: async () => {
+            const response = await api.get<SetResponse[]>("/sets");
+            store.setSets(response.data);
+            return response.data;
+        }
+    });
+
     return {
         playersQuery,
         matchesQuery,
         competitionsQuery,
         placesQuery,
+        setsQuery,
     };
 }

@@ -81,6 +81,7 @@ export const useCreateMatchStore = defineStore('createMatch', {
     },
     createAndSaveSets(id: number) {
       this.sets.forEach((set, index) => {
+        if (set.score1 === 0 && set.score2 === 0) return;
         const submitSet: SetSubmit = {
           matchId: id,
           setNumber: index + 1,
@@ -95,16 +96,27 @@ export const useCreateMatchStore = defineStore('createMatch', {
     },
     createAndSaveGames(id: number, games: Array<{name: string, selectedPuntuation1: number, selectedPuntuation2: number}>) {
       games.forEach((game, index) => {
+        if (game.selectedPuntuation1 === 0 && game.selectedPuntuation2 === 0) return;
         const submitGame: GameSubmit = {
           set: id,
           gameNumber: index + 1,
           winner: null,
-          scorePlayer1: game.selectedPuntuation1,
-          scorePlayer2: game.selectedPuntuation2,
-          pointsPlayer1: 0,
-          pointsPlayer2: 0,
+          scorePlayer1: game.selectedPuntuation1 == 50 ? 'AD' : game.selectedPuntuation1.toString(),
+          scorePlayer2: game.selectedPuntuation2 == 50 ? 'AD' : game.selectedPuntuation2.toString(),
+          pointsPlayer1: 
+                        game.selectedPuntuation1 == 15 ? 1 : 
+                        game.selectedPuntuation1 == 30 ? 2 : 
+                        game.selectedPuntuation1 == 40 ? 3 : 
+                        game.selectedPuntuation1 == 50 ? 4 : 0,
+          pointsPlayer2: 
+                        game.selectedPuntuation2 == 15 ? 1 : 
+                        game.selectedPuntuation2 == 30 ? 2 : 
+                        game.selectedPuntuation2 == 40 ? 3 : 
+                        game.selectedPuntuation2 == 50 ? 4 : 0,
+          type: index === 12 ? 'tiebreak' : 'normal',
         };
         saveData.saveGame(submitGame);
+        
       });
     },
   }

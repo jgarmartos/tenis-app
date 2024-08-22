@@ -5,9 +5,11 @@ import { useInitialData } from "@/services/useInitialData";
 import { useDataStore } from '@/stores/useDataStore';
 
 
-const { matchesQuery } = useInitialData();
+const { matchesQuery, setsQuery } = useInitialData();
 
 const matches = computed(() => useDataStore().matches);
+
+const sets = computed(() => useDataStore().sets);
 
 /**
  * @description Setting the name of the columns
@@ -15,29 +17,34 @@ const matches = computed(() => useDataStore().matches);
 const columns = [
     { field: {
         header: "Jugador 1",
-        value: "player1.name"
+        value: 'player1'
     } },
     { field: {
         header: "Jugador 2",
-        value: "player2.name"
+        value: "player2"
     } },
     { field: {
         header: "Pista",
-        value: "place.name"
+        value: "place"
     } },
-    // { field: {
-    //     header: "Competición",
-    //     value: "competition.name"
-    // } },
-    // { field: {
-    //     header: "Fecha",
-    //     value: "date"
-    // } },
-    // { field: {
-    //     header: "Hora",
-    //     value: "time"
-    // } }
+    { field: {
+        header: "Resultado",
+        value: "sets"
+    } }
 ]
+
+const propertyToAccess = "name"
+
+/**
+ * @description Mapear sets a los partidos usando el matchId
+ * @param matchId {string} ID del partido
+ * @returns {Array} Array de sets correspondientes
+ */
+ const getSetsForMatch = (matchId: number) => {
+  return sets.value.filter(set => set.match.id == matchId)
+                   .map(set => `${set.player1Score}-${set.player2Score}`)
+                   .join(', ');
+};
 
 /**
  * @description Get the last five matches
@@ -83,8 +90,22 @@ const setVisible = (value: boolean) => {
             <Button @click="matchesQuery.refetch()">Retry</Button>
         </div> -->
         <div>
-            <DataTable :value="lastFiveMatches" size="small">
-                <Column v-for="col in columns" :field="col.field.value" :header="col.field.header" sortable />
+            <DataTable :value="lastFiveMatches" size="small" :loading="matchesQuery.isFetching.value">
+                <!-- <Column v-for="col in columns" :field="col.field.value" :header="col.field.header" sortable /> -->
+                <Column v-for="col in columns" sortable>
+                    <template #header>
+                        <span>{{ col.field.header }}</span>
+                    </template>
+                    <template #body="matchesResponse">
+                        <span v-if="col.field.value !== 'sets'">
+                            {{ matchesResponse.data[col.field.value][propertyToAccess] }}
+                        </span>
+                        <span v-else>
+                            <!-- Renderizamos las puntuaciones de los sets -->
+                            {{ getSetsForMatch(matchesResponse.data.id) }}
+                        </span>
+                    </template>
+                </Column>
             </DataTable>
         </div>
     </Panel>
@@ -99,7 +120,7 @@ const setVisible = (value: boolean) => {
     border-color: #d9d9d9;
     /* max-width: 50%; */
     /* min-width: 33%;; */
-    width: 33%;
+    width: 50%;
 }
 
 .player-field {

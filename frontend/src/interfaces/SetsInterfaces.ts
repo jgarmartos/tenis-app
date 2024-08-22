@@ -15,3 +15,15 @@ export interface SetSubmit {
     scorePlayer2: number
 }
 
+export interface SetResponse {
+    id: number
+    match : {
+        id: number
+    },
+    setNumber: number,
+    winner: number,
+    player1Score: number,
+    player2Score: number
+    }
+
+
