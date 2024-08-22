@@ -12,26 +12,29 @@ useCreateMatchStore().sets.forEach((set) => {
         let score1 = 0;
         let score2 = 0;
   
-        set.games.forEach((game) => {
-          if (
-            game.selectedPuntuation1 == 40 &&
-            ["0", "15", "30"].includes(game.selectedPuntuation2.toString())
-          ) {
+        set.games.forEach((game, index) => {
+          if (index === 12) {
+            if (game.selectedPuntuation1 >= 6 && game.selectedPuntuation1 > game.selectedPuntuation2 && game.selectedPuntuation1 - game.selectedPuntuation2 >= 2) {
+              score1++;
+            } else if (game.selectedPuntuation2 >= 6 && game.selectedPuntuation2 > game.selectedPuntuation1 && game.selectedPuntuation2 - game.selectedPuntuation1 >= 2) {
+              score2++;
+            }
+          } else {
+            if ( game.selectedPuntuation1 == 40 && ["0", "15", "30"].includes(game.selectedPuntuation2.toString())) {
             score1++;
-          } else if (
-            game.selectedPuntuation2 == 40 &&
-            ["0", "15", "30"].includes(game.selectedPuntuation1.toString())
-          ) {
+          } else if (game.selectedPuntuation2 == 40 && ["0", "15", "30"].includes(game.selectedPuntuation1.toString())) {
             score2++;
           } else if (game.selectedPuntuation1 == 50 && game.selectedPuntuation2 != 50) {
             score1++;
           } else if (game.selectedPuntuation2 == 50 && game.selectedPuntuation1 != 50) {
             score2++;
           }
+          }
+          
         });
   
-        set.score1 =+ score1;
-        set.score2 =+ score2;
+        set.score1 += score1;
+        set.score2 += score2;
       },
       { deep: true }
     );
@@ -58,65 +61,35 @@ useCreateMatchStore().sets.forEach((set) => {
               </div>
               <div class="flex-container-points">
                 <Stepper>
-                  <StepperPanel v-for="game in set.games" :header="game.name">
+                  <StepperPanel v-for="(game, index) in set.games" :header="game.name">
                     <template #content="{ nextCallback }">
                       <div>
                         <div class="flex-container">
-                          <div class="flex-container">
-                            <RadioButton v-model="game.selectedPuntuation1" inputId="puntuation1" name="0" value="0"
-                              selected />
-                            <label for="puntuation1" class="ml-2">0</label>
+                          <div v-if="index === 12">
+                            <InputNumber inputId="integeronly" class="score" :inputStyle="{ width: '50px' }" v-model="game.selectedPuntuation1" />
+                          </div>
+                          <div v-else v-for="option in [0, 15, 30, 40, 50]" :key="option" class="flex-container">
+                            <RadioButton v-model="game.selectedPuntuation1" :inputId="'puntuation' + option" :name="option.toString()" :value="option" />
+                            <label v-if="option === 50" :for="'puntuation' + option" class="ml-2">AD</label>
+                            <label v-else :for="'puntuation' + option" class="ml-2">{{ option }}</label>
                           </div>
                           <div class="flex-container">
-                            <RadioButton v-model="game.selectedPuntuation1" inputId="puntuation2" name="15" value=15 />
-                            <label for="puntuation2" class="ml-2">15</label>
-                          </div>
-                          <div class="flex-container">
-                            <RadioButton v-model="game.selectedPuntuation1" inputId="puntuation3" name="30" value=30 />
-                            <label for="puntuation3" class="ml-2">30</label>
-                          </div>
-                          <div class="flex-container">
-                            <RadioButton v-model="game.selectedPuntuation1" inputId="puntuation4" name="40" value=40 />
-                            <label for="puntuation4" class="ml-2">40</label>
-                          </div>
-                          <div class="flex-container">
-                            <RadioButton v-model="game.selectedPuntuation1" inputId="puntuation5" name="V" value="50" />
-                            <label for="puntuation5" class="ml-2">V</label>
-                          </div>
-                          <div class="flex-container">
-                            <InputNumber inputId="integeronly" class="score" :inputStyle="{ width: '50px' }"
-                              v-model="set.score1" />
+                            <InputNumber inputId="integeronly" class="score" :inputStyle="{ width: '50px' }" v-model="set.score1" />
                           </div>
                         </div>
                       </div>
                       <div>
                         <div class="flex-container">
-                          <div class="flex-container">
-                            <RadioButton v-model="game.selectedPuntuation2" inputId="puntuation1" name="0" value="0" />
-                            <label for="puntuation1" class="ml-2">0</label>
+                          <div v-if="index === 12">
+                            <InputNumber inputId="integeronly" class="score" :inputStyle="{ width: '50px' }" v-model="game.selectedPuntuation2" />
+                          </div>
+                          <div v-else v-for="option in [0, 15, 30, 40, 50]" :key="option" class="flex-container">
+                            <RadioButton v-model="game.selectedPuntuation2" :inputId="'puntuation' + option" :name="option.toString()" :value="option" />
+                            <label v-if="option === 50" :for="'puntuation' + option" class="ml-2">AD</label>
+                            <label v-else :for="'puntuation' + option" class="ml-2">{{ option }}</label>
                           </div>
                           <div class="flex-container">
-                            <RadioButton v-model="game.selectedPuntuation2" inputId="puntuation2" name="15"
-                              value="15" />
-                            <label for="puntuation2" class="ml-2">15</label>
-                          </div>
-                          <div class="flex-container">
-                            <RadioButton v-model="game.selectedPuntuation2" inputId="puntuation3" name="30"
-                              value="30" />
-                            <label for="puntuation3" class="ml-2">30</label>
-                          </div>
-                          <div class="flex-container">
-                            <RadioButton v-model="game.selectedPuntuation2" inputId="puntuation4" name="40"
-                              value="40" />
-                            <label for="puntuation4" class="ml-2">40</label>
-                          </div>
-                          <div class="flex-container">
-                            <RadioButton v-model="game.selectedPuntuation2" inputId="puntuation5" name="V" value="50" />
-                            <label for="puntuation5" class="ml-2">V</label>
-                          </div>
-                          <div class="flex-container">
-                            <InputNumber inputId="integeronly" class="score" :inputStyle="{ width: '50px' }"
-                              v-model="set.score2" />
+                            <InputNumber inputId="integeronly" class="score" :inputStyle="{ width: '50px' }" v-model="set.score2" />
                           </div>
                         </div>
                       </div>

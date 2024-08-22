@@ -103,12 +103,12 @@ export const useCreateMatchStore = defineStore('createMatch', {
           winner: null,
           scorePlayer1: game.selectedPuntuation1 == 50 ? 'AD' : game.selectedPuntuation1.toString(),
           scorePlayer2: game.selectedPuntuation2 == 50 ? 'AD' : game.selectedPuntuation2.toString(),
-          pointsPlayer1: 
+          pointsPlayer1: index === 12 ? game.selectedPuntuation1 :
                         game.selectedPuntuation1 == 15 ? 1 : 
                         game.selectedPuntuation1 == 30 ? 2 : 
                         game.selectedPuntuation1 == 40 ? 3 : 
                         game.selectedPuntuation1 == 50 ? 4 : 0,
-          pointsPlayer2: 
+          pointsPlayer2: index === 12 ? game.selectedPuntuation2 :
                         game.selectedPuntuation2 == 15 ? 1 : 
                         game.selectedPuntuation2 == 30 ? 2 : 
                         game.selectedPuntuation2 == 40 ? 3 : 

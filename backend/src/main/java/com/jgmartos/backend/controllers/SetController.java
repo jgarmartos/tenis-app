@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jgmartos.backend.models.Set;
 import com.jgmartos.backend.models.requests.SetRequest;
 import com.jgmartos.backend.repositories.MatchRepository;
-import com.jgmartos.backend.repositories.SetRepository;
 import com.jgmartos.backend.services.SetService;
 
 @RestController
