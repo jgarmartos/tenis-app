@@ -22,7 +22,7 @@
   border-bottom-style: solid;
   border-color: #d9d9d9;
   /* max-width: 33%; */
-  min-width: 33%;
+  min-width: 25%;
 }
 
 .title {

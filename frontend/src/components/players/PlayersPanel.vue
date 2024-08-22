@@ -72,7 +72,7 @@ const setVisible = (value: boolean) => {
   border-color: #d9d9d9;
   /* max-width: 50%; */
   /* min-width: 33%; */
-  width: 33%;
+  width: 25%;
 }
 
 .player-field {
