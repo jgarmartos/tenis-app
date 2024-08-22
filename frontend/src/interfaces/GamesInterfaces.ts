@@ -1,13 +1,13 @@
 export interface Game {
     id: number,
     set: number,
-    player1: number,
-    player2: number,
-    match: number,
-    competition: number,
-    place: number,
-    result: string,
-    winner: number
+    gameNumber: number,
+    pointsPlayer1: number,
+    pointsPlayer2: number,
+    scorePlayer1: string,
+    scorePlayer2: string,
+    winner: number | null
+    type: string
 }
 
 export interface GameSubmit {
@@ -15,7 +15,8 @@ export interface GameSubmit {
     gameNumber: number,
     pointsPlayer1: number,
     pointsPlayer2: number,
-    scorePlayer1: number,
-    scorePlayer2: number,
-    winner: number | null
+    scorePlayer1: string,
+    scorePlayer2: string,
+    winner: number | null,
+    type: string
 }
