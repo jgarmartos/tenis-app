@@ -27,6 +27,8 @@ export const useCreateMatchStore = defineStore('createMatch', {
 
     selectedPlace :  ref<Place>(emptyPlace()),
 
+    date :  ref<Date>(new Date()),
+
     startTime :  ref<Date>(new Date()),
 
     endTime : ref<Date>(new Date()),
@@ -36,8 +38,9 @@ export const useCreateMatchStore = defineStore('createMatch', {
       name: `Set ${i + 1}`,
       score1: ref(0),
       score2: ref(0),
+      type: ref<'Set' | 'Super Tie Break'>('Set'),
       games: Array.from({ length: 13 }, (_, i) => ({
-        name: `Game ${i + 1}`,
+        name: i === 12 ? 'Tiebreak': `Game ${i + 1}` ,
         selectedPuntuation1: ref(0),
         selectedPuntuation2: ref(0),
       })),
@@ -69,7 +72,7 @@ export const useCreateMatchStore = defineStore('createMatch', {
         player2: this.selectedPlayer2.id,
         competition: this.selectedCompetition?.id,
         place: this.selectedPlace.id,
-        date: this.startTime,
+        date: this.date,
         startTime: this.startTime,
         endTime: this.endTime,
         winner: null,
@@ -88,6 +91,7 @@ export const useCreateMatchStore = defineStore('createMatch', {
           winner: null,
           scorePlayer1: set.score1,
           scorePlayer2: set.score2,
+          type: set.type,
         };
         saveData.saveSet(submitSet).then((response) => {
           this.createAndSaveGames(response.id, set.games);

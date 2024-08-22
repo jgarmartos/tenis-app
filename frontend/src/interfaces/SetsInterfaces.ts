@@ -4,7 +4,8 @@ export interface Set {
     setNumber: number,
     winner: number,
     scorePlayer1: number,
-    scorePlayer2: number
+    scorePlayer2: number,
+    type: string
 }
 
 export interface SetSubmit {
@@ -12,7 +13,8 @@ export interface SetSubmit {
     setNumber: number,
     winner: number | null,
     scorePlayer1: number,
-    scorePlayer2: number
+    scorePlayer2: number,
+    type: string
 }
 
 export interface SetResponse {
@@ -23,7 +25,8 @@ export interface SetResponse {
     setNumber: number,
     winner: number,
     player1Score: number,
-    player2Score: number
+    player2Score: number,
+    type: string
     }
 
 

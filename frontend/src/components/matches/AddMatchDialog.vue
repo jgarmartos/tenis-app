@@ -75,12 +75,13 @@ const places = computed(() => useDataStore().places);
         </Dropdown>
       </div>
       <div class="add-player-line" name="startDate">
-        <label for="date" class="font-semibold w-6rem">Fecha Inicio</label>
-        <Calendar v-model="useCreateMatchStore().startTime" showIcon :showOnFocus="false" dateFormat="dd/mm/yy" />
+        <label for="date" class="font-semibold w-6rem">Fecha</label>
+        <Calendar v-model="useCreateMatchStore().date" showIcon :showOnFocus="false" dateFormat="dd/mm/yy" />
       </div>
       <div class="add-player-line" name="endDate">
-        <label for="date" class="font-semibold w-6rem">Fecha Final</label>
-        <Calendar v-model="useCreateMatchStore().endTime" showIcon :showOnFocus="false" dateFormat="dd/mm/yy" />
+        <label for="date" class="font-semibold w-6rem">Hora de inicio y final Final</label>
+        <Calendar id="calendar-timeonly" v-model="useCreateMatchStore().startTime" timeOnly />
+        <Calendar id="calendar-timeonly" v-model="useCreateMatchStore().endTime" timeOnly />
       </div>
       <div class="add-player-line" name="resultTitle">
         <label for="date" class="font-semibold w-6rem">Resultado</label>

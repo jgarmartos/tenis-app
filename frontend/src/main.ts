@@ -28,7 +28,7 @@ import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import RadioButton from 'primevue/radiobutton';
 import InputNumber from 'primevue/inputnumber';
-
+import FloatLabel from 'primevue/floatlabel';
 import Listbox from 'primevue/listbox';
 
 import AvatarGroup from 'primevue/avatargroup';   //Optional for grouping
@@ -69,6 +69,7 @@ app.component('TabPanel', TabPanel)
 app.component('RadioButton', RadioButton)
 app.component('Column', Column) 
 app.component('AvatarGroup', AvatarGroup) 
+app.component('FloatLabel', FloatLabel)
 
 
 

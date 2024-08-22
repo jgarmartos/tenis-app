@@ -13,4 +13,6 @@ public class SetRequest {
     private int scorePlayer1;
 
     private int scorePlayer2;
+
+    private String type;
 }
