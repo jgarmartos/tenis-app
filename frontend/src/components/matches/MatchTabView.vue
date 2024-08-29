@@ -10,6 +10,10 @@ const setTypes = ['Set', 'Super Tie Break'];
 const selectedSetType = ref(setTypes[0]);
 
 useCreateMatchStore().sets.forEach((set) => {
+  if (!set.startsServing) {
+    set.startsServing = null; // Asegurar que initialServer está definido
+  }
+
   watch(
     () => set.games.map(game => [game.selectedPuntuation1, game.selectedPuntuation2]),
     () => {
@@ -66,32 +70,35 @@ useCreateMatchStore().sets.forEach((set) => {
 
           <!-- PLAYERS DROPDOWN -->
 
+
           <div class="flex-container-players">
+
             <div>
-              <Dropdown v-model="useCreateMatchStore().selectedPlayer1" :options="players" filter optionLabel="name"
-                placeholder="Jugador 1">
-              </Dropdown>
+              <span> {{ useCreateMatchStore().selectedPlayer1.name }} </span>
             </div>
             <div>
-              <Dropdown v-model="useCreateMatchStore().selectedPlayer2" :options="players" filter optionLabel="name"
-                placeholder="Jugador 2">
-              </Dropdown>
+              <span> {{ useCreateMatchStore().selectedPlayer2.name }} </span>
             </div>
           </div>
 
           <!-- PUNTUATIONS -->
 
-          <div id='Set'  v-if="set.type == 'Set'" class="flex-container-points">
+          <div id='Set' v-if="set.type == 'Set'" class="flex-container-points">
             <Stepper>
               <StepperPanel v-for="(game, index) in set.games" :header="game.name">
                 <template v-if="index == 0" #content="{ nextCallback }">
                   <div>
+
                     <div class="flex-container">
                       <div v-for="option in [0, 15, 30, 40, 50]" :key="option" class="flex-container">
                         <RadioButton v-model="game.selectedPuntuation1" :inputId="'puntuation' + option"
                           :name="option.toString()" :value="option" />
                         <label v-if="option === 50" :for="'puntuation' + option" class="ml-2">AD</label>
                         <label v-else :for="'puntuation' + option" class="ml-2">{{ option }}</label>
+                      </div>
+                      <div class="flex-container">
+                        <v-icon name="gi-tennis-ball" fill="green" />
+                        <RadioButton id="sever" v-model="set.startsServing" value="player1"></RadioButton>
                       </div>
                       <div class="flex-container" style="justify-content: right;">
                         <InputNumber inputId="integeronly" class="score" :inputStyle="{ width: '50px' }"
@@ -107,6 +114,10 @@ useCreateMatchStore().sets.forEach((set) => {
                         <label v-if="option === 50" :for="'puntuation' + option" class="ml-2">AD</label>
                         <label v-else :for="'puntuation' + option" class="ml-2">{{ option }}</label>
                       </div>
+                      <div class="flex-container">
+                        <v-icon name="gi-tennis-ball" fill="green" />
+                        <RadioButton id="sever" v-model="set.startsServing" value="player2"></RadioButton>
+                      </div>
                       <div class="flex-container" style="justify-content: right;">
                         <InputNumber inputId="integeronly" class="score" :inputStyle="{ width: '50px' }"
                           v-model="set.score2" />
@@ -115,7 +126,8 @@ useCreateMatchStore().sets.forEach((set) => {
                   </div>
                   <div class="flex-container-buttons">
                     <!-- <Button label="Back" severity="secondary" icon="pi pi-arrow-left" @click="prevCallback" /> -->
-                    <Button :label="'Game ' + (index + 2)" icon="pi pi-arrow-right" :iconPos="'right'" @click="nextCallback" />
+                    <Button :label="'Game ' + (index + 2)" icon="pi pi-arrow-right" :iconPos="'right'"
+                      @click="nextCallback" />
                   </div>
                 </template>
                 <template v-else-if="index < 12" #content="{ prevCallback, nextCallback }">
@@ -156,8 +168,10 @@ useCreateMatchStore().sets.forEach((set) => {
                     </div>
                   </div>
                   <div class="flex-container-buttons">
-                    <Button :label="'Game ' + (index)" severity="secondary" icon="pi pi-arrow-left" @click="prevCallback" />
-                    <Button :label="'Game ' + (index + 2)" icon="pi pi-arrow-right" iconPos="right" @click="nextCallback" />
+                    <Button :label="'Game ' + (index)" severity="secondary" icon="pi pi-arrow-left"
+                      @click="prevCallback" />
+                    <Button :label="'Game ' + (index + 2)" icon="pi pi-arrow-right" iconPos="right"
+                      @click="nextCallback" />
                   </div>
                 </template>
                 <template v-else #content="{ prevCallback }">
@@ -186,7 +200,8 @@ useCreateMatchStore().sets.forEach((set) => {
                     </div>
                   </div>
                   <div class="flex-container-buttons">
-                    <Button :label="'Game ' + (index)" severity="secondary" icon="pi pi-arrow-left" @click="prevCallback" />
+                    <Button :label="'Game ' + (index)" severity="secondary" icon="pi pi-arrow-left"
+                      @click="prevCallback" />
                   </div>
                 </template>
               </StepperPanel>
@@ -212,6 +227,11 @@ useCreateMatchStore().sets.forEach((set) => {
           </div>
         </div>
 
+        <div class="flex-container">
+          <v-icon name="gi-tennis-ball" fill="green" />
+          <span> => </span>
+          <span> Empieza sacando</span>
+        </div>
       </TabPanel>
     </TabView>
   </div>
@@ -262,10 +282,10 @@ useCreateMatchStore().sets.forEach((set) => {
 .flex-container-players {
   margin-top: 1rem;
   display: flex;
-  align-items: left;
-  gap: 1rem;
+  align-items: center;
+  gap: 2rem;
   padding: 5px;
-  width: 50%;
+  width: 30%;
   flex-direction: column;
 }
 
@@ -274,7 +294,7 @@ useCreateMatchStore().sets.forEach((set) => {
   align-items: right;
   gap: 1rem;
   padding: 5px;
-  width: 80%;
+  width: 70%;
   flex-direction: column;
 }
 

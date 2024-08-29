@@ -14,10 +14,6 @@ const props = defineProps<{
 
 const { matchesQuery } = useInitialData();
 
-const saveMatch = () => {
-  
-
-}
 
 const handleSaveMatch = async () => {
   props.setVisible(false);
@@ -32,7 +28,7 @@ const handleSaveMatch = async () => {
 /**
  * Competitions
  */
- const { competitionsQuery } = useInitialData();
+const { competitionsQuery } = useInitialData();
 
 const competitions = computed(() => useDataStore().matches);
 
@@ -42,6 +38,8 @@ const competitions = computed(() => useDataStore().matches);
 const { placesQuery } = useInitialData();
 
 const places = computed(() => useDataStore().places);
+
+const players = computed(() => useDataStore().players);
 
 
 </script>
@@ -82,10 +80,28 @@ const places = computed(() => useDataStore().places);
       </div> -->
       <div class="add-player-line" name="endDate">
         <label for="date" class="font-semibold w-6rem">Fecha</label>
-        <Calendar id="calendar-timeonly" v-model="useCreateMatchStore().startTime" showTime hourFormat="24" />
+        <Calendar id="calendar-timeonly" v-model="useCreateMatchStore().startTime" showTime dateFormat="dd/mm/yy" hourFormat="24" />
         <!-- <Calendar id="calendar-timeonly" v-model="useCreateMatchStore().endTime" timeOnly /> -->
       </div>
-      <MatchTabView/>
+      <div class="add-player-line">
+        <label for="date" class="font-semibold w-6rem">Jugadores</label>
+        <div class="right-side-players">
+          <div class="players-imput">
+            <div>
+              <Dropdown v-model="useCreateMatchStore().selectedPlayer1" :options="players" filter optionLabel="name"
+                placeholder="Jugador 1">
+              </Dropdown>
+            </div>
+            <div>
+              <Dropdown v-model="useCreateMatchStore().selectedPlayer2" :options="players" filter optionLabel="name"
+                placeholder="Jugador 2">
+              </Dropdown>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <MatchTabView />
     </div>
     <template #footer>
       <Button label="Cancelar" text severity="secondary" @click="setVisible(false)" autofocus />
@@ -97,7 +113,7 @@ const places = computed(() => useDataStore().places);
 <style scoped>
 .dialog-content {
   padding: 1rem;
-  width: 60rem;
+  width: 71rem;
 }
 
 .add-player-line {
@@ -108,9 +124,19 @@ const places = computed(() => useDataStore().places);
   width: 100%;
 }
 
+.players-imput {
+  display: flex;
+  gap: 10px;
+}
+
 .right-side {
   margin-left: auto;
   max-width: 14rem;
+}
+
+.right-side-players {
+  margin-left: auto;
+  /* max-width: 14rem; */
 }
 
 .p-calendar {

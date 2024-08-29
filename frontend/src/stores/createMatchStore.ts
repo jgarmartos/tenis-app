@@ -40,6 +40,7 @@ export const useCreateMatchStore = defineStore('createMatch', {
       name: `Set ${i + 1}`,
       score1: ref(0),
       score2: ref(0),
+      startsServing: ref(),
       type: ref<'Set' | 'Super Tie Break'>('Set'),
       games: Array.from({ length: 13 }, (_, i) => ({
         name: i === 12 ? 'Tiebreak': `Game ${i + 1}` ,
@@ -50,24 +51,6 @@ export const useCreateMatchStore = defineStore('createMatch', {
 
   }),
   actions: {
-    setSelectedPlayer1(player: Player) {
-      this.selectedPlayer1 = player;
-    },
-    setSelectedPlayer2(player: Player) {
-      this.selectedPlayer2 = player;
-    },
-    setSelectedCompetition(competition: Competition) {
-      this.selectedCompetition = competition;
-    },
-    setSelectedPlace(place: Place) {
-      this.selectedPlace = place;
-    },
-    setStartTime(date: Date) {
-      this.startTime = date;
-    },
-    setEndTime(date: Date) {
-      this.endTime = date;
-    },
     saveMatch() {
       this.matchScore.score1 = 0;
       this.matchScore.score2 = 0;
@@ -99,7 +82,7 @@ export const useCreateMatchStore = defineStore('createMatch', {
           type: set.type,
         };
         saveData.saveSet(submitSet).then((response) => {
-          this.createAndSaveGames(response.id, set.games);
+          this.createAndSaveGames(response.id, set.games, set.startsServing);
         });
         if (submitSet.winner === this.selectedPlayer1.id) {
           this.matchScore.score1++;
@@ -114,9 +97,20 @@ export const useCreateMatchStore = defineStore('createMatch', {
       saveData.updateWinner(matchId, matchSubmit)
       }
     },
-    createAndSaveGames(id: number, games: Array<{name: string, selectedPuntuation1: number, selectedPuntuation2: number}>) {
+    createAndSaveGames(id: number,
+                      games: Array<{name: string, selectedPuntuation1: number, selectedPuntuation2: number}>,
+                      startsServing: string) {
+
+      
+
       games.forEach((game, index) => {
         if (game.selectedPuntuation1 === 0 && game.selectedPuntuation2 === 0) return;
+
+        // Determinamos el servidor en función del set y el número de juego
+        const server = (index % 2 === 0) 
+        ? (startsServing === 'player1' ? this.selectedPlayer1.id : this.selectedPlayer2.id)
+        : (startsServing === 'player1' ? this.selectedPlayer2.id : this.selectedPlayer1.id);
+
         const submitGame: GameSubmit = {
           set: id,
           gameNumber: index + 1,
@@ -135,6 +129,7 @@ export const useCreateMatchStore = defineStore('createMatch', {
                         game.selectedPuntuation2 == 40 ? 3 : 
                         game.selectedPuntuation2 == 50 ? 4 : 0,
           type: index === 12 ? 'tiebreak' : 'normal',
+          server: server
         };
         saveData.saveGame(submitGame);
         

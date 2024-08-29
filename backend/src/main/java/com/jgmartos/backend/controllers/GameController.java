@@ -42,6 +42,7 @@ public class GameController {
         game.setType(request.getType());
         game.setGameNumber(request.getGameNumber());
         game.setWinner(playerRepository.findById(request.getWinner()).orElse(null));
+        game.setServer(playerRepository.findById(request.getServer()).orElse(null));
         return gameService.createGame(game);
     }
 

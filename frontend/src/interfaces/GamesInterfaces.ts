@@ -8,6 +8,7 @@ export interface Game {
     scorePlayer2: string,
     winner: number | null
     type: string
+    server: number
 }
 
 export interface GameSubmit {
@@ -19,4 +20,5 @@ export interface GameSubmit {
     scorePlayer2: string,
     winner: number | null,
     type: string
+    server: number
 }

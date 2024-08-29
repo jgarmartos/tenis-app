@@ -21,4 +21,6 @@ public class GameRequest {
 
     private String type;
 
+    private int server;
+
 }

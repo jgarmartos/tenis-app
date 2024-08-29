@@ -36,4 +36,8 @@ public class Game {
 
     @Column(nullable = false)
     private String type;
+
+    @ManyToOne
+    @JoinColumn(name = "server_id")
+    private Player server;
 }
