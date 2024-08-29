@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jgmartos.backend.models.Game;
 import com.jgmartos.backend.models.requests.GameRequest;
+import com.jgmartos.backend.repositories.PlayerRepository;
 import com.jgmartos.backend.repositories.SetRepository;
 import com.jgmartos.backend.services.GameService;
 
@@ -26,17 +27,21 @@ public class GameController {
     @Autowired
     private SetRepository setRepository;
 
+    @Autowired
+    private PlayerRepository playerRepository;
+
     @PostMapping
     public Game createGame(@RequestBody GameRequest request) {
         Game game = new Game();
 
         game.setSet(setRepository.findById(request.getSet()).orElse(null));
-        game.setPlayer1Points(request.getPlayer1Points());
-        game.setPlayer2Points(request.getPlayer2Points());
-        game.setPlayer1Score(request.getPlayer1Score()+"");
-        game.setPlayer2Score(request.getPlayer2Score()+"");
+        game.setPlayer1Points(request.getPointsPlayer1());
+        game.setPlayer2Points(request.getPointsPlayer2());
+        game.setPlayer1Score(request.getScorePlayer1()+"");
+        game.setPlayer2Score(request.getScorePlayer2()+"");
         game.setType(request.getType());
         game.setGameNumber(request.getGameNumber());
+        game.setWinner(playerRepository.findById(request.getWinner()).orElse(null));
         return gameService.createGame(game);
     }
 

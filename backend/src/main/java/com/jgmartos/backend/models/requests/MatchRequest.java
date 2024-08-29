@@ -12,8 +12,8 @@ public class MatchRequest {
     private int competition;
     private int place;
     private Date date;
-    private Time startTime;
-    private Time endTime;
+    private long startTime;
+    private long endTime;
     private int winnerId;
     
     // Getters and Setters

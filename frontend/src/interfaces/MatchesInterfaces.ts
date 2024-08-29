@@ -16,7 +16,8 @@ export interface MatchSubmit {
     place: number,
     competition: number | null | undefined,
     date: Date,
-    startTime: Date,
-    endTime: Date,
+    startTime: number,
+    endTime: number,
     winner: number | null
 }
+

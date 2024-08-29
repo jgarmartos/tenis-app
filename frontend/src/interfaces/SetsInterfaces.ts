@@ -1,7 +1,7 @@
 export interface Set {
     id: number
     matchId : number,
-    setNumber: number,
+    numberSet: number,
     winner: number,
     scorePlayer1: number,
     scorePlayer2: number,
@@ -10,7 +10,7 @@ export interface Set {
 
 export interface SetSubmit {
     matchId : number,
-    setNumber: number,
+    numberSet: number,
     winner: number | null,
     scorePlayer1: number,
     scorePlayer2: number,
@@ -22,7 +22,7 @@ export interface SetResponse {
     match : {
         id: number
     },
-    setNumber: number,
+    numberSet: number,
     winner: number,
     player1Score: number,
     player2Score: number,

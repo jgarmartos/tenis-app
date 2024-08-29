@@ -9,6 +9,7 @@ const props = defineProps<{
   visible: boolean;
   setVisible: (value: boolean) => void;
   retry: () => void;
+  getSetsForMatch: (matchId: number) => string;
 }>();
 
 const { matchesQuery } = useInitialData();
@@ -20,6 +21,7 @@ const saveMatch = () => {
 
 const handleSaveMatch = async () => {
   props.setVisible(false);
+  // props.getSetsForMatch();
   await useCreateMatchStore().saveMatch(); // Guardar el partido
   await matchesQuery.refetch(); // Esperar a que la refetch complete
   console.log(useDataStore().matches); // Verificar si los datos han cambiado
@@ -74,17 +76,14 @@ const places = computed(() => useDataStore().places);
           </template>
         </Dropdown>
       </div>
-      <div class="add-player-line" name="startDate">
+      <!-- <div class="add-player-line" name="startDate">
         <label for="date" class="font-semibold w-6rem">Fecha</label>
         <Calendar v-model="useCreateMatchStore().date" showIcon :showOnFocus="false" dateFormat="dd/mm/yy" />
-      </div>
+      </div> -->
       <div class="add-player-line" name="endDate">
-        <label for="date" class="font-semibold w-6rem">Hora de inicio y final Final</label>
-        <Calendar id="calendar-timeonly" v-model="useCreateMatchStore().startTime" timeOnly />
-        <Calendar id="calendar-timeonly" v-model="useCreateMatchStore().endTime" timeOnly />
-      </div>
-      <div class="add-player-line" name="resultTitle">
-        <label for="date" class="font-semibold w-6rem">Resultado</label>
+        <label for="date" class="font-semibold w-6rem">Fecha</label>
+        <Calendar id="calendar-timeonly" v-model="useCreateMatchStore().startTime" showTime hourFormat="24" />
+        <!-- <Calendar id="calendar-timeonly" v-model="useCreateMatchStore().endTime" timeOnly /> -->
       </div>
       <MatchTabView/>
     </div>

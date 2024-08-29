@@ -81,7 +81,7 @@ useCreateMatchStore().sets.forEach((set) => {
 
           <!-- PUNTUATIONS -->
 
-          <div id='Set'  v-if="selectedSetType == 'Set'" class="flex-container-points">
+          <div id='Set'  v-if="set.type == 'Set'" class="flex-container-points">
             <Stepper>
               <StepperPanel v-for="(game, index) in set.games" :header="game.name">
                 <template v-if="index == 0" #content="{ nextCallback }">

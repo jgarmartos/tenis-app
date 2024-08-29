@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jgmartos.backend.models.Set;
 import com.jgmartos.backend.models.requests.SetRequest;
 import com.jgmartos.backend.repositories.MatchRepository;
+import com.jgmartos.backend.repositories.PlayerRepository;
 import com.jgmartos.backend.services.SetService;
 
 @RestController
@@ -26,16 +27,20 @@ public class SetController {
     @Autowired
     private MatchRepository matchRepository;
 
+    @Autowired
+    private PlayerRepository playerRepository;
+
 
     @PostMapping
     public Set createSet(@RequestBody SetRequest setRequest) {
         Set set = new Set();
 
         set.setMatch(matchRepository.findById(setRequest.getMatchId()).orElse(null));
-        set.setNumberSet(setRequest.getSetNumber());
+        set.setNumberSet(setRequest.getNumberSet());
         set.setPlayer1Score(setRequest.getScorePlayer1());
         set.setPlayer2Score(setRequest.getScorePlayer2());
-        set.setWinner(null);
+        set.setType(setRequest.getType());
+        set.setWinner(playerRepository.findById(setRequest.getWinner()).orElse(null));
         
         return setService.createSet(set);
     }

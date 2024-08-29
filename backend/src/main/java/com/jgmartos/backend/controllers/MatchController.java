@@ -1,10 +1,13 @@
 package com.jgmartos.backend.controllers;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -44,8 +47,9 @@ public class MatchController {
         match.setCompetition(competitionRepository.findById(matchRequest.getCompetition()).orElse(null));
         match.setPlace(placeRepository.findById(matchRequest.getPlace()).orElse(null));
         match.setDate(matchRequest.getDate());
-        match.setStartTime(matchRequest.getStartTime());
-        match.setEndTime(matchRequest.getEndTime());
+        Date date = new Date(matchRequest.getStartTime());
+        match.setStartTime(new java.sql.Time(date.getTime()));
+        match.setEndTime(null);
         match.setWinner(playerRepository.findById(matchRequest.getWinnerId()).orElse(null));
 
         return matchService.createMatch(match);
@@ -56,7 +60,19 @@ public class MatchController {
         return matchService.getMatch(id);
     }
 
-    @PutMapping("/{id}")
+    // @PutMapping("/{id}/{winnerId}")
+    // public Match updateWinner(@PathVariable Integer id, @PathVariable Integer
+    // winnerId) {
+    // return matchService.updateWinner(id, winnerId);
+    // }
+
+    @PatchMapping("/{id}/winner")
+    public Match updateWinner(@PathVariable Integer id, @RequestBody Map<String, Integer> winnerRequest) {
+        Integer winnerId = winnerRequest.get("winnerId");
+        return matchService.updateWinner(id, winnerId);
+    }
+
+    @PutMapping("/{id}")                        
     public Match updateMatch(@PathVariable Integer id, @RequestBody Match match) {
         match.setId(id);
         return matchService.updateMatch(match);

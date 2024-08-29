@@ -29,7 +29,7 @@ public class Set {
     @Column(name = "player_2_score", nullable = false)
     private int player2Score;
 
-    @Column(name = "super", nullable = false)
+    @Column(name = "type", nullable = false)
     private String type;
 }
 
