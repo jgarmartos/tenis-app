@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import AddMatchDialog from './AddMatchDialog.vue';
 import { useInitialData } from "@/services/useInitialData";
 import { useDataStore } from '@/stores/useDataStore';
+import { useCreateMatchStore } from '@/stores/createMatchStore';
 
 
 const { matchesQuery, setsQuery } = useInitialData();
@@ -40,10 +41,11 @@ const propertyToAccess = "name"
  * @param matchId {string} ID del partido
  * @returns {Array} Array de sets correspondientes
  */
- const getSetsForMatch = (matchId: number) => {
-  return sets.value.filter(set => set.match.id == matchId)
-                   .map(set => `${set.player1Score}-${set.player2Score}`)
-                   .join(', ');
+const getSetsForMatch = (matchId: number) => {
+    console.log('sets', sets.value);
+    const filteredSets = sets.value.filter(set => set.match.id == matchId);
+    const sortedSets = filteredSets.sort((a, b) => a.numberSet - b.numberSet);
+    return sortedSets.map(set => `${set.player1Score}-${set.player2Score}`).join(', ');
 };
 
 /**
@@ -81,7 +83,7 @@ const setVisible = (value: boolean) => {
                 </div>
             </div>
         </template>
-        <AddMatchDialog v-bind:visible="visible" :setVisible="setVisible" :retry="matchesQuery.refetch" />
+        <AddMatchDialog v-bind:visible="visible" :setVisible="setVisible" :retry="matchesQuery.refetch" :getSetsForMatch="getSetsForMatch" />
         <!-- <div v-if="matchesQuery.isLoading" class="p-text-center">
             <ProgressSpinner />
         </div>
@@ -102,7 +104,7 @@ const setVisible = (value: boolean) => {
                         </span>
                         <span v-else>
                             <!-- Renderizamos las puntuaciones de los sets -->
-                            {{ getSetsForMatch(matchesResponse.data.id) }}
+                            {{ useCreateMatchStore().getSetsForMatch(matchesResponse.data.id) }}
                         </span>
                     </template>
                 </Column>

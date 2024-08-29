@@ -7,12 +7,16 @@ import org.springframework.stereotype.Service;
 
 import com.jgmartos.backend.models.Match;
 import com.jgmartos.backend.repositories.MatchRepository;
+import com.jgmartos.backend.repositories.PlayerRepository;
 
 @Service
 public class MatchService {
 
     @Autowired
     private MatchRepository matchRepository;
+
+    @Autowired
+    private PlayerRepository playerRepository;
 
     public Match createMatch(Match match) {
         return matchRepository.save(match);
@@ -23,6 +27,12 @@ public class MatchService {
     }
 
     public Match updateMatch(Match match) {
+        return matchRepository.save(match);
+    }
+
+    public Match updateWinner(Integer id, Integer winnerId) {
+        Match match = matchRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Match not found"));
+        match.setWinner(playerRepository.findById(winnerId).orElse(null));
         return matchRepository.save(match);
     }
 

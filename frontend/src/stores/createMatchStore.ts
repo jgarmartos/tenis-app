@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import type { GameSubmit } from '@/interfaces/GamesInterfaces';
 import type { SetSubmit } from '@/interfaces/SetsInterfaces';
@@ -27,17 +27,22 @@ export const useCreateMatchStore = defineStore('createMatch', {
 
     selectedPlace :  ref<Place>(emptyPlace()),
 
+    date :  ref<Date>(new Date()),
+
     startTime :  ref<Date>(new Date()),
 
     endTime : ref<Date>(new Date()),
+
+    matchScore : ref({score1: 0, score2: 0}),
 
     sets : ref(
     Array.from({ length: 5 }, (_, i) => ({
       name: `Set ${i + 1}`,
       score1: ref(0),
       score2: ref(0),
+      type: ref<'Set' | 'Super Tie Break'>('Set'),
       games: Array.from({ length: 13 }, (_, i) => ({
-        name: `Game ${i + 1}`,
+        name: i === 12 ? 'Tiebreak': `Game ${i + 1}` ,
         selectedPuntuation1: ref(0),
         selectedPuntuation2: ref(0),
       })),
@@ -64,35 +69,50 @@ export const useCreateMatchStore = defineStore('createMatch', {
       this.endTime = date;
     },
     saveMatch() {
+      this.matchScore.score1 = 0;
+      this.matchScore.score2 = 0;
       const matchSubmit: MatchSubmit = {
         player1: this.selectedPlayer1.id,
         player2: this.selectedPlayer2.id,
         competition: this.selectedCompetition?.id,
         place: this.selectedPlace.id,
         date: this.startTime,
-        startTime: this.startTime,
-        endTime: this.endTime,
+        startTime: this.startTime.getTime(),
+        endTime: this.endTime.getTime(),
         winner: null,
       };
       saveData.saveMatch(matchSubmit).then((response) => {
         // useInitialData().matchesQuery.refetch();
-        this.createAndSaveSets(response.id);
+        this.createAndSaveSets(matchSubmit, response.id);
       });
     },
-    createAndSaveSets(id: number) {
+    createAndSaveSets(matchSubmit: MatchSubmit, matchId: number) {
       this.sets.forEach((set, index) => {
         if (set.score1 === 0 && set.score2 === 0) return;
         const submitSet: SetSubmit = {
-          matchId: id,
-          setNumber: index + 1,
-          winner: null,
+          matchId: matchId,
+          numberSet: index + 1,
+          winner: set.score1 > set.score2 ? this.selectedPlayer1.id : 
+                  set.score1 < set.score2 ? this.selectedPlayer2.id : null,
           scorePlayer1: set.score1,
           scorePlayer2: set.score2,
+          type: set.type,
         };
         saveData.saveSet(submitSet).then((response) => {
           this.createAndSaveGames(response.id, set.games);
         });
+        if (submitSet.winner === this.selectedPlayer1.id) {
+          this.matchScore.score1++;
+        } else {
+          this.matchScore.score2++;
+        }
       });
+      // create logic to save the winner of the match depending on the sets
+      matchSubmit.winner = this.matchScore.score1 > this.matchScore.score2 ? this.selectedPlayer1.id :
+                          this.matchScore.score1 < this.matchScore.score2 ? this.selectedPlayer2.id : null;
+      if (matchSubmit.winner !== null) {
+      saveData.updateWinner(matchId, matchSubmit)
+      }
     },
     createAndSaveGames(id: number, games: Array<{name: string, selectedPuntuation1: number, selectedPuntuation2: number}>) {
       games.forEach((game, index) => {
@@ -100,15 +120,16 @@ export const useCreateMatchStore = defineStore('createMatch', {
         const submitGame: GameSubmit = {
           set: id,
           gameNumber: index + 1,
-          winner: null,
+          winner: game.selectedPuntuation1 > game.selectedPuntuation2 ? this.selectedPlayer1.id :
+                  game.selectedPuntuation1 < game.selectedPuntuation2 ? this.selectedPlayer2.id : null,
           scorePlayer1: game.selectedPuntuation1 == 50 ? 'AD' : game.selectedPuntuation1.toString(),
           scorePlayer2: game.selectedPuntuation2 == 50 ? 'AD' : game.selectedPuntuation2.toString(),
-          pointsPlayer1: 
+          pointsPlayer1: index === 12 ? game.selectedPuntuation1 :
                         game.selectedPuntuation1 == 15 ? 1 : 
                         game.selectedPuntuation1 == 30 ? 2 : 
                         game.selectedPuntuation1 == 40 ? 3 : 
                         game.selectedPuntuation1 == 50 ? 4 : 0,
-          pointsPlayer2: 
+          pointsPlayer2: index === 12 ? game.selectedPuntuation2 :
                         game.selectedPuntuation2 == 15 ? 1 : 
                         game.selectedPuntuation2 == 30 ? 2 : 
                         game.selectedPuntuation2 == 40 ? 3 : 
@@ -119,6 +140,13 @@ export const useCreateMatchStore = defineStore('createMatch', {
         
       });
     },
+    getSetsForMatch(matchId: number) {
+      const sets = computed(() => useDataStore().sets);
+      console.log('sets', sets.value);
+      const filteredSets = sets.value.filter(set => set.match.id == matchId);
+      const sortedSets = filteredSets.sort((a, b) => a.numberSet - b.numberSet);
+      return sortedSets.map(set => `${set.player1Score}-${set.player2Score}`).join(', ');
+  }
   }
 
 });

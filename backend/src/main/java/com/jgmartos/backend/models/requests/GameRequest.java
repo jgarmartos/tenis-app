@@ -11,13 +11,13 @@ public class GameRequest {
 
     private int winner;
 
-    private int player1Points;
+    private int pointsPlayer1;
 
-    private int player2Points;
+    private int pointsPlayer2;
 
-    private int player1Score;
+    private String scorePlayer1;
 
-    private int player2Score;
+    private String scorePlayer2;
 
     private String type;
 

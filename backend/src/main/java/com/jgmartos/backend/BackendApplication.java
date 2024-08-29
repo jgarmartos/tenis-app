@@ -20,7 +20,7 @@ public class BackendApplication {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Allow all paths
                         .allowedOrigins("http://localhost:3000") // Allow requests from your frontend
-                        .allowedMethods("GET", "POST", "PUT", "DELETE") // Allow common HTTP methods
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH") // Allow common HTTP methods
                         .allowedHeaders("*") // Allow all headers
                         .allowCredentials(true); // Allow cookies
             }

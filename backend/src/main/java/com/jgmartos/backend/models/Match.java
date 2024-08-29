@@ -3,6 +3,7 @@ package com.jgmartos.backend.models;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.sql.Time;
 import java.util.Date;
 
 @Entity
@@ -34,10 +35,10 @@ public class Match {
     private Date date;
 
     @Column(name = "start_time", nullable = false)
-    private Date startTime;
+    private Time startTime;
 
     @Column(name = "end_time")
-    private Date endTime;
+    private Time endTime;
 
     @ManyToOne
     @JoinColumn(name = "winner_player_id")

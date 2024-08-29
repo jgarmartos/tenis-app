@@ -17,6 +17,13 @@ const saveMatch = async (match: MatchSubmit) => {
     return response.data;
 }
 
+const updateWinner = async (matchId: number, match : MatchSubmit) => {
+    //make a custom requets
+    const matchWinner = {winnerId: match.winner}
+    const response = await api.patch<Match>('/matches/'+matchId+'/winner', matchWinner);
+    return response.data;
+}
+
 const saveSet = async (set: SetSubmit) => {
     //make a custom requets
     const response = await api.post<Set>('/sets', set);
@@ -34,6 +41,7 @@ const saveGame = async (game: GameSubmit) => {
 export default {
     savePlayer,
     saveMatch,
+    updateWinner,
     saveSet,
     saveGame
 }

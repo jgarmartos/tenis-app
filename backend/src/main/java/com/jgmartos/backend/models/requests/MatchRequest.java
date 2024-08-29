@@ -1,5 +1,6 @@
 package com.jgmartos.backend.models.requests;
 
+import java.sql.Time;
 import java.util.Date;
 
 import lombok.Data;
@@ -11,8 +12,8 @@ public class MatchRequest {
     private int competition;
     private int place;
     private Date date;
-    private Date startTime;
-    private Date endTime;
+    private long startTime;
+    private long endTime;
     private int winnerId;
     
     // Getters and Setters
