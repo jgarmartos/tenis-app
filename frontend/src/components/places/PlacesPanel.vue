@@ -2,26 +2,26 @@
 import { useInitialData } from '@/services/requests/useInitialData';
 import { useDataStore } from '@/stores/useDataStore';
 import { computed, ref } from 'vue';
-import AddCompetitionDialog from './AddCompetitionDialog.vue';
-
+import AddPlaceDialog from './AddPlaceDialog.vue';
 
 
 const visible = ref(false);
 
 const setVisible = (value: boolean) => {
-  visible.value = value;
+    visible.value = value;
 };
 
-const { competitionsQuery } = useInitialData();
+const { placesQuery } = useInitialData();
 
-const competitions = computed(() => useDataStore().competitions);
+const places = computed(() => useDataStore().places);
 
-const lastCompetitions = computed(() => {
-  return competitions.value?.slice(-3).reverse() || [];
+const lastPlaces = computed(() => {
+  return places.value?.slice(-3).reverse() || [];
 });
 
 const columns = [
   { field: "name", sortable: true },
+  { field: "city", sortable: true },
 ];
 </script>
 
@@ -30,16 +30,16 @@ const columns = [
         <template #header>
             <div class="title">
                 <i class="pi pi-user" />
-                <span class="font-bold">Últimas competiciones</span>
+                <span class="font-bold">Últimos lugares</span>
                 <div class="right-side">
                     <Button @click="visible = true">
-                        <v-icon name="fa-trophy" fill="white" scale="1" />
+                        <v-icon name="md-place-outlined" fill="white" scale="1" />
                     </Button>
                 </div>
             </div>
         </template>
-        <AddCompetitionDialog v-bind:visible="visible" :setVisible="setVisible" :retry="competitionsQuery.refetch"/>
-        <DataTable :value="lastCompetitions" size="small" :loading="competitionsQuery.isFetching.value">
+        <AddPlaceDialog v-bind:visible="visible" :setVisible="setVisible" :retry="placesQuery.refetch"/>
+        <DataTable :value="lastPlaces" size="small" :loading="placesQuery.isFetching.value">
             <Column v-for="col in columns" :field="col.field" />
         </DataTable>
     </Panel>
@@ -49,11 +49,9 @@ const columns = [
 <style scoped>
 .panel {
     border-radius: 10px;
-    /* overflow: hidden; */
     border-bottom-width: 1px;
     border-bottom-style: solid;
     border-color: #d9d9d9;
-    /* max-width: 33%; */
     min-width: 25%;
     min-height: 60%;
 }
