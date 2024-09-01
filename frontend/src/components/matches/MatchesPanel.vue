@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, type Ref } from 'vue';
 import AddMatchDialog from './AddMatchDialog.vue';
-import { useInitialData } from "@/services/useInitialData";
+import MatchInfoDialog from './MatchInfoDialog.vue';
+import { useInitialData } from "@/services/requests/useInitialData";
 import { useDataStore } from '@/stores/useDataStore';
 import { useCreateMatchStore } from '@/stores/createMatchStore';
+import type { Match } from '@/interfaces/MatchesInterfaces';
+import { emptyMatch } from '@/services/emptyObjects';
 
 
 const { matchesQuery, setsQuery } = useInitialData();
@@ -36,6 +39,8 @@ const columns = [
 
 const propertyToAccess = "name"
 
+const sortedSets = ref();
+
 /**
  * @description Mapear sets a los partidos usando el matchId
  * @param matchId {string} ID del partido
@@ -43,9 +48,9 @@ const propertyToAccess = "name"
  */
 const getSetsForMatch = (matchId: number) => {
     console.log('sets', sets.value);
-    const filteredSets = sets.value.filter(set => set.match.id == matchId);
-    const sortedSets = filteredSets.sort((a, b) => a.numberSet - b.numberSet);
-    return sortedSets.map(set => `${set.player1Score}-${set.player2Score}`).join(', ');
+    const filteredSets = sets.value.filter((set: any) => set.match.id == matchId);
+    sortedSets.value = filteredSets.sort((a, b) => a.numberSet - b.numberSet);
+    return sortedSets.value.map((set: any) => `${set.player1Score}-${set.player2Score}`).join(', ');
 };
 
 /**
@@ -56,16 +61,49 @@ const lastFiveMatches = computed(() => {
     return matches.value.slice(-5).reverse() || [];
 });
 
+// const dialogs = {
+//     visibleAddMatchDialog: ref(false),
+//     visibleEditMatchDialog: ref(false),
+// };
+
 /**
- * @initialValue {boolean} visible
+ * @initialValue {boolean} visibleAddMatchDialog
  * @function {function} setVisible
  * @description Set the visibility of the dialog
  */
-const visible = ref(false);
+const visibleAddMatchDialog = ref(false);
+
+/**
+ * @initialValue {boolean} visibleMatchInfoDialog
+ * @function {function} setVisible
+ * @description Set the visibility of the dialog
+ */
+const visibleMatchInfoDialog = ref(false);
 
 
-const setVisible = (value: boolean) => {
-    visible.value = value;
+const setVisibleAddMatchDialog = (value: boolean, ) => {
+    visibleAddMatchDialog.value = value;
+};
+
+const setVisibleMatchInfoDialog = (value: boolean) => {
+    visibleMatchInfoDialog.value = value;
+};
+
+// const setVisible = (property: Ref<boolean>, value: boolean) => {
+//     property.value = value;
+// };
+
+const matchInfo = ref<Match>(emptyMatch());
+
+/**
+ * @description Handle the row select event
+ * @param event {Event} Event
+ */
+const onRowSelect = (event: any) => {
+    console.log('event', event.data);
+    matchInfo.value = event.data;
+    console.log('matchInfo', matchInfo.value);
+    setVisibleMatchInfoDialog(true);
 };
 </script>
 
@@ -77,22 +115,16 @@ const setVisible = (value: boolean) => {
                 <v-icon name="gi-tennis-court" fill="black" scale="1." />
                 <span class="font-bold">Últimos partidos</span>
                 <div class="right-side">
-                    <Button @click="visible = true">
+                    <Button @click="visibleAddMatchDialog = true">
                         <v-icon name="gi-tennis-court" fill="white" scale="1" />
                     </Button>
                 </div>
             </div>
         </template>
-        <AddMatchDialog v-bind:visible="visible" :setVisible="setVisible" :retry="matchesQuery.refetch" :getSetsForMatch="getSetsForMatch" />
-        <!-- <div v-if="matchesQuery.isLoading" class="p-text-center">
-            <ProgressSpinner />
-        </div>
-        <div v-if="matchesQuery.isError" class="p-text-center">
-            <span>Error: {{ matchesQuery.error?.value?.message }}</span>
-            <Button @click="matchesQuery.refetch()">Retry</Button>
-        </div> -->
+        <AddMatchDialog v-bind:visible="visibleAddMatchDialog" :setVisible="setVisibleAddMatchDialog" :retry="matchesQuery.refetch" :getSetsForMatch="getSetsForMatch" />
+        <MatchInfoDialog v-bind:visible="visibleMatchInfoDialog" :setVisible="setVisibleMatchInfoDialog" v-bind:matchInfo="matchInfo"></MatchInfoDialog>
         <div>
-            <DataTable :value="lastFiveMatches" size="small" :loading="matchesQuery.isFetching.value">
+            <DataTable :value="lastFiveMatches" size="small" :loading="matchesQuery.isFetching.value" @rowSelect="onRowSelect" selectionMode="single">
                 <!-- <Column v-for="col in columns" :field="col.field.value" :header="col.field.header" sortable /> -->
                 <Column v-for="col in columns" sortable>
                     <template #header>
