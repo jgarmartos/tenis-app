@@ -50,6 +50,7 @@ public class MatchController {
         Date date = new Date(matchRequest.getStartTime());
         match.setStartTime(new java.sql.Time(date.getTime()));
         match.setEndTime(null);
+        match.setSurface(matchRequest.getSurface());
         match.setWinner(playerRepository.findById(matchRequest.getWinnerId()).orElse(null));
 
         return matchService.createMatch(match);

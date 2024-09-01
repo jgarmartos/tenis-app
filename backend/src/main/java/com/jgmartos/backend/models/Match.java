@@ -40,6 +40,9 @@ public class Match {
     @Column(name = "end_time")
     private Time endTime;
 
+    @Column(name = "surface")
+    private String surface;
+
     @ManyToOne
     @JoinColumn(name = "winner_player_id")
     private Player winner;
