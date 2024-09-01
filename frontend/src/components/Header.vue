@@ -1,16 +1,29 @@
 <script setup lang="ts">
+import router from "@/router";
 import { ref } from "vue";
 
+const navigateToPlayers = () => {
+  router.push({ name: 'players' });
+}
+
 const headerCategories = ref([
+  {
+    title: 'Inicio',
+    icon: 'fa-home',
+    animation: '',
+    redirect: () => router.push('/')
+  },
   {
     title: 'Jugadores',
     icon: 'fa-users',
     animation: '',
+    redirect: () => router.push('/players')
   },
   {
     title: 'Partidos',
     icon: 'gi-tennis-ball',
     animation: 'float',
+    // redirect: () => router.push({ name: 'MatchesView' })
   },
   {
     title: 'Competiciones',
@@ -23,18 +36,19 @@ const headerCategories = ref([
     animation: 'pulse'
   }
 ]);
+
 </script>
 
 <template>
-    <body>
+
+  <body>
     <div class="header">
       <div class="block"></div>
       <div class="navigation-pill-list">
-        <Button v-for="category in headerCategories" class="navigation-pill">
+        <Button v-for="category in headerCategories" class="navigation-pill" @click="category.redirect">
           <v-icon :name="category.icon" :animation="category.animation" fill="white" />
           <span class="title">{{ category.title }}</span>
         </Button>
-        
       </div>
 
       <div>
@@ -43,20 +57,20 @@ const headerCategories = ref([
 
       <div class="header-auth">
         <Button label="Sign In" icon="pi pi-arrow-right" class="sign-in-button" />
-        <Button label="Register" icon="pi pi-user-plus"  class="register-button" />
+        <Button label="Register" icon="pi pi-user-plus" class="register-button" />
       </div>
     </div>
   </body>
-  
+
 </template>
 
 <style scoped>
-.sign-in-button{
+.sign-in-button {
   background-color: grey;
   border-color: grey;
 }
 
-.register-button{
+.register-button {
   background-color: rgb(71, 71, 71);
   border-color: rgb(71, 71, 71);
 }
@@ -201,6 +215,4 @@ const headerCategories = ref([
   white-space: nowrap;
   font-style: var(--single-line-body-base-font-style);
 }
-
-
 </style>
