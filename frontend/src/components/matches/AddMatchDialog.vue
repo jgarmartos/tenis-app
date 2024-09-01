@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useCreateMatchStore } from "@/stores/createMatchStore";
 import MatchTabView from "./MatchTabView.vue";
-import { useInitialData } from "@/services/useInitialData";
+import { useInitialData } from "@/services/requests/useInitialData";
 import { useDataStore } from "@/stores/useDataStore";
 
 const props = defineProps<{
@@ -23,14 +23,18 @@ const handleSaveMatch = async () => {
   console.log(useDataStore().matches); // Verificar si los datos han cambiado
 };
 
-
+const surfaces = [
+    "Tierra batida",
+    "Hierba",
+    "Pista dura",
+  ]
 
 /**
  * Competitions
  */
 const { competitionsQuery } = useInitialData();
 
-const competitions = computed(() => useDataStore().matches);
+const competitions = computed(() => useDataStore().competitions);
 
 /**
  * Places
@@ -55,7 +59,7 @@ const players = computed(() => useDataStore().players);
       <div class="add-player-line" name="competition">
         <label for="competition" class="font-semibold w-6rem">Competición</label>
         <Dropdown v-model="useCreateMatchStore().selectedCompetition" :options="competitions" filter optionLabel="name"
-          placeholder="Selecciona una competición: " class="right-side">
+          placeholder="Competición: " class="right-side">
           <template #option="slotProps">
             <div class="flex align-items-center">
               <div>{{ slotProps.option.name }}</div>
@@ -66,10 +70,21 @@ const players = computed(() => useDataStore().players);
       <div class="add-player-line" name="place">
         <label for="place" class="font-semibold w-6rem">Lugar</label>
         <Dropdown v-model="useCreateMatchStore().selectedPlace" :options="places" filter optionLabel="name"
-          placeholder="Selecciona un lugar: " class="right-side">
+          placeholder="Lugar: " class="right-side">
           <template #option="slotProps">
             <div class="flex align-items-center">
               <div>{{ slotProps.option.name }}</div>
+            </div>
+          </template>
+        </Dropdown>
+      </div>
+      <div class="add-player-line" name="surface">
+        <label for="place" class="font-semibold w-6rem">Superficie</label>
+        <Dropdown v-model="useCreateMatchStore().selectedSurface" :options="surfaces"
+          placeholder="Superficie: " class="right-side">
+          <template #option="slotProps">
+            <div class="flex align-items-center">
+              <div>{{ slotProps.option }}</div>
             </div>
           </template>
         </Dropdown>
