@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import type { PlayerSubmit } from "@/interfaces/PlayerInterfaces";
-import saveData from "@/services/saveData";
+import saveData from "@/services/requests/saveData";
 
 const props = defineProps<{
   visible: boolean;
@@ -38,7 +38,7 @@ const savePlayer = () => {
       :visible="visible"
       modal
       header="Edit Profile"
-      :style="{ width: '25rem' }">
+      :style="{ width: '25rem' }" :closable="false">
       <template #header>
         <div class="inline-flex align-items-center justify-content-center gap-2">
           <span class="font-bold white-space-nowrap">Crear jugador</span>

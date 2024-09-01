@@ -10,9 +10,9 @@ import type { Player } from '@/interfaces/PlayerInterfaces';
 import type { Competition } from '@/interfaces/CompetitionsIntercfaces';
 
 import { emptyPlace, emptyPlayer } from '@/services/emptyObjects';
-import saveData from '@/services/saveData';
+import saveData from '@/services/requests/saveData';
 import { useDataStore } from './useDataStore';
-import { useInitialData } from '@/services/useInitialData';
+import { useInitialData } from '@/services/requests/useInitialData';
 
 
 
@@ -26,6 +26,8 @@ export const useCreateMatchStore = defineStore('createMatch', {
     selectedCompetition :  ref<Competition | undefined>(),
 
     selectedPlace :  ref<Place>(emptyPlace()),
+
+    selectedSurface : ref<string>(''),
 
     date :  ref<Date>(new Date()),
 
@@ -59,6 +61,7 @@ export const useCreateMatchStore = defineStore('createMatch', {
         player2: this.selectedPlayer2.id,
         competition: this.selectedCompetition?.id,
         place: this.selectedPlace.id,
+        surface: this.selectedSurface,
         date: this.startTime,
         startTime: this.startTime.getTime(),
         endTime: this.endTime.getTime(),
@@ -137,7 +140,6 @@ export const useCreateMatchStore = defineStore('createMatch', {
     },
     getSetsForMatch(matchId: number) {
       const sets = computed(() => useDataStore().sets);
-      console.log('sets', sets.value);
       const filteredSets = sets.value.filter(set => set.match.id == matchId);
       const sortedSets = filteredSets.sort((a, b) => a.numberSet - b.numberSet);
       return sortedSets.map(set => `${set.player1Score}-${set.player2Score}`).join(', ');

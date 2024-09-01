@@ -3,6 +3,7 @@ import HeaderComponent from "@/components/Header.vue";
 import PlayersPanel from "@/components/players/PlayersPanel.vue";
 import MatchesPanel from "@/components/matches/MatchesPanel.vue";
 import CompetitionsPanel from "@/components/competitions/CompetitionsPanel.vue";
+import PlacesPanel from "@/components/places/PlacesPanel.vue";
 
 </script>
 
@@ -15,8 +16,16 @@ import CompetitionsPanel from "@/components/competitions/CompetitionsPanel.vue";
     <div class="panels-container">
       <PlayersPanel class="panel"/>
       <MatchesPanel />
-      <CompetitionsPanel />
+      <div class="flex-container">
+        <CompetitionsPanel />
+        <PlacesPanel />
+      </div>
     </div>
+    <!-- <div class="panels-container">
+      <PlayersPanel />
+      <MatchesPanel />
+      <CompetitionsPanel />
+    </div> -->
   </body>
 
 </template>
@@ -48,5 +57,13 @@ body {
   max-width: 80%;
   width: 100%;
   /* overflow-x: auto; */
+}
+
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* Espacio entre los componentes, ajusta según sea necesario */
+  width: 25%;
+  height: 100%;
 }
 </style>

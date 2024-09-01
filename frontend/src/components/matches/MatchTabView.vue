@@ -74,10 +74,12 @@ useCreateMatchStore().sets.forEach((set) => {
           <div class="flex-container-players">
 
             <div>
-              <span> {{ useCreateMatchStore().selectedPlayer1.name }} </span>
+              <span v-if="useCreateMatchStore().selectedPlayer1.name">{{ useCreateMatchStore().selectedPlayer1.name }} </span>
+              <span v-else> Jugador 1 </span>
             </div>
             <div>
-              <span> {{ useCreateMatchStore().selectedPlayer2.name }} </span>
+              <span v-if="useCreateMatchStore().selectedPlayer2.name"> {{ useCreateMatchStore().selectedPlayer2.name }} </span>
+              <span v-else> Jugador 2 </span>
             </div>
           </div>
 

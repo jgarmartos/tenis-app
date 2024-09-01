@@ -30,13 +30,16 @@ import RadioButton from 'primevue/radiobutton';
 import InputNumber from 'primevue/inputnumber';
 import FloatLabel from 'primevue/floatlabel';
 import Listbox from 'primevue/listbox';
+import Row from 'primevue/row';
 
 import AvatarGroup from 'primevue/avatargroup';   //Optional for grouping
 
 
-import { FaFlag, RiZhihuFill, GiTennisBall, FaUsers, HiSolidSearch, FaTrophy, GiTennisCourt, HiSolidPlusSm, HiSolidMinusSm } from "oh-vue-icons/icons";
+import { FaFlag, RiZhihuFill, GiTennisBall, FaUsers, HiSolidSearch, 
+    FaTrophy, GiTennisCourt, HiSolidPlusSm, HiSolidMinusSm, MdPlaceOutlined, FaHome } from "oh-vue-icons/icons";
 
-addIcons(FaFlag, RiZhihuFill, GiTennisBall, FaUsers, FaTrophy, HiSolidSearch, GiTennisCourt, HiSolidPlusSm, HiSolidMinusSm);
+addIcons(FaFlag, RiZhihuFill, GiTennisBall, FaUsers, FaTrophy,
+     HiSolidSearch, GiTennisCourt, HiSolidPlusSm, HiSolidMinusSm, MdPlaceOutlined, FaHome);
 
 import 'primevue/resources/themes/aura-light-green/theme.css'
 
@@ -70,6 +73,7 @@ app.component('RadioButton', RadioButton)
 app.component('Column', Column) 
 app.component('AvatarGroup', AvatarGroup) 
 app.component('FloatLabel', FloatLabel)
+app.component('Row', Row)
 
 
 

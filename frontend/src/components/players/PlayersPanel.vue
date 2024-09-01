@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import type { Player, PlayerSubmit } from "@/interfaces/PlayerInterfaces";
-import saveData from "@/services/saveData";
+import saveData from "@/services/requests/saveData";
 import AddPlayerDialog from "./AddPlayerDialog.vue";
 import api from "@/api/api";
 import { useQuery } from "@tanstack/vue-query";
-import { useInitialData } from "@/services/useInitialData";
+import { useInitialData } from "@/services/requests/useInitialData";
 import { useDataStore } from "@/stores/useDataStore";
 
 const { playersQuery } = useInitialData();
