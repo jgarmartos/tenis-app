@@ -1,6 +1,8 @@
 import api from "@/api/api";
+import type { Competition, CompetitionSubmit } from "@/interfaces/CompetitionsIntercfaces";
 import type { Game, GameSubmit } from "@/interfaces/GamesInterfaces";
 import type { Match, MatchSubmit } from "@/interfaces/MatchesInterfaces";
+import type { Place, PlaceSubmit } from "@/interfaces/PlacesInterfaces";
 import type { Player, PlayerSubmit } from "@/interfaces/PlayerInterfaces";
 import type { Set, SetSubmit } from "@/interfaces/SetsInterfaces";
 
@@ -36,6 +38,18 @@ const saveGame = async (game: GameSubmit) => {
     return response.data;
 }
 
+const saveCompetition = async (competition: CompetitionSubmit) => {
+    //make a custom requets
+    const response = await api.post<Competition>('/competitions', competition);
+    return response.data;
+}
+
+const savePlace = async (place: PlaceSubmit) => {
+    //make a custom requets
+    const response = await api.post<Place>('/places', place);
+    return response.data;
+}
+
 
 
 export default {
@@ -43,5 +57,7 @@ export default {
     saveMatch,
     updateWinner,
     saveSet,
+    saveCompetition,
+    savePlace,
     saveGame
 }
