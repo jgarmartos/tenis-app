@@ -4,8 +4,8 @@ export interface Game {
     gameNumber: number,
     pointsPlayer1: number,
     pointsPlayer2: number,
-    scorePlayer1: string,
-    scorePlayer2: string,
+    player1Score: string,
+    player2Score: string,
     winner: number | null
     type: string
     server: number

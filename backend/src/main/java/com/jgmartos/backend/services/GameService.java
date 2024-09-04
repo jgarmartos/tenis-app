@@ -35,5 +35,11 @@ public class GameService {
         return gameRepository.findAll();
     }
 
+    public List<Game> getGamesBySet(Integer setId) {
+        List<Game> sortedGames = gameRepository.findBySetId(setId);
+        sortedGames.sort((g1, g2) -> g1.getGameNumber() - g2.getGameNumber());
+        return sortedGames;
+    }
+
 
 }

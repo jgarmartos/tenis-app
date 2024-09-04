@@ -3,12 +3,17 @@
 import { useDataStore } from '@/stores/useDataStore';
 import { computed } from 'vue'; // Import the 'computed' function from the 'vue' package
 
+const getSetsResultForMatch = (matchId: number) => { // Add arrow function syntax and specify the return type
+    const sets = computed(() => useDataStore().sets);
+    const filteredSets = sets.value.filter((set: any) => set.match.id === matchId); // Add type annotation for the 'set' parameter
+    return filteredSets.map((set: any) => `${set.player1Score}-${set.player2Score}`).join(', '); // Add type annotation for the 'set' parameter
+};
+
 const getSetsForMatch = (matchId: number) => { // Add arrow function syntax and specify the return type
     const sets = computed(() => useDataStore().sets);
     const filteredSets = sets.value.filter((set: any) => set.match.id === matchId); // Add type annotation for the 'set' parameter
-    const sortedSets = filteredSets.sort((a: any, b: any) => a.numberSet - b.numberSet); // Add type annotations for the 'a' and 'b' parameters
-    return sortedSets.map((set: any) => `${set.player1Score}-${set.player2Score}`).join(', '); // Add type annotation for the 'set' parameter
-};
+    return filteredSets // Add type annotations for the 'a' and 'b' parameters // Add type annotation for the 'set' parameter
+}
 
 const getSetsForMatchByPlayer = (matchId: number, playerId: number) => { // Add arrow function syntax and specify the return type
     const sets = computed(() => useDataStore().sets);
@@ -39,4 +44,4 @@ const getSetsForMatchByPlayer = (matchId: number, playerId: number) => { // Add 
     })// Add type annotation for the 'set' parameter
 }
 
-export { getSetsForMatch, getSetsForMatchByPlayer }; // Export the 'getSetsForMatch' function
+export { getSetsResultForMatch, getSetsForMatch, getSetsForMatchByPlayer }; // Export the 'getSetsForMatch' function

@@ -9,7 +9,6 @@ const props = defineProps<{
   visible: boolean;
   setVisible: (value: boolean) => void;
   retry: () => void;
-  getSetsForMatch: (matchId: number) => string;
 }>();
 
 const { matchesQuery } = useInitialData();

@@ -32,7 +32,15 @@ public class SetService {
 
     //get all sets
     public List<Set> getAllSets() {
-        return setRepository.findAll();
+        List<Set> sets = setRepository.findAll();
+        sets.sort((Set s1, Set s2) -> s1.getNumberSet() - s2.getNumberSet());
+        return sets;    
+    }
+
+    public List<Set> getSetsByMatch(Integer matchId) {
+        List<Set> sortedSets = setRepository.findByMatchId(matchId);
+        sortedSets.sort((Set s1, Set s2) -> s1.getNumberSet() - s2.getNumberSet());
+        return sortedSets;
     }
 
 

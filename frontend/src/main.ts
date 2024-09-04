@@ -31,6 +31,9 @@ import InputNumber from 'primevue/inputnumber';
 import FloatLabel from 'primevue/floatlabel';
 import Listbox from 'primevue/listbox';
 import Row from 'primevue/row';
+import Accordion from 'primevue/accordion';
+import AccordionTab from 'primevue/accordiontab';
+
 
 import AvatarGroup from 'primevue/avatargroup';   //Optional for grouping
 
@@ -74,6 +77,8 @@ app.component('Column', Column)
 app.component('AvatarGroup', AvatarGroup) 
 app.component('FloatLabel', FloatLabel)
 app.component('Row', Row)
+app.component('Accordion', Accordion)
+app.component('AccordionTab', AccordionTab)
 
 
 

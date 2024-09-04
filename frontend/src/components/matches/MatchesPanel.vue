@@ -7,6 +7,7 @@ import { useDataStore } from '@/stores/useDataStore';
 import { useCreateMatchStore } from '@/stores/createMatchStore';
 import type { Match } from '@/interfaces/MatchesInterfaces';
 import { emptyMatch } from '@/services/emptyObjects';
+import { getSetsResultForMatch } from '@/services/matchServices';
 
 
 const { matchesQuery, setsQuery } = useInitialData();
@@ -46,12 +47,6 @@ const sortedSets = ref();
  * @param matchId {string} ID del partido
  * @returns {Array} Array de sets correspondientes
  */
-const getSetsForMatch = (matchId: number) => {
-    console.log('sets', sets.value);
-    const filteredSets = sets.value.filter((set: any) => set.match.id == matchId);
-    sortedSets.value = filteredSets.sort((a, b) => a.numberSet - b.numberSet);
-    return sortedSets.value.map((set: any) => `${set.player1Score}-${set.player2Score}`).join(', ');
-};
 
 /**
  * @description Get the last five matches
@@ -121,7 +116,7 @@ const onRowSelect = (event: any) => {
                 </div>
             </div>
         </template>
-        <AddMatchDialog v-bind:visible="visibleAddMatchDialog" :setVisible="setVisibleAddMatchDialog" :retry="matchesQuery.refetch" :getSetsForMatch="getSetsForMatch" />
+        <AddMatchDialog v-bind:visible="visibleAddMatchDialog" :setVisible="setVisibleAddMatchDialog" :retry="matchesQuery.refetch" />
         <MatchInfoDialog v-bind:visible="visibleMatchInfoDialog" :setVisible="setVisibleMatchInfoDialog" v-bind:matchInfo="matchInfo"></MatchInfoDialog>
         <div>
             <DataTable :value="lastFiveMatches" size="small" :loading="matchesQuery.isFetching.value" @rowSelect="onRowSelect" selectionMode="single">
@@ -136,7 +131,7 @@ const onRowSelect = (event: any) => {
                         </span>
                         <span v-else>
                             <!-- Renderizamos las puntuaciones de los sets -->
-                            {{ useCreateMatchStore().getSetsForMatch(matchesResponse.data.id) }}
+                            {{ getSetsResultForMatch(matchesResponse.data.id) }}
                         </span>
                     </template>
                 </Column>

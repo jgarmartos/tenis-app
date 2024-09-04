@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,7 +47,7 @@ public class SetController {
     }
 
     @GetMapping("/{id}")
-    public Set getSet(Integer id) {
+    public Set getSet(@PathVariable Integer id) {
         return setService.getSet(id);
     }
 
@@ -56,13 +57,18 @@ public class SetController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteSet(Integer id) {
+    public void deleteSet(@PathVariable Integer id) {
         setService.deleteSet(id);
     }
 
     @GetMapping
     public List<Set> getAllSets() {
         return setService.getAllSets();
+    }
+
+    @GetMapping("/match/{id}")
+    public List<Set> getSetsByMatch(@PathVariable Integer id) {
+        return setService.getSetsByMatch(id);
     }
 
 }

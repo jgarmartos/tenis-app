@@ -137,13 +137,7 @@ export const useCreateMatchStore = defineStore('createMatch', {
         saveData.saveGame(submitGame);
         
       });
-    },
-    getSetsForMatch(matchId: number) {
-      const sets = computed(() => useDataStore().sets);
-      const filteredSets = sets.value.filter(set => set.match.id == matchId);
-      const sortedSets = filteredSets.sort((a, b) => a.numberSet - b.numberSet);
-      return sortedSets.map(set => `${set.player1Score}-${set.player2Score}`).join(', ');
-  }
+    }
   }
 
 });
