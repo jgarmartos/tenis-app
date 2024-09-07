@@ -33,28 +33,25 @@ import Listbox from 'primevue/listbox';
 import Row from 'primevue/row';
 import Accordion from 'primevue/accordion';
 import AccordionTab from 'primevue/accordiontab';
-
-
+import Divider from 'primevue/divider';
+import MeterGroup from 'primevue/metergroup';
 import AvatarGroup from 'primevue/avatargroup';   //Optional for grouping
 
-
 import { FaFlag, RiZhihuFill, GiTennisBall, FaUsers, HiSolidSearch, 
-    FaTrophy, GiTennisCourt, HiSolidPlusSm, HiSolidMinusSm, MdPlaceOutlined, FaHome } from "oh-vue-icons/icons";
+    FaTrophy, GiTennisCourt, HiSolidPlusSm, HiSolidMinusSm, MdPlaceOutlined, FaHome, BiX, BiXOctagonFill } from "oh-vue-icons/icons";
 
 addIcons(FaFlag, RiZhihuFill, GiTennisBall, FaUsers, FaTrophy,
-     HiSolidSearch, GiTennisCourt, HiSolidPlusSm, HiSolidMinusSm, MdPlaceOutlined, FaHome);
+     HiSolidSearch, GiTennisCourt, HiSolidPlusSm, HiSolidMinusSm, MdPlaceOutlined, FaHome, BiX, BiXOctagonFill );
 
 import 'primevue/resources/themes/aura-light-green/theme.css'
-
-// import Noir from './assets/presets/Noir';
 
 const app = createApp(App);
 
 app.use(PrimeVue)
 app.use(VueQueryPlugin)
-
 app.use(createPinia())
 app.use(router)
+
 app.component('Button', Button) 
 app.component('DataView', DataView) 
 app.component('Panel', Panel) 
@@ -79,10 +76,7 @@ app.component('FloatLabel', FloatLabel)
 app.component('Row', Row)
 app.component('Accordion', Accordion)
 app.component('AccordionTab', AccordionTab)
-
-
-
-
-
+app.component('Divider', Divider)
+app.component('MeterGroup', MeterGroup)
 
 app.mount('#app')

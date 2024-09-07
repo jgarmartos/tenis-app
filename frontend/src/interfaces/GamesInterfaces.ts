@@ -1,3 +1,5 @@
+import type { Player } from "./PlayerInterfaces"
+
 export interface Game {
     id: number,
     set: number,
@@ -6,9 +8,9 @@ export interface Game {
     pointsPlayer2: number,
     player1Score: string,
     player2Score: string,
-    winner: number | null
+    winner: Player | null
     type: string
-    server: number
+    server: Player
 }
 
 export interface GameSubmit {

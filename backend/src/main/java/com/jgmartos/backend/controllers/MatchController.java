@@ -17,10 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jgmartos.backend.models.Match;
 import com.jgmartos.backend.models.requests.MatchRequest;
+import com.jgmartos.backend.models.statistics.MatchStatistics;
 import com.jgmartos.backend.repositories.CompetitionRepository;
 import com.jgmartos.backend.repositories.PlaceRepository;
 import com.jgmartos.backend.repositories.PlayerRepository;
 import com.jgmartos.backend.services.MatchService;
+import com.jgmartos.backend.services.MatchStatisticsService;
 
 @RestController
 @RequestMapping("/matches")
@@ -28,6 +30,9 @@ public class MatchController {
 
     @Autowired
     private MatchService matchService;
+
+    @Autowired
+    private MatchStatisticsService matchStatisticsService;
 
     @Autowired
     private PlayerRepository playerRepository;
@@ -88,5 +93,11 @@ public class MatchController {
     public List<Match> getAllMatches() {
         return matchService.getAllMatches();
     }
+
+    @GetMapping("statistics/{matchId}")
+    public MatchStatistics getMatchStatistics(@PathVariable Integer matchId) {
+        return matchStatisticsService.getMatchStatistics(matchId);
+    }
+
 
 }

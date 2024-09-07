@@ -1,5 +1,5 @@
 import { computed } from "vue";
-import { useGetData } from "./requests/getData";
+// import { useGetData } from "./requests/getData";
 import { useDataStore } from "@/stores/useDataStore";
 
 const getGamesBySet = (setId: number) => {

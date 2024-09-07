@@ -1,3 +1,6 @@
+import type { Match } from "./MatchesInterfaces"
+import type { Player } from "./PlayerInterfaces"
+
 export interface Set {
     id: number
     matchId : number,
@@ -19,11 +22,9 @@ export interface SetSubmit {
 
 export interface SetResponse {
     id: number
-    match : {
-        id: number
-    },
+    match : Match,
     numberSet: number,
-    winner: number,
+    winner: Player,
     player1Score: number,
     player2Score: number,
     type: string
