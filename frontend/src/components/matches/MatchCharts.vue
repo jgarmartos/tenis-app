@@ -2,7 +2,6 @@
 import type { Match } from '@/interfaces/MatchesInterfaces';
 import type { MatchStatistics } from '@/interfaces/StatisticsInterface';
 import { getStats, useMatchStatistics } from '@/services/requests/getData';
-import { get } from 'node_modules/axios/index.cjs';
 import { computed, ref, watch } from 'vue';
 import ProgressBar from '@/components/ProgressBar.vue';
 
