@@ -51,10 +51,6 @@ const headerCategories = ref([
         </Button>
       </div>
 
-      <div>
-        <img src="@/assets/tennis-court-game-field-grass-512.webp" alt="logo" style="width: 80px; height: 80px;" />
-      </div>
-
       <div class="header-auth">
         <Button label="Sign In" icon="pi pi-arrow-right" class="sign-in-button" />
         <Button label="Register" icon="pi pi-user-plus" class="register-button" />

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import HeaderComponent from "@/components/Header.vue";
+import MenuBar from "@/components/MenuBar.vue";
 import PlayersPanel from "@/components/players/PlayersPanel.vue";
 import MatchesPanel from "@/components/matches/MatchesPanel.vue";
 import CompetitionsPanel from "@/components/competitions/CompetitionsPanel.vue";
@@ -8,25 +9,21 @@ import PlacesPanel from "@/components/places/PlacesPanel.vue";
 </script>
 
 <template>
-  <header>
-    <HeaderComponent />
-  </header>
+  
 
-  <body>
+  <main>
+  <header>
+    <MenuBar />
+  </header>
     <div class="panels-container">
       <PlayersPanel class="panel"/>
-      <MatchesPanel />
+      <MatchesPanel class="panel"/>
       <div class="flex-container">
         <CompetitionsPanel />
         <PlacesPanel />
       </div>
     </div>
-    <!-- <div class="panels-container">
-      <PlayersPanel />
-      <MatchesPanel />
-      <CompetitionsPanel />
-    </div> -->
-  </body>
+  </main>
 
 </template>
 
@@ -34,23 +31,25 @@ import PlacesPanel from "@/components/places/PlacesPanel.vue";
 header {
   line-height: 2;
   max-height: 20vh;
+  width: 80%;
 }
 
-body {
+main {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 /*  */
 
 .panels-container {
-  padding-top: 2%;
+  padding-top: 2rem;
   display: flex !important;
   /* margin: 0 auto; */
   justify-content: space-between;
   
-  flex-direction: row;
+  flex-direction: column;
   /* Arrange items in a column */
   gap: 16px;
   /* Add spacing between panels */
@@ -63,7 +62,28 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2rem; /* Espacio entre los componentes, ajusta según sea necesario */
-  width: 25%;
+  width: 100%;
   height: 100%;
 }
+
+@media (min-width: 768px) {
+  .panels-container { 
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .flex-container {
+    width: 25%;
+    flex-direction: column;
+    gap: 2rem;
+  }
+}
+
+.panel {
+  width: 100%;
+  /* height: 100%; */
+  /* overflow: auto; */
+}
+
 </style>
