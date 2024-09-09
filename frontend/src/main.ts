@@ -36,6 +36,8 @@ import AccordionTab from 'primevue/accordiontab';
 import Divider from 'primevue/divider';
 import MeterGroup from 'primevue/metergroup';
 import AvatarGroup from 'primevue/avatargroup';   //Optional for grouping
+import Menubar from 'primevue/menubar';
+
 
 import { FaFlag, RiZhihuFill, GiTennisBall, FaUsers, HiSolidSearch, 
     FaTrophy, GiTennisCourt, HiSolidPlusSm, HiSolidMinusSm, MdPlaceOutlined, FaHome, BiX, BiXOctagonFill } from "oh-vue-icons/icons";
@@ -43,7 +45,7 @@ import { FaFlag, RiZhihuFill, GiTennisBall, FaUsers, HiSolidSearch,
 addIcons(FaFlag, RiZhihuFill, GiTennisBall, FaUsers, FaTrophy,
      HiSolidSearch, GiTennisCourt, HiSolidPlusSm, HiSolidMinusSm, MdPlaceOutlined, FaHome, BiX, BiXOctagonFill );
 
-import 'primevue/resources/themes/aura-light-green/theme.css'
+import 'primevue/resources/themes/aura-light-blue/theme.css'
 
 const app = createApp(App);
 
@@ -78,5 +80,6 @@ app.component('Accordion', Accordion)
 app.component('AccordionTab', AccordionTab)
 app.component('Divider', Divider)
 app.component('MeterGroup', MeterGroup)
+app.component('Menubar', Menubar)
 
 app.mount('#app')
