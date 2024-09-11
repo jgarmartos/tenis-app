@@ -6,50 +6,20 @@ const items = ref([
     {
         label: 'Inicio',
         icon: 'fa-home',
+        command: () => {
+            router.push('/');
+        }
     },
     {
         label: 'Jugadores',
         icon: 'fa-users',
+        command: () => {
+            router.push('/players');
+        }
     },
     {
         label: 'Partidos',
         icon: 'gi-tennis-ball',
-        // items: [
-        //     {
-        //         label: 'Core',
-        //         icon: 'pi pi-bolt',
-        //         shortcut: '⌘+S'
-        //     },
-        //     {
-        //         label: 'Blocks',
-        //         icon: 'pi pi-server',
-        //         shortcut: '⌘+B'
-        //     },
-        //     {
-        //         label: 'UI Kit',
-        //         icon: 'pi pi-pencil',
-        //         shortcut: '⌘+U'
-        //     },
-        //     {
-        //         separator: true
-        //     },
-        //     {
-        //         label: 'Templates',
-        //         icon: 'pi pi-palette',
-        //         items: [
-        //             {
-        //                 label: 'Apollo',
-        //                 icon: 'pi pi-palette',
-        //                 badge: 2
-        //             },
-        //             {
-        //                 label: 'Ultima',
-        //                 icon: 'pi pi-palette',
-        //                 badge: 3
-        //             }
-        //         ]
-        //     }
-        // ]
     },
     {
         label: 'Competiciones',
@@ -71,16 +41,22 @@ const items = ref([
         </template>
         <template #item="{ item, props, hasSubmenu, root }">
             <div class="header-container" style="justify-content: center;">
-                <a v-ripple class="header-container" v-bind="props.action">
-                <!-- <span :class="item.icon" /> -->
-                <v-icon :name="item.icon" style="color: #3B82F6;"/>
-                <span class="ml-2">{{ item.label }}</span>
-                <!-- <Badge v-if="item.badge" :class="{ 'ml-auto': !root, 'ml-2': root }" :value="item.badge" /> -->
-                <!-- <i v-if="hasSubmenu"
-                    :class="['pi pi-angle-down', { 'pi-angle-down ml-2': root, 'pi-angle-right ml-auto': !root }]"></i> -->
-            </a>
+                <router-link v-slot="{ href, navigate }" :to="item.route" custom>
+                    <!-- <a v-ripple :href="href" v-bind="props.action" @click="navigate">
+                        <span :class="item.icon" />
+                        <span class="ml-2">{{ item.label }}</span>
+                    </a> -->
+                    <a v-ripple class="header-container" v-bind="props.action" @click="navigate">
+                        <v-icon :name="item.icon" style="color: #3B82F6;" />
+                        <span class="ml-2">{{ item.label }}</span>
+                    </a>
+                </router-link>
+                <!-- <a v-ripple class="header-container" v-bind="props.action">
+                    <v-icon :name="item.icon" style="color: #3B82F6;" />
+                    <span class="ml-2">{{ item.label }}</span>
+                </a> -->
             </div>
-            
+
         </template>
         <template #end>
             <div class="header-container">
@@ -99,7 +75,7 @@ const items = ref([
 }
 
 .p-menubar {
-    background-color: var(--surface-100);
+    /* background-color: var(--surface-100); */
     color: var(--on-surface);
     height: 4rem;
     border-radius: 10px;
@@ -147,8 +123,8 @@ const items = ref([
     }
 
     .p-menubar-root-list {
-    display: flex;
-    justify-content: center;
+        display: flex;
+        justify-content: center;
     }
 
     .logo {
@@ -161,7 +137,7 @@ const items = ref([
         font-size: 0.75rem;
     }
 
-    .p-inputtext{
+    .p-inputtext {
         width: 6rem;
         max-width: 100%;
     }

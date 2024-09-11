@@ -45,7 +45,7 @@ import { FaFlag, RiZhihuFill, GiTennisBall, FaUsers, HiSolidSearch,
 addIcons(FaFlag, RiZhihuFill, GiTennisBall, FaUsers, FaTrophy,
      HiSolidSearch, GiTennisCourt, HiSolidPlusSm, HiSolidMinusSm, MdPlaceOutlined, FaHome, BiX, BiXOctagonFill );
 
-import 'primevue/resources/themes/aura-light-blue/theme.css'
+import 'primevue/resources/themes/aura-dark-blue/theme.css'
 
 const app = createApp(App);
 

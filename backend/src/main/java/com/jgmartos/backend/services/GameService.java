@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jgmartos.backend.models.Game;
 import com.jgmartos.backend.repositories.GameRepository;
@@ -39,6 +40,11 @@ public class GameService {
         List<Game> sortedGames = gameRepository.findBySetId(setId);
         sortedGames.sort((g1, g2) -> g1.getGameNumber() - g2.getGameNumber());
         return sortedGames;
+    }
+
+    @Transactional
+    public void deleteGamesBySetId(Integer setId) {
+        gameRepository.deleteBySetId(setId);
     }
 
 

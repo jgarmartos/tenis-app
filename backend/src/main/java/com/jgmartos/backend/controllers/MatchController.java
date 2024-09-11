@@ -21,8 +21,10 @@ import com.jgmartos.backend.models.statistics.MatchStatistics;
 import com.jgmartos.backend.repositories.CompetitionRepository;
 import com.jgmartos.backend.repositories.PlaceRepository;
 import com.jgmartos.backend.repositories.PlayerRepository;
+import com.jgmartos.backend.services.GameService;
 import com.jgmartos.backend.services.MatchService;
 import com.jgmartos.backend.services.MatchStatisticsService;
+import com.jgmartos.backend.services.SetService;
 
 @RestController
 @RequestMapping("/matches")
@@ -42,6 +44,12 @@ public class MatchController {
 
     @Autowired
     private CompetitionRepository competitionRepository;
+
+    @Autowired
+    private SetService setService;
+
+    @Autowired
+    private GameService gameService;
 
     @PostMapping
     public Match createMatch(@RequestBody MatchRequest matchRequest) {
@@ -86,6 +94,8 @@ public class MatchController {
 
     @DeleteMapping("/{id}")
     public void deleteMatch(@PathVariable Integer id) {
+        setService.getSetsByMatch(id).forEach(set -> gameService.deleteGamesBySetId(set.getId()));
+        setService.deleteSetsByMatchId(id);
         matchService.deleteMatch(id);
     }
 

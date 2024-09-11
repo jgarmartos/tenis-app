@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for backend-tennis on 2024-09-09T03:35:24+02:00
+# fly.toml app configuration file generated for backend-tennis on 2024-09-11T16:53:25+02:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -7,6 +7,9 @@ app = 'backend-tennis'
 primary_region = 'mad'
 
 [build]
+
+[env]
+  SPRING_PROFILES_ACTIVE = 'prod'
 
 [http_service]
   internal_port = 8080

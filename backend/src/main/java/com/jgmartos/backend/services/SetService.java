@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jgmartos.backend.models.Set;
 import com.jgmartos.backend.repositories.SetRepository;
@@ -41,6 +42,11 @@ public class SetService {
         List<Set> sortedSets = setRepository.findByMatchId(matchId);
         sortedSets.sort((Set s1, Set s2) -> s1.getNumberSet() - s2.getNumberSet());
         return sortedSets;
+    }
+
+    @Transactional
+    public void deleteSetsByMatchId(Integer matchId) {
+        setRepository.deleteByMatchId(matchId);
     }
 
 

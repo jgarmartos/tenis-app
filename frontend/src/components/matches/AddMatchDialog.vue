@@ -19,7 +19,6 @@ const handleSaveMatch = async () => {
   // props.getSetsForMatch();
   await useCreateMatchStore().saveMatch(); // Guardar el partido
   await matchesQuery.refetch(); // Esperar a que la refetch complete
-  console.log(useDataStore().matches); // Verificar si los datos han cambiado
 };
 
 const surfaces = [
