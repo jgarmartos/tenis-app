@@ -20,4 +20,4 @@ EXPOSE 8080
 COPY --from=build /app/target/Tenis-App.jar /app/Tenis-App.jar
 
 # Establecer el punto de entrada para ejecutar la aplicación
-ENTRYPOINT ["java", "-jar", "/app/Tenis-App.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "/app/Tenis-App.jar"]
