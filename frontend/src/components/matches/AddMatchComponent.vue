@@ -86,16 +86,6 @@ const players = computed(() => useDataStore().players);
                             </Dropdown>
                         </div>
                         <div>
-                            <Dropdown v-model="useCreateMatchStore().selectedPlace" :options="places" filter
-                                optionLabel="name" placeholder="Lugar: " class="right-side">
-                                <template #option="slotProps">
-                                    <div class="flex align-items-center">
-                                        <div>{{ slotProps.option.name }}</div>
-                                    </div>
-                                </template>
-                            </Dropdown>
-                        </div>
-                        <div>
                             <Calendar id="calendar-timeonly" v-model="useCreateMatchStore().startTime" showTime
                                 dateFormat="dd/mm/yy" hourFormat="24" />
                         </div>
