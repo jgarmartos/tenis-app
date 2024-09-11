@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import HeaderComponent from "@/components/Header.vue";
 import MenuBar from "@/components/MenuBar.vue";
 import PlayersPanel from "@/components/players/PlayersPanel.vue";
 import MatchesPanel from "@/components/matches/MatchesPanel.vue";
@@ -9,8 +8,6 @@ import PlacesPanel from "@/components/places/PlacesPanel.vue";
 </script>
 
 <template>
-  
-
   <main>
   <header>
     <MenuBar />
@@ -31,7 +28,7 @@ import PlacesPanel from "@/components/places/PlacesPanel.vue";
 header {
   line-height: 2;
   max-height: 20vh;
-  width: 80%;
+  width: 100%;
 }
 
 main {
@@ -44,7 +41,7 @@ main {
 /*  */
 
 .panels-container {
-  padding-top: 2rem;
+  padding-top: 1rem;
   display: flex !important;
   /* margin: 0 auto; */
   justify-content: space-between;
@@ -53,7 +50,7 @@ main {
   /* Arrange items in a column */
   gap: 16px;
   /* Add spacing between panels */
-  max-width: 80%;
+  max-width: 100%;
   width: 100%;
   /* overflow-x: auto; */
 }

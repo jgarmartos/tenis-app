@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import HeaderComponent from "@/components/Header.vue";
+import MenuBar from '@/components/MenuBar.vue';
 
 </script>
 
 <template>
     <header>
-        <HeaderComponent />
+        <MenuBar />
     </header>
 
     <body>
@@ -33,7 +33,7 @@ header {
 }
 
 .panels-container {
-  padding-top: 2%;
+  padding-top: 1%;
   display: flex !important;
   width: 100%;
   height: 100%;

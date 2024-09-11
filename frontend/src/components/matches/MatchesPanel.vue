@@ -8,7 +8,7 @@ import { useCreateMatchStore } from '@/stores/createMatchStore';
 import type { Match } from '@/interfaces/MatchesInterfaces';
 import { emptyMatch } from '@/services/emptyObjects';
 import { getSetsResultForMatch } from '@/services/matchServices';
-
+import router from '@/router';
 
 const { matchesQuery, setsQuery } = useInitialData();
 
@@ -107,10 +107,10 @@ const onRowSelect = (event: any) => {
     <Panel class="panel">
         <template #header>
             <div class="title">
-                <v-icon name="gi-tennis-court" fill="black" scale="1." />
+                <v-icon name="gi-tennis-court" scale="1.2" />
                 <span class="font-bold">Últimos partidos</span>
                 <div class="right-side">
-                    <Button @click="visibleAddMatchDialog = true">
+                    <Button @click="router.push('/addMatch')">
                         <v-icon name="gi-tennis-court" fill="white" scale="1" />
                     </Button>
                 </div>
