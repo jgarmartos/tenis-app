@@ -9,5 +9,7 @@ import com.jgmartos.backend.models.Set;
 public interface SetRepository extends JpaRepository<Set, Integer> {
 
         public List<Set> findByMatchId(Integer matchId);
+        
+        public void deleteByMatchId(Integer matchId);
 
 }

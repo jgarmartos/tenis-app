@@ -9,4 +9,6 @@ import com.jgmartos.backend.models.Game;
 public interface GameRepository extends JpaRepository<Game, Integer> {
 
     public List<Game> findBySetId(Integer setId);
+
+    public void deleteBySetId(Integer setId);
 }
