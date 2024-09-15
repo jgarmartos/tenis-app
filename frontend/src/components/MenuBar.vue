@@ -6,20 +6,17 @@ const items = ref([
     {
         label: 'Inicio',
         icon: 'fa-home',
-        command: () => {
-            router.push('/');
-        }
+        route: '/'
     },
     {
         label: 'Jugadores',
         icon: 'fa-users',
-        command: () => {
-            router.push('/players');
-        }
+        route: '/players'
     },
     {
         label: 'Partidos',
         icon: 'gi-tennis-ball',
+        route: '/matches'
     },
     {
         label: 'Competiciones',
