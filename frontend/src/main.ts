@@ -47,9 +47,14 @@ addIcons(FaFlag, RiZhihuFill, GiTennisBall, FaUsers, FaTrophy,
 
 import 'primevue/resources/themes/aura-dark-blue/theme.css'
 
+import Ripple from 'primevue/ripple';
+
 const app = createApp(App);
 
-app.use(PrimeVue)
+app.directive('ripple', Ripple);
+
+
+app.use(PrimeVue, { ripple: true })
 app.use(VueQueryPlugin)
 app.use(createPinia())
 app.use(router)

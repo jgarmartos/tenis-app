@@ -20,7 +20,12 @@ const router = createRouter({
       path: '/addMatch',
       name: 'addMatch',
       component: AddMatchComponent
-    }
+    },
+    {
+      path: '/matches',
+      name: 'matches',
+      component: HomeView
+    },
   ]
 })
 

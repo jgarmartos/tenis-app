@@ -21,7 +21,7 @@ const items = ref([
     {
         label: 'Competiciones',
         icon: 'fa-trophy',
-        badge: 3
+        route: '/'
     }
 ]);
 
@@ -36,13 +36,9 @@ const items = ref([
                     style="width: 3rem; height: 3rem; margin-left: 1rem" />
             </div>
         </template>
-        <template #item="{ item, props, hasSubmenu, root }">
+        <template #item="{ item, props }">
             <div class="header-container" style="justify-content: center;">
-                <router-link v-slot="{ href, navigate }" :to="item.route" custom>
-                    <!-- <a v-ripple :href="href" v-bind="props.action" @click="navigate">
-                        <span :class="item.icon" />
-                        <span class="ml-2">{{ item.label }}</span>
-                    </a> -->
+                <router-link v-slot="{ navigate }" :to="item.route" custom>
                     <a v-ripple class="header-container" v-bind="props.action" @click="navigate">
                         <v-icon :name="item.icon" style="color: #3B82F6;" />
                         <span class="ml-2">{{ item.label }}</span>
