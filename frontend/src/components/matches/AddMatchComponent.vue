@@ -5,13 +5,15 @@ import { useCreateMatchStore } from "@/stores/createMatchStore";
 import { useDataStore } from '@/stores/useDataStore';
 import { computed } from 'vue';
 import MatchTabView from './MatchTabView.vue';
+import router from '@/router';
 
 const { matchesQuery } = useInitialData();
 
 
 const handleSaveMatch = async () => {
     await useCreateMatchStore().saveMatch(); // Guardar el partido
-    await matchesQuery.refetch(); // Esperar a que la refetch complete
+    await matchesQuery.refetch();
+    router.push('/') // Esperar a que la refetch complete
 };
 
 const surfaces = [

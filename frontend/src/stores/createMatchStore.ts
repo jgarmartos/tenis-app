@@ -46,6 +46,7 @@ export const useCreateMatchStore = defineStore('createMatch', {
       type: ref<'Set' | 'Super Tie Break'>('Set'),
       games: Array.from({ length: 13 }, (_, i) => ({
         name: i === 12 ? 'Tiebreak': `Game ${i + 1}` ,
+        number: i + 1,
         selectedPuntuation1: ref(0),
         selectedPuntuation2: ref(0),
       })),

@@ -72,7 +72,7 @@ useCreateMatchStore().sets.forEach((set) => {
 
           <div id='Set' v-if="set.type == 'Set'" class="flex-container-points">
             <Stepper>
-              <StepperPanel v-for="(game, index) in set.games" :header="game.name">
+              <StepperPanel v-for="(game, index) in set.games" :header="game.number + 'º juego'">
                 <template v-if="index == 0" #content="{ nextCallback }">
                   <div class="flex-container">
                     <div>
@@ -129,7 +129,10 @@ useCreateMatchStore().sets.forEach((set) => {
 
                   <div class="flex-container-buttons">
                     <!-- <Button label="Back" severity="secondary" icon="pi pi-arrow-left" @click="prevCallback" /> -->
-                    <Button :label="'Game ' + (index + 2)" icon="pi pi-arrow-right" :iconPos="'right'"
+                    <div class="white-border">
+                      <span class="bold-font"> {{ (index + 1) + 'º juego' }} </span>
+                    </div>
+                    <Button :label="(index + 2) + 'º juego'" icon="pi pi-arrow-right" :iconPos="'right'"
                       @click="nextCallback" />
                   </div>
                 </template>
@@ -185,9 +188,13 @@ useCreateMatchStore().sets.forEach((set) => {
                     </div>
                   </div>
                   <div class="flex-container-buttons">
-                    <Button :label="'Game ' + (index)" severity="secondary" icon="pi pi-arrow-left"
+                    <Button :label="(index) + 'º juego'" severity="secondary" icon="pi pi-arrow-left"
                       @click="prevCallback" />
-                    <Button :label="'Game ' + (index + 2)" icon="pi pi-arrow-right" iconPos="right"
+                      <div class="white-border">
+                        <span class="bold-font"> {{ (index + 1) + 'º juego' }} </span>
+                      </div>
+                    
+                    <Button :label="(index + 2) + 'º juego'" icon="pi pi-arrow-right" iconPos="right"
                       @click="nextCallback" />
                   </div>
                 </template>
@@ -231,8 +238,12 @@ useCreateMatchStore().sets.forEach((set) => {
                     </div>
                   </div>
                   <div class="flex-container-buttons">
-                    <Button :label="'Game ' + (index)" severity="secondary" icon="pi pi-arrow-left"
+                    <Button :label="(index) + 'º juego'" severity="secondary" icon="pi pi-arrow-left"
                       @click="prevCallback" />
+                      <div class="white-border">
+                        <span class="bold-font"> {{ (index + 1) + 'º juego' }} </span>
+                      </div>
+                    
                   </div>
                 </template>
               </StepperPanel>
@@ -320,9 +331,19 @@ useCreateMatchStore().sets.forEach((set) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 2rem;
   padding: 5px;
   width: 100%;
+}
+
+.bold-font {
+  font-weight: bold;
+}
+
+.white-border {
+  border: 1px solid white;
+  padding: 10px;
+  border-radius: 5px;
 }
 
 .p-tabview.p-component {
