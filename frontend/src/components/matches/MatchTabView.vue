@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useCreateMatchStore } from '@/stores/createMatchStore';
 import { useDataStore } from '@/stores/useDataStore';
+import SelectButton from 'primevue/selectbutton';
 import { computed, ref, watch } from 'vue'
 
 const players = computed(() => useDataStore().players);
@@ -58,10 +59,7 @@ useCreateMatchStore().sets.forEach((set) => {
         <!-- RADIOBUTTONS TO SET THE SET TYPE -->
 
         <div class="flex-options">
-          <RadioButton v-model="set.type" :name="setTypes[0]" :value="setTypes[0]" />
-          <label for="set">Set</label>
-          <RadioButton v-model="set.type" :name="setTypes[1]" :value="setTypes[1]" />
-          <label for="superTieBreak">Super Tie Break</label>
+          <SelectButton v-model="set.type" :options="setTypes" />
         </div>
 
         <!-- PANEL WITH THE PLAYERS DROPDOWN AND PUNTUATIONS -->
@@ -72,7 +70,7 @@ useCreateMatchStore().sets.forEach((set) => {
 
           <div id='Set' v-if="set.type == 'Set'" class="flex-container-points">
             <Stepper>
-              <StepperPanel v-for="(game, index) in set.games" :header="game.name">
+              <StepperPanel v-for="(game, index) in set.games" :header="game.number + 'º juego'">
                 <template v-if="index == 0" #content="{ nextCallback }">
                   <div class="flex-container">
                     <div>
@@ -129,7 +127,10 @@ useCreateMatchStore().sets.forEach((set) => {
 
                   <div class="flex-container-buttons">
                     <!-- <Button label="Back" severity="secondary" icon="pi pi-arrow-left" @click="prevCallback" /> -->
-                    <Button :label="'Game ' + (index + 2)" icon="pi pi-arrow-right" :iconPos="'right'"
+                    <div class="white-border">
+                      <span class="bold-font"> {{ (index + 1) + 'º juego' }} </span>
+                    </div>
+                    <Button :label="(index + 2) + 'º juego'" icon="pi pi-arrow-right" :iconPos="'right'"
                       @click="nextCallback" />
                   </div>
                 </template>
@@ -185,9 +186,13 @@ useCreateMatchStore().sets.forEach((set) => {
                     </div>
                   </div>
                   <div class="flex-container-buttons">
-                    <Button :label="'Game ' + (index)" severity="secondary" icon="pi pi-arrow-left"
+                    <Button :label="(index) + 'º juego'" severity="secondary" icon="pi pi-arrow-left"
                       @click="prevCallback" />
-                    <Button :label="'Game ' + (index + 2)" icon="pi pi-arrow-right" iconPos="right"
+                      <div class="white-border">
+                        <span class="bold-font"> {{ (index + 1) + 'º juego' }} </span>
+                      </div>
+                    
+                    <Button :label="(index + 2) + 'º juego'" icon="pi pi-arrow-right" iconPos="right"
                       @click="nextCallback" />
                   </div>
                 </template>
@@ -231,8 +236,12 @@ useCreateMatchStore().sets.forEach((set) => {
                     </div>
                   </div>
                   <div class="flex-container-buttons">
-                    <Button :label="'Game ' + (index)" severity="secondary" icon="pi pi-arrow-left"
+                    <Button :label="(index) + 'º juego'" severity="secondary" icon="pi pi-arrow-left"
                       @click="prevCallback" />
+                      <div class="white-border">
+                        <span class="bold-font"> {{ (index + 1) + 'º juego' }} </span>
+                      </div>
+                    
                   </div>
                 </template>
               </StepperPanel>
@@ -320,9 +329,19 @@ useCreateMatchStore().sets.forEach((set) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 2rem;
   padding: 5px;
   width: 100%;
+}
+
+.bold-font {
+  font-weight: bold;
+}
+
+.white-border {
+  border: 1px solid white;
+  padding: 10px;
+  border-radius: 5px;
 }
 
 .p-tabview.p-component {

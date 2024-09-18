@@ -16,14 +16,14 @@ export interface Match {
 }
 
 export interface MatchSubmit {
-    player1: number,
-    player2: number,
-    place: number,
+    player1: number | undefined,
+    player2: number | undefined,
+    place: number | undefined,
     competition: number | null | undefined,
-    date: Date,
-    startTime: number,
-    endTime: number,
-    surface: string
-    winner: number | null
+    date: Date  | undefined,
+    startTime: number | undefined,
+    endTime: number | undefined,
+    surface: string | undefined,
+    winner: number | undefined | null
 }
 
