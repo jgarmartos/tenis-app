@@ -19,13 +19,25 @@ import { useInitialData } from '@/services/requests/useInitialData';
 export const useCreateMatchStore = defineStore('createMatch', {
   state: () => ({
 
+    match: ref<MatchSubmit>({
+      player1: undefined,
+      player2: undefined,
+      competition: undefined,
+      place: undefined,
+      surface: undefined,
+      date: undefined,
+      startTime: undefined,
+      endTime: undefined,
+      winner: undefined,
+    }),
+
     selectedPlayer1 :  ref<Player>(emptyPlayer()),
 
     selectedPlayer2 :  ref<Player>(emptyPlayer()),
 
     selectedCompetition :  ref<Competition | undefined>(),
 
-    selectedPlace :  ref<Place>(emptyPlace()),
+    selectedPlace :  ref<Place|undefined>(undefined),
 
     selectedSurface : ref<string>(''),
 
@@ -61,7 +73,7 @@ export const useCreateMatchStore = defineStore('createMatch', {
         player1: this.selectedPlayer1.id,
         player2: this.selectedPlayer2.id,
         competition: this.selectedCompetition?.id,
-        place: this.selectedPlace.id,
+        place: this.selectedPlace?.id,
         surface: this.selectedSurface,
         date: this.startTime,
         startTime: this.startTime.getTime(),

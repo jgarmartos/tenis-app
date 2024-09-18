@@ -37,6 +37,7 @@ import Divider from 'primevue/divider';
 import MeterGroup from 'primevue/metergroup';
 import AvatarGroup from 'primevue/avatargroup';   //Optional for grouping
 import Menubar from 'primevue/menubar';
+import SelectButton from 'primevue/selectbutton';
 
 
 import { FaFlag, RiZhihuFill, GiTennisBall, FaUsers, HiSolidSearch, 
@@ -86,5 +87,6 @@ app.component('AccordionTab', AccordionTab)
 app.component('Divider', Divider)
 app.component('MeterGroup', MeterGroup)
 app.component('Menubar', Menubar)
+app.component('SelectButton', SelectButton)
 
 app.mount('#app')

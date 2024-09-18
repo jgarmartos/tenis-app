@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useCreateMatchStore } from '@/stores/createMatchStore';
 import { useDataStore } from '@/stores/useDataStore';
+import SelectButton from 'primevue/selectbutton';
 import { computed, ref, watch } from 'vue'
 
 const players = computed(() => useDataStore().players);
@@ -58,10 +59,7 @@ useCreateMatchStore().sets.forEach((set) => {
         <!-- RADIOBUTTONS TO SET THE SET TYPE -->
 
         <div class="flex-options">
-          <RadioButton v-model="set.type" :name="setTypes[0]" :value="setTypes[0]" />
-          <label for="set">Set</label>
-          <RadioButton v-model="set.type" :name="setTypes[1]" :value="setTypes[1]" />
-          <label for="superTieBreak">Super Tie Break</label>
+          <SelectButton v-model="set.type" :options="setTypes" />
         </div>
 
         <!-- PANEL WITH THE PLAYERS DROPDOWN AND PUNTUATIONS -->
