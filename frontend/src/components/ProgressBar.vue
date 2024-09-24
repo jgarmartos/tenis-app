@@ -6,9 +6,9 @@
         <span>{{ value2 }}</span>
       </div>
       <div class="progress-bar">
-        <div class="progress" :style="{ width: `${percentage1}%`, backgroundColor: 'green' }"></div>
+        <div class="progress" :style="{ width: `${percentage1}%`, backgroundColor: 'var(--blue-color)' }"></div>
         <!-- <Divider layout="vertical" /> -->
-        <div class="progress" :style="{ width: `${percentage2}%`, backgroundColor: 'blue' }"></div>
+        <div class="progress" :style="{ width: `${percentage2}%`, backgroundColor: 'var(--green-color)' }"></div>
       </div>
       
     </div>

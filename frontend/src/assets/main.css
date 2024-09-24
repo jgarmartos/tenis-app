@@ -7,6 +7,8 @@
     font-weight: normal;
     /* background-color: rgb(169, 222, 169); */
     /* display: flex; */
+    --blue-color: #3B82F6;
+    --green-color: #10B981;
 }
 
 body {

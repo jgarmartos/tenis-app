@@ -4,7 +4,7 @@ import AddMatchDialog from './AddMatchDialog.vue';
 import MatchInfoDialog from './MatchInfoDialog.vue';
 import { useInitialData } from "@/services/requests/useInitialData";
 import { useDataStore } from '@/stores/useDataStore';
-import { useCreateMatchStore } from '@/stores/createMatchStore';
+import { useCreateMatchStore, useMatchInfoStore } from '@/stores/createMatchStore';
 import type { Match } from '@/interfaces/MatchesInterfaces';
 import { emptyMatch } from '@/services/emptyObjects';
 import { getSetsResultForMatch } from '@/services/matchServices';
@@ -20,22 +20,30 @@ const sets = computed(() => useDataStore().sets);
  * @description Setting the name of the columns
  */
 const columns = [
-    { field: {
-        header: "Jugador 1",
-        value: 'player1'
-    } },
-    { field: {
-        header: "Jugador 2",
-        value: "player2"
-    } },
-    { field: {
-        header: "Pista",
-        value: "place"
-    } },
-    { field: {
-        header: "Resultado",
-        value: "sets"
-    } }
+    {
+        field: {
+            header: "Jugador 1",
+            value: 'player1'
+        }
+    },
+    {
+        field: {
+            header: "Jugador 2",
+            value: "player2"
+        }
+    },
+    {
+        field: {
+            header: "Pista",
+            value: "place"
+        }
+    },
+    {
+        field: {
+            header: "Resultado",
+            value: "sets"
+        }
+    }
 ]
 
 const propertyToAccess = "name"
@@ -76,7 +84,7 @@ const visibleAddMatchDialog = ref(false);
 const visibleMatchInfoDialog = ref(false);
 
 
-const setVisibleAddMatchDialog = (value: boolean, ) => {
+const setVisibleAddMatchDialog = (value: boolean,) => {
     visibleAddMatchDialog.value = value;
 };
 
@@ -95,10 +103,15 @@ const matchInfo = ref<Match>(emptyMatch());
  * @param event {Event} Event
  */
 const onRowSelect = (event: any) => {
-    console.log('event', event.data);
     matchInfo.value = event.data;
-    console.log('matchInfo', matchInfo.value);
-    setVisibleMatchInfoDialog(true);
+    useMatchInfoStore().matchInfo = event.data;
+    router.push({
+        name: 'matchInfo',
+        query: {
+            visible: 'true', // Example static value
+            matchInfo: JSON.stringify(matchInfo.value) // Convert the matchInfo object to a JSON string
+        }
+    });
 };
 </script>
 
@@ -116,10 +129,13 @@ const onRowSelect = (event: any) => {
                 </div>
             </div>
         </template>
-        <AddMatchDialog v-bind:visible="visibleAddMatchDialog" :setVisible="setVisibleAddMatchDialog" :retry="matchesQuery.refetch" />
-        <MatchInfoDialog v-bind:visible="visibleMatchInfoDialog" :setVisible="setVisibleMatchInfoDialog" v-bind:matchInfo="matchInfo"></MatchInfoDialog>
+        <AddMatchDialog v-bind:visible="visibleAddMatchDialog" :setVisible="setVisibleAddMatchDialog"
+            :retry="matchesQuery.refetch" />
+        <MatchInfoDialog v-bind:visible="visibleMatchInfoDialog" :setVisible="setVisibleMatchInfoDialog"
+            v-bind:matchInfo="matchInfo"></MatchInfoDialog>
         <div>
-            <DataTable :value="lastFiveMatches" size="small" :loading="matchesQuery.isFetching.value" @rowSelect="onRowSelect" selectionMode="single">
+            <DataTable :value="lastFiveMatches" size="small" :loading="matchesQuery.isFetching.value"
+                @rowSelect="onRowSelect" selectionMode="single">
                 <!-- <Column v-for="col in columns" :field="col.field.value" :header="col.field.header" sortable /> -->
                 <Column v-for="col in columns" sortable>
                     <template #header>

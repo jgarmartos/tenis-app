@@ -3,13 +3,13 @@ import { computed, ref } from 'vue';
 
 import type { GameSubmit } from '@/interfaces/GamesInterfaces';
 import type { SetSubmit } from '@/interfaces/SetsInterfaces';
-import type { MatchSubmit } from '@/interfaces/MatchesInterfaces';
+import type { Match, MatchSubmit } from '@/interfaces/MatchesInterfaces';
 
 import type { Place } from '@/interfaces/PlacesInterfaces';
 import type { Player } from '@/interfaces/PlayerInterfaces';
 import type { Competition } from '@/interfaces/CompetitionsIntercfaces';
 
-import { emptyPlace, emptyPlayer } from '@/services/emptyObjects';
+import { emptyMatch, emptyPlace, emptyPlayer } from '@/services/emptyObjects';
 import saveData from '@/services/requests/saveData';
 import { useDataStore } from './useDataStore';
 import { useInitialData } from '@/services/requests/useInitialData';
@@ -137,13 +137,13 @@ export const useCreateMatchStore = defineStore('createMatch', {
           pointsPlayer1: index === 12 ? game.selectedPuntuation1 :
                         game.selectedPuntuation1 == 15 ? 1 : 
                         game.selectedPuntuation1 == 30 ? 2 : 
-                        game.selectedPuntuation1 == 40 ? 3 : 
-                        game.selectedPuntuation1 == 50 ? 4 : 0,
+                        game.selectedPuntuation1 == 40 ? game.selectedPuntuation2 == 50 ? 3 : 4 :
+                        game.selectedPuntuation1 == 50 ? 5 : 0,
           pointsPlayer2: index === 12 ? game.selectedPuntuation2 :
                         game.selectedPuntuation2 == 15 ? 1 : 
                         game.selectedPuntuation2 == 30 ? 2 : 
-                        game.selectedPuntuation2 == 40 ? 3 : 
-                        game.selectedPuntuation2 == 50 ? 4 : 0,
+                        game.selectedPuntuation2 == 40 ? game.selectedPuntuation1 == 50 ? 3 : 4 :
+                        game.selectedPuntuation2 == 50 ? 5 : 0,
           type: index === 12 ? 'tiebreak' : 'normal',
           server: server
         };
@@ -153,4 +153,16 @@ export const useCreateMatchStore = defineStore('createMatch', {
     }
   }
 
+});
+
+export const useMatchInfoStore = defineStore('matchInfo', {
+  state: () => ({
+    matchInfo : ref<Match>(emptyMatch())
+  }),
+  actions: {
+    setMatchInfo(match: Match) {
+      this.matchInfo = match;
+    }
+    
+  }
 });

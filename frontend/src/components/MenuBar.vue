@@ -40,7 +40,7 @@ const items = ref([
             <div class="header-container" style="justify-content: center;">
                 <router-link v-slot="{ navigate }" :to="item.route" custom>
                     <a v-ripple class="header-container" v-bind="props.action" @click="navigate">
-                        <v-icon :name="item.icon" style="color: #3B82F6;" />
+                        <v-icon :name="item.icon" style="color: var(--blue-color);;" />
                         <span class="ml-2">{{ item.label }}</span>
                     </a>
                 </router-link>
