@@ -3,9 +3,7 @@ import type { Match, MatchSubmit } from '@/interfaces/MatchesInterfaces';
 import { getSetsForMatch, getSetsForMatchByPlayer } from '@/services/matchServices';
 import { onMounted, onUpdated, ref, watch } from 'vue';
 import { getGamesBySet } from '@/services/gameService';
-import { useMatchInfoStore } from '@/stores/createMatchStore';
 import MenuBar from '../MenuBar.vue';
-import { get } from 'node_modules/axios/index.cjs';
 import MatchCharts from './MatchCharts.vue';
 import router from '@/router';
 /**
