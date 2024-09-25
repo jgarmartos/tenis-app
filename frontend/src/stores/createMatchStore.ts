@@ -61,6 +61,7 @@ export const useCreateMatchStore = defineStore('createMatch', {
         number: i + 1,
         selectedPuntuation1: ref(0),
         selectedPuntuation2: ref(0),
+        deuceNumber: ref(0),
       })),
     }))),
 
@@ -114,7 +115,7 @@ export const useCreateMatchStore = defineStore('createMatch', {
       }
     },
     createAndSaveGames(id: number,
-                      games: Array<{name: string, selectedPuntuation1: number, selectedPuntuation2: number}>,
+                      games: Array<{name: string, selectedPuntuation1: number, selectedPuntuation2: number, deuceNumber: number}>,
                       startsServing: string) {
 
       
@@ -147,6 +148,10 @@ export const useCreateMatchStore = defineStore('createMatch', {
           type: index === 12 ? 'tiebreak' : 'normal',
           server: server
         };
+        if (game.deuceNumber !== 0) {
+          submitGame.pointsPlayer1 = submitGame.pointsPlayer1 + game.deuceNumber - 1;
+          submitGame.pointsPlayer2 = submitGame.pointsPlayer2 + game.deuceNumber - 1;
+        }
         saveData.saveGame(submitGame);
         
       });

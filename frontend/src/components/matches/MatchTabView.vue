@@ -125,6 +125,12 @@ useCreateMatchStore().sets.forEach((set) => {
                     </div>
                   </div>
 
+                  <div v-if="game.selectedPuntuation1 == 50 || game.selectedPuntuation2 == 50 " class="flex-container">
+                    <span> Nº iguales: </span>
+                    <InputNumber v-model="game.deuceNumber" inputId="minmax-buttons" mode="decimal" showButtons :min="0" :max="100" fluid 
+                    :inputStyle="{ width: '4rem' }"/>
+                  </div>
+
                   <div class="flex-container-buttons">
                     <!-- <Button label="Back" severity="secondary" icon="pi pi-arrow-left" @click="prevCallback" /> -->
                     <div class="white-border">
@@ -185,13 +191,19 @@ useCreateMatchStore().sets.forEach((set) => {
                       </div>
                     </div>
                   </div>
+
+                  <div v-if="game.selectedPuntuation1 == 50 || game.selectedPuntuation2 == 50 " class="flex-container">
+                    <InputNumber v-model="game.deuceNumber" inputId="minmax-buttons" mode="decimal" showButtons :min="0" :max="100" fluid 
+                    :inputStyle="{ width: '4rem' }"/>
+                  </div>
+
                   <div class="flex-container-buttons">
                     <Button :label="(index) + 'º juego'" severity="secondary" icon="pi pi-arrow-left"
                       @click="prevCallback" />
-                      <div class="white-border">
-                        <span class="bold-font"> {{ (index + 1) + 'º juego' }} </span>
-                      </div>
-                    
+                    <div class="white-border">
+                      <span class="bold-font"> {{ (index + 1) + 'º juego' }} </span>
+                    </div>
+
                     <Button :label="(index + 2) + 'º juego'" icon="pi pi-arrow-right" iconPos="right"
                       @click="nextCallback" />
                   </div>
@@ -235,13 +247,19 @@ useCreateMatchStore().sets.forEach((set) => {
                       </div>
                     </div>
                   </div>
+
+                  <div v-if="game.selectedPuntuation1 == 50 || game.selectedPuntuation2 == 50 " class="flex-container">
+                    <InputNumber v-model="game.deuceNumber" inputId="minmax-buttons" mode="decimal" showButtons :min="0" :max="100" fluid 
+                    :inputStyle="{ width: '4rem' }"/>
+                  </div>
+
                   <div class="flex-container-buttons">
                     <Button :label="(index) + 'º juego'" severity="secondary" icon="pi pi-arrow-left"
                       @click="prevCallback" />
-                      <div class="white-border">
-                        <span class="bold-font"> {{ (index + 1) + 'º juego' }} </span>
-                      </div>
-                    
+                    <div class="white-border">
+                      <span class="bold-font"> {{ (index + 1) + 'º juego' }} </span>
+                    </div>
+
                   </div>
                 </template>
               </StepperPanel>
@@ -346,6 +364,23 @@ useCreateMatchStore().sets.forEach((set) => {
 
 .p-tabview.p-component {
   width: 100%;
+}
+
+p-inputnumber {
+  width: 20%;
+  max-width: 20%;
+}
+
+p-inputnumber-input {
+  width: 100%;
+  max-width: 100%;
+}
+
+.p-inputnumber p-component {
+    font-family: var(--font-family);
+    font-feature-settings: var(--font-feature-settings, normal);
+    font-size: 1rem;
+    font-weight: normal;
 }
 
 @media (max-width: 600px) {

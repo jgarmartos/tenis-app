@@ -6,6 +6,15 @@ import { getGamesBySet } from '@/services/gameService';
 import MenuBar from '../MenuBar.vue';
 import MatchCharts from './MatchCharts.vue';
 import router from '@/router';
+
+const title = ref<string>('Información del partido');
+
+const matchLineTitle = ref<string>('Línea de partido');
+
+const statsTitle = ref<string>('Estadísticas');
+
+const closeButtonText = ref<string>('Cerrar');
+
 /**
  * Properties of the component
  * @param visible - Dialog visibility
@@ -99,7 +108,7 @@ onMounted(async () => {
                 <template #header>
                     <div class="title">
                         <!-- <i class="pi pi-user" /> -->
-                        <span style="font-weight: bold;">Añadir partido</span>
+                        <span style="font-weight: bold;">{{ title }}</span>
                     </div>
                 </template>
                 <div class="dialog-content">
@@ -147,7 +156,7 @@ onMounted(async () => {
                     </Panel>
                     <!-- LÍNEA DE PARTIDO -->
                     <div class="flex-container-vertical" style="justify-content: center; margin-top: 1rem;">
-                        <span style="justify-content: center; font-weight: bold;">Línea de partido</span>
+                        <span style="justify-content: center; font-weight: bold;">{{ matchLineTitle }}</span>
                         <div style="width: 100%;">
                             <Accordion :activeIndex="0">
                                 <AccordionTab v-for="set in getSetsForMatchLocal(matchInfoLocal.id)"
@@ -201,14 +210,14 @@ onMounted(async () => {
                     </div>
                     <!-- ESTADÍSTICAS -->
                     <div class="flex-container-vertical" style="justify-content: center; margin-top: 1rem;">
-                        <span style="justify-content: center; font-weight: bold;">Estadísticas</span>
+                        <span style="justify-content: center; font-weight: bold;"> {{ statsTitle }}</span>
                         <MatchCharts :matchInfo="matchInfoLocal" />
                     </div>
                 </div>
                 <template #footer>
                     <!-- <Button label="Cancelar" text severity="secondary" @click="setVisible(false)" autofocus /> -->
                     <div class="center-div">
-                        <Button label="Cerrar" autofocus @click="router.push('/')" />
+                        <Button :label=" closeButtonText " autofocus @click="router.push('/')" />
                     </div>
                 </template>
             </Panel>
@@ -220,6 +229,15 @@ onMounted(async () => {
 header {
     line-height: 2;
     max-height: 20vh;
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+    padding: 1rem;
 }
 
 .panel {

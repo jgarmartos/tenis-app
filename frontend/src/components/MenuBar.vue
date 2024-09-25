@@ -51,12 +51,11 @@ const items = ref([
             </div>
 
         </template>
-        <template #end>
+        <!-- <template #end>
             <div class="header-container">
                 <InputText placeholder="Buscar" type="text" class="search-imput" />
-                <!-- <Avatar image="/images/avatar/amyelsner.png" shape="circle" /> -->
             </div>
-        </template>
+        </template> -->
     </Menubar>
 
 </template>
@@ -111,7 +110,7 @@ const items = ref([
     .p-menubar {
         height: auto;
         padding: 0.5rem;
-        justify-content: center;
+        justify-content: left;
         border-radius: 10px;
     }
 
