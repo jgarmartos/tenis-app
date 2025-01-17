@@ -30,12 +30,6 @@ const items = ref([
 <template>
 
     <Menubar :model="items">
-        <template #start>
-            <div>
-                <img src="@/assets/tennis-court-game-field-grass-512.webp" alt="logo"
-                    style="width: 3rem; height: 3rem; margin-left: 1rem" />
-            </div>
-        </template>
         <template #item="{ item, props }">
             <div class="header-container" style="justify-content: center;">
                 <router-link v-slot="{ navigate }" :to="item.route" custom>

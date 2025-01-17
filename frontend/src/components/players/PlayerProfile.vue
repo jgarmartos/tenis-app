@@ -219,7 +219,6 @@ function updateChartData(playerData: any) {
     padding-top: 1%;
     display: flex;
     flex-direction: column;
-    /* Colocar los elementos en columna en móviles */
     width: 100%;
     height: 100%;
 }
@@ -227,7 +226,6 @@ function updateChartData(playerData: any) {
 .flex-center {
     display: flex;
     justify-content: center;
-    /* align-items: center; */
     flex-direction: column;
     width: 100%;
     height: 100%;
@@ -238,14 +236,15 @@ function updateChartData(playerData: any) {
     width: 100%;
     margin-top: 1rem;
     padding: 1rem;
-    gap: 3rem;
+    gap: 2rem;
 }
 
 .flex-horizontal {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
-    gap: 10rem;
+    gap: 2rem;
+    flex-wrap: wrap; /* Para que los elementos se adapten en una sola columna si hay poco espacio */
 }
 
 .flex-vertical {
@@ -264,30 +263,22 @@ function updateChartData(playerData: any) {
     align-items: center;
 }
 
-.grid-container-two {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    justify-content: center;
-    align-items: center;
-}
-
 .grid-element {
     text-align: center;
-    padding: 1rem;
+    padding: 0.5rem;
     border-radius: 0.5rem;
-    gap: 1rem;
+    gap: 0.5rem;
 }
 
 .grid-statistic,
 .grid-statistic-won,
 .grid-statistic-lost {
-    font-size: 1.25rem;
+    font-size: 1rem;
     font-weight: bold;
-    padding: 0.5rem;
+    padding: 0.3rem;
     border-radius: 0.5rem;
     color: white;
-    width: 20%;
+    width: 80%;
     margin: 0 auto;
 }
 
@@ -306,8 +297,39 @@ function updateChartData(playerData: any) {
 .p-chart {
     width: 100%;
     height: 100%;
-    max-width: 300px;
-    max-height: 300px;
+    max-width: 200px; /* Ajusta el tamaño máximo para dispositivos pequeños */
+    max-height: 200px;
     margin: 0 auto;
 }
+
+/* Estilos específicos para pantallas pequeñas */
+@media (max-width: 768px) {
+    .category-box {
+        padding: 0.5rem;
+        gap: 1rem;
+    }
+
+    .flex-horizontal {
+        flex-direction: column; /* Apila los elementos en columna */
+        gap: 1.5rem;
+    }
+
+    .grid-container-three {
+        grid-template-columns: 1fr; /* Cambia la cuadrícula a una sola columna */
+        gap: 0.5rem;
+    }
+
+    .grid-statistic,
+    .grid-statistic-won,
+    .grid-statistic-lost {
+        font-size: 0.9rem;
+        width: 100%;
+    }
+
+    .p-chart {
+        max-width: 150px;
+        max-height: 150px;
+    }
+}
 </style>
+
