@@ -45,4 +45,9 @@ public class MatchService {
         return matchRepository.findAll();
     }
 
+    //get all matches by player
+    public List<Match> getMatchesByPlayer(Integer playerId) {
+        return matchRepository.findByPlayer1IdOrPlayer2Id(playerId, playerId);
+    }
+
 }

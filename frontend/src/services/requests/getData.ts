@@ -21,3 +21,8 @@ export const getStats = async (matchId: number) => {
     const response = await api.get<MatchStatistics>(`/matches/statistics/${matchId}`);
     return response.data;
 };
+
+export const getPlayer = async (playerId: number) => {
+    const response = await api.get(`/players/${playerId}`);
+    return response.data;
+}

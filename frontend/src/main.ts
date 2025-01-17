@@ -33,11 +33,14 @@ import Listbox from 'primevue/listbox';
 import Row from 'primevue/row';
 import Accordion from 'primevue/accordion';
 import AccordionTab from 'primevue/accordiontab';
+import Knob from 'primevue/knob';
 import Divider from 'primevue/divider';
 import MeterGroup from 'primevue/metergroup';
 import AvatarGroup from 'primevue/avatargroup';   //Optional for grouping
 import Menubar from 'primevue/menubar';
 import SelectButton from 'primevue/selectbutton';
+import Fieldset from 'primevue/fieldset';
+
 
 
 import { FaFlag, RiZhihuFill, GiTennisBall, FaUsers, HiSolidSearch, 
@@ -73,6 +76,7 @@ app.component('InputText', InputText)
 app.component('PickList', PickList) 
 app.component('Avatar', Avatar) 
 app.component('v-icon', OhVueIcon) 
+app.component('Knob', Knob)
 app.component('InputNumber', InputNumber)
 app.component('DataTable', DataTable) 
 app.component('TabView', TabView)
@@ -82,6 +86,7 @@ app.component('Column', Column)
 app.component('AvatarGroup', AvatarGroup) 
 app.component('FloatLabel', FloatLabel)
 app.component('Row', Row)
+app.component('Fieldset', Fieldset)
 app.component('Accordion', Accordion)
 app.component('AccordionTab', AccordionTab)
 app.component('Divider', Divider)

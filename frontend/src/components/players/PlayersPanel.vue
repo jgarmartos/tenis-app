@@ -13,7 +13,7 @@ const { playersQuery } = useInitialData();
 const players = computed(() => useDataStore().players);
 
 const lastFivePlayers = computed(() => {
-  return players.value?.slice(-5).reverse() || [];
+  return players.value?.slice(-10).reverse() || [];
 });
 
 const columns = [

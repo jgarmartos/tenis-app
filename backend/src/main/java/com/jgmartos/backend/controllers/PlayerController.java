@@ -1,6 +1,7 @@
 package com.jgmartos.backend.controllers;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jgmartos.backend.models.Player;
+import com.jgmartos.backend.models.PlayerResponse;
+import com.jgmartos.backend.models.statistics.PlayerStatistics;
 import com.jgmartos.backend.services.PlayerService;
+import com.jgmartos.backend.services.PlayerStatisticsService;
 
 @RestController
 @RequestMapping("/players")
@@ -23,14 +27,26 @@ public class PlayerController {
     @Autowired
     private PlayerService playerService;
 
+    @Autowired
+    private PlayerStatisticsService playerStatisticsService;
+
     @PostMapping
     public Player createPlayer(Player player) {
         return playerService.createPlayer(player);
     }
 
     @GetMapping("/{id}")
-    public Player getPlayer(@PathVariable Integer id) {
-        return playerService.getPlayer(id);
+    public PlayerResponse getPlayer(@PathVariable Integer id) {
+        PlayerResponse playerResponse = new PlayerResponse();
+        Player player = playerService.getPlayer(id);
+        PlayerStatistics playerStatistics = playerStatisticsService.getPlayerStatistics(id);
+        playerResponse.setId(player.getId());
+        playerResponse.setName(player.getName());
+        playerResponse.setForehand(player.getForehand());
+        playerResponse.setAvatar(player.getAvatar());
+        playerResponse.setPlayerStatistics(playerStatistics);
+        
+        return playerResponse;
     }
 
     @PutMapping("/{id}")
@@ -45,10 +61,26 @@ public class PlayerController {
     }
 
     @GetMapping
-    public List<Player> getAllPlayers() {
-        return playerService.getAllPlayers();
+    public List<PlayerResponse> getAllPlayers() {
+        List<Player> players = playerService.getAllPlayers();
+        List<PlayerResponse> playerResponses = new ArrayList<>();
+
+        for (Player player : players) {
+            PlayerStatistics playerStatistics = playerStatisticsService.getPlayerStatistics(player.getId());
+            PlayerResponse playerResponse = new PlayerResponse();
+            playerResponse.setId(player.getId());
+            playerResponse.setName(player.getName());
+            playerResponse.setForehand(player.getForehand());
+            playerResponse.setAvatar(player.getAvatar());
+            playerResponse.setPlayerStatistics(playerStatistics);
+            playerResponses.add(playerResponse);
+        }
+        return playerResponses;
     }
 
+    @GetMapping("/statistics/{id}")
+    public PlayerStatistics getPlayerStatistics(@PathVariable Integer id) {
+        return playerStatisticsService.getPlayerStatistics(id);
+    }
 
-    
 }

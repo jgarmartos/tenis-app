@@ -94,6 +94,12 @@ onMounted(async () => {
     calculateSetsPuntuations();
 });
 
+console.log('matchInfoLocalWinner', matchInfoLocal.value.winner);
+
+console.log('player1', matchInfoLocal.value.player1);
+
+console.log('player2', matchInfoLocal.value.player2);
+
 
 </script>
 
@@ -122,11 +128,11 @@ onMounted(async () => {
                                 <div class="right-side">
                                     <div class="flex-container-result"
                                         v-for="setScore in getSetsForMatchByPlayer(matchInfoLocal.id, matchInfoLocal.player1.id)"
-                                        >
+                                        :style="setScore?.isWinner ? 'background-color: gold' : ''">
                                         <span class="set-puntuation" :style="setScore?.isWinner ? 'font-weight: bold' : ''">{{ setScore?.score}}</span>
                                     </div>
                                     <Divider layout="vertical" />
-                                    <div class="flex-container-result">
+                                    <div class="flex-container-result" :style="matchInfoLocal.winner == matchInfoLocal.player1.id  ? 'background-color: gold' : ''">
                                         <span class="set-puntuation"> {{ setPuntationP1 }} </span>
                                     </div>
                                 </div>
@@ -147,8 +153,8 @@ onMounted(async () => {
                                             }}</span>
                                     </div>
                                     <Divider layout="vertical" />
-                                    <div class="flex-container-result">
-                                        <span class="set-puntuation"> {{ setPuntationP2 }} </span>
+                                    <div class="flex-container-result" :style="matchInfoLocal.winner === matchInfoLocal.player2.id  ? 'background-color: gold' : ''">
+                                        <span class="set-puntuation" > {{ setPuntationP2 }} </span>
                                     </div>
                                 </div>
                             </div>

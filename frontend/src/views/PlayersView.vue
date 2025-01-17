@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import MenuBar from '@/components/MenuBar.vue';
+import PlayerListPanel from '@/components/players/PlayerListPanel.vue';
+
 
 </script>
 
@@ -10,7 +12,9 @@ import MenuBar from '@/components/MenuBar.vue';
 
     <body>
         <div class="panels-container">
-            <Panel class="panel"/>
+            <Panel class="panel">
+                <PlayerListPanel />
+            </Panel>
         </div>
     </body>
 </template>

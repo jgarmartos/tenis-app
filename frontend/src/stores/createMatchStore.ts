@@ -11,9 +11,6 @@ import type { Competition } from '@/interfaces/CompetitionsIntercfaces';
 
 import { emptyMatch, emptyPlace, emptyPlayer } from '@/services/emptyObjects';
 import saveData from '@/services/requests/saveData';
-import { useDataStore } from './useDataStore';
-import { useInitialData } from '@/services/requests/useInitialData';
-
 
 
 export const useCreateMatchStore = defineStore('createMatch', {

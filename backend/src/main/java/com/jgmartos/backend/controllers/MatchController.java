@@ -109,5 +109,21 @@ public class MatchController {
         return matchStatisticsService.getMatchStatistics(matchId);
     }
 
+    @GetMapping("byplayer/{playerId}")
+    public List<Match> getMatchesByPlayer(@PathVariable Integer playerId) {
+        return matchService.getMatchesByPlayer(playerId);
+    }
+
+    @DeleteMapping("deleteall")
+    public void deleteAllMatches() {
+        List<Match> matches = matchService.getAllMatches();
+        for (Match match : matches) {
+            setService.getSetsByMatch(match.getId()).forEach(set -> gameService.deleteGamesBySetId(set.getId()));
+            setService.deleteSetsByMatchId(match.getId());
+            matchService.deleteMatch(match.getId());
+        }
+
+    }
+
 
 }
