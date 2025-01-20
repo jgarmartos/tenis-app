@@ -127,7 +127,7 @@ useCreateMatchStore().sets.forEach((set) => {
 
                   <div v-if="game.selectedPuntuation1 == 50 || game.selectedPuntuation2 == 50 " class="flex-container">
                     <span> Nº iguales: </span>
-                    <InputNumber v-model="game.deuceNumber" inputId="minmax-buttons" mode="decimal" showButtons :min="0" :max="100" fluid 
+                    <InputNumber v-model="game.deuceNumber" inputId="minmax-buttons" mode="decimal" showButtons :min="1" :max="100" fluid 
                     :inputStyle="{ width: '4rem' }"/>
                   </div>
 
@@ -193,7 +193,7 @@ useCreateMatchStore().sets.forEach((set) => {
                   </div>
 
                   <div v-if="game.selectedPuntuation1 == 50 || game.selectedPuntuation2 == 50 " class="flex-container">
-                    <InputNumber v-model="game.deuceNumber" inputId="minmax-buttons" mode="decimal" showButtons :min="0" :max="100" fluid 
+                    <InputNumber v-model="game.deuceNumber" inputId="minmax-buttons" mode="decimal" showButtons :min="1" :max="100" fluid 
                     :inputStyle="{ width: '4rem' }"/>
                   </div>
 
@@ -249,7 +249,7 @@ useCreateMatchStore().sets.forEach((set) => {
                   </div>
 
                   <div v-if="game.selectedPuntuation1 == 50 || game.selectedPuntuation2 == 50 " class="flex-container">
-                    <InputNumber v-model="game.deuceNumber" inputId="minmax-buttons" mode="decimal" showButtons :min="0" :max="100" fluid 
+                    <InputNumber v-model="game.deuceNumber" inputId="minmax-buttons" mode="decimal" showButtons :min="1" :max="100" fluid 
                     :inputStyle="{ width: '4rem' }"/>
                   </div>
 

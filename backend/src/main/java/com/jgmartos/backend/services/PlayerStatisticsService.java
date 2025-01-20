@@ -61,16 +61,18 @@ public class PlayerStatisticsService {
                 ? round((double) stats.getPointsWon() / stats.getPointsPlayed() * 100, 1)
                 : 0);
         stats.setGamesWinPercentageAsServer(stats.getGamesWonAsServer() > 0
-                ? round((double) stats.getGamesWonAsServer() / (stats.getGamesWonAsServer() + stats.getGamesLostAsServer()) * 100, 1)
+                ? round((double) stats.getGamesWonAsServer()
+                        / (stats.getGamesWonAsServer() + stats.getGamesLostAsServer()) * 100, 1)
                 : 0);
         stats.setGamesWinPercentageAsReceiver(stats.getGamesWonAsReceiver() > 0
-                ? round((double) stats.getGamesWonAsReceiver() / (stats.getGamesWonAsReceiver() + stats.getGamesLostAsReceiver()) * 100, 1)
+                ? round((double) stats.getGamesWonAsReceiver()
+                        / (stats.getGamesWonAsReceiver() + stats.getGamesLostAsReceiver()) * 100, 1)
                 : 0);
-    
+
         stats.setPointsWonPerMatch(stats.getMatchesPlayed() > 0
                 ? round((double) stats.getPointsWon() / stats.getMatchesPlayed(), 1)
                 : 0);
-    
+
         stats.setPointsLostPerMatch(stats.getMatchesPlayed() > 0
                 ? round((double) stats.getPointsLost() / stats.getMatchesPlayed(), 1)
                 : 0);
@@ -81,16 +83,17 @@ public class PlayerStatisticsService {
 
         stats.setPointsLostPerGame(stats.getGamesPlayed() > 0
                 ? round((double) stats.getPointsLost() / stats.getGamesPlayed(), 1)
-                : 0);   
+                : 0);
     }
 
     private double round(double value, int places) {
-    if (places < 0) throw new IllegalArgumentException();
+        if (places < 0)
+            throw new IllegalArgumentException();
 
-    BigDecimal bd = BigDecimal.valueOf(value);
-    bd = bd.setScale(places, RoundingMode.HALF_UP);
-    return bd.doubleValue();
-}
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
 
     private void processMatch(Match match, Integer playerId, PlayerStatistics stats) {
         // TODO: manage the possibility of a match without winner
@@ -115,6 +118,18 @@ public class PlayerStatisticsService {
 
         updateSetStats(stats, isWinner);
 
+        if (set.getType().equals("Super Tie Break")) {
+            processSuperTieBreak(set, match, playerId, stats);
+        } else {
+            List<Game> games = gameService.getGamesBySet(set.getId());
+        for (Game game : games) {
+            processGame(game, match, playerId, stats);
+        }
+        }
+        
+    }
+
+    private void processSuperTieBreak(Set set, Match match, Integer playerId, PlayerStatistics stats) {
         List<Game> games = gameService.getGamesBySet(set.getId());
         for (Game game : games) {
             processGame(game, match, playerId, stats);
@@ -153,21 +168,42 @@ public class PlayerStatisticsService {
         if (isGameWinner) {
             stats.setGamesWon(stats.getGamesWon() + 1);
             updatePointsStats(stats, game, isPlayer1, true);
-            if (isPlayer1) {
-                categorizeGameByPoints(stats, game.getPlayer1Points(), game.getPlayer2Points(), true);
-            } else {
-                categorizeGameByPoints(stats, game.getPlayer2Points(), game.getPlayer1Points(), true);
+            if (!game.getType().equals("tiebreak")) {
+                if (isPlayer1) {
+                    categorizeGameByPoints(stats, game.getPlayer1Points(), game.getPlayer2Points(), true);
+                } else {
+                    categorizeGameByPoints(stats, game.getPlayer2Points(), game.getPlayer1Points(), true);
+                }
             }
+            // if (isPlayer1) {
+            // categorizeGameByPoints(stats, game.getPlayer1Points(),
+            // game.getPlayer2Points(), true);
+            // } else {
+            // categorizeGameByPoints(stats, game.getPlayer2Points(),
+            // game.getPlayer1Points(), true);
+            // }
         } else {
             stats.setGamesLost(stats.getGamesLost() + 1);
             updatePointsStats(stats, game, isPlayer1, false);
-            if (isPlayer1) {
-                categorizeGameByPoints(stats, game.getPlayer1Points(), game.getPlayer2Points(), true);
-            } else {
-                categorizeGameByPoints(stats, game.getPlayer2Points(), game.getPlayer1Points(), true);
+            if (!game.getType().equals("tiebreak")) {
+                if (isPlayer1) {
+                    categorizeGameByPoints(stats, game.getPlayer1Points(),
+                            game.getPlayer2Points(), true);
+                } else {
+                    categorizeGameByPoints(stats, game.getPlayer2Points(),
+                            game.getPlayer1Points(), true);
+                }
             }
+            // if (isPlayer1) {
+            // categorizeGameByPoints(stats, game.getPlayer1Points(),
+            // game.getPlayer2Points(), true);
+            // } else {
+            // categorizeGameByPoints(stats, game.getPlayer2Points(),
+            // game.getPlayer1Points(), true);
+            // }
         }
 
+        if (!game.getType().equals("tiebreak"))
         updateServeStats(stats, game, isPlayer1, match);
     }
 
