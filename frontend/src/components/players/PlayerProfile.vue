@@ -191,6 +191,24 @@ function updateChartData(playerData: any) {
                                     </div>
                                 </div>
                                 <div class="grid-element">
+                                    <p> Sets ganados </p>
+                                    <div class="grid-statistic-knob">
+                                        <Knob v-model="player.playerStatistics.setsWinPercentage" :valueTemplate="val => `${val}%`" />
+                                    </div>
+                                </div>
+                                <div class="grid-element">
+                                    <p> Juegos ganados </p>
+                                    <div class="grid-statistic-knob">
+                                        <Knob v-model="player.playerStatistics.gamesWinPercentage" :valueTemplate="val => `${val}%`" />
+                                    </div>
+                                </div>
+                                <div class="grid-element">
+                                    <p> Puntos ganados </p>
+                                    <div class="grid-statistic-knob">
+                                        <Knob v-model="player.playerStatistics.pointsWinPercentage" :valueTemplate="val => `${val}%`" />
+                                    </div>
+                                </div>
+                                <div class="grid-element">
                                     <p> Servicios ganados </p>
                                     <div class="grid-statistic-knob">
                                         <Knob v-model="player.playerStatistics.gamesWinPercentageAsServer" :valueTemplate="val => `${val}%`" />
@@ -280,18 +298,17 @@ function updateChartData(playerData: any) {
     color: white;
     width: 80%;
     margin: 0 auto;
-}
-
-.grid-statistic {
-    background-color: #42d1f5;
+    border: 3px solid white;
 }
 
 .grid-statistic-won {
     background-color: #42f59b;
+    border: 2px solid white;
 }
 
 .grid-statistic-lost {
     background-color: #FF6384;
+    border: 2px solid white;
 }
 
 .p-chart {
