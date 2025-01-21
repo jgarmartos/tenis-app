@@ -114,7 +114,7 @@ function updateChartData(playerData: any) {
                                 <h3>Juegos jugados: {{ player.playerStatistics.gamesPlayed }}</h3>
                                 </p>
                             </div>
-                            <div class="flex-horizontal">
+                            <!-- <div class="flex-horizontal">
                                 <p class="flex-vertical">
                                     <Chart type="polarArea" :data="gamesWonToX" :options="chartOptions" />
                                 <h3>Resultados en los juegos ganados</h3>
@@ -123,9 +123,7 @@ function updateChartData(playerData: any) {
                                     <Chart type="polarArea" :data="gamesLostToX" :options="chartOptions" />
                                 <h3>Resultados en los juegos perdidos</h3>
                                 </p>
-                            </div>
-                        </Fieldset>
-                        <Fieldset legend="Estadísticas" :toggleable="true" class="category-box">
+                            </div> -->
                             <div class="grid-container-three">
                                 <div class="grid-element"> 
                                     <p> Partidos jugados </p>
