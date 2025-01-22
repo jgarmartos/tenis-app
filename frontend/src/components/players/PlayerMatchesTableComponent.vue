@@ -55,6 +55,12 @@ const propertyToAccess = "name"
     },
     {
         field: {
+            header: "Competición",
+            value: "competition"
+        }
+    },
+    {
+        field: {
             header: "Resultado",
             value: "sets"
         }
