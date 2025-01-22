@@ -3,6 +3,7 @@ import MenuBar from '@/components/MenuBar.vue';
 import { usePlayer, usePlayerQuery } from '@/services/requests/usePlayer';
 import { ref, watchEffect } from 'vue';
 import Chart from 'primevue/chart';
+import PlayerMatchesTableComponent from './PlayerMatchesTableComponent.vue';
 
 import { useRoute } from 'vue-router';
 
@@ -221,6 +222,7 @@ function updateChartData(playerData: any) {
                             </div>
                         </Fieldset>
                         <Fieldset legend="Últimos partidos" :toggleable="true" class="category-box">
+                            <PlayerMatchesTableComponent :playerId="playerId.toString()" />
                         </Fieldset>
                     </div>
                 </div>
