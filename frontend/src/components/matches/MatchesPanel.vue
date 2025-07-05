@@ -2,9 +2,12 @@
 import { computed, ref, type Ref } from 'vue';
 import AddMatchDialog from './AddMatchDialog.vue';
 import MatchInfoDialog from './MatchInfoDialog.vue';
-import { useInitialData } from "@/services/requests/useInitialData";
+import { useInitialData } from '@/services/requests/useInitialData';
 import { useDataStore } from '@/stores/useDataStore';
-import { useCreateMatchStore, useMatchInfoStore } from '@/stores/createMatchStore';
+import {
+  useCreateMatchStore,
+  useMatchInfoStore,
+} from '@/stores/createMatchStore';
 import type { Match } from '@/interfaces/MatchesInterfaces';
 import { emptyMatch } from '@/services/emptyObjects';
 import { getSetsResultForMatch } from '@/services/matchServices';
@@ -20,33 +23,33 @@ const sets = computed(() => useDataStore().sets);
  * @description Setting the name of the columns
  */
 const columns = [
-    {
-        field: {
-            header: "Jugador 1",
-            value: 'player1'
-        }
+  {
+    field: {
+      header: 'Jugador 1',
+      value: 'player1',
     },
-    {
-        field: {
-            header: "Jugador 2",
-            value: "player2"
-        }
+  },
+  {
+    field: {
+      header: 'Jugador 2',
+      value: 'player2',
     },
-    {
-        field: {
-            header: "Pista",
-            value: "place"
-        }
+  },
+  {
+    field: {
+      header: 'Pista',
+      value: 'place',
     },
-    {
-        field: {
-            header: "Resultado",
-            value: "sets"
-        }
-    }
-]
+  },
+  {
+    field: {
+      header: 'Resultado',
+      value: 'sets',
+    },
+  },
+];
 
-const propertyToAccess = "name"
+const propertyToAccess = 'name';
 
 const sortedSets = ref();
 
@@ -61,7 +64,7 @@ const sortedSets = ref();
  * @returns {Array} Array of the last five matches
  */
 const lastFiveMatches = computed(() => {
-    return matches.value.slice(-5).reverse() || [];
+  return matches.value.slice(-5).reverse() || [];
 });
 
 // const dialogs = {
@@ -83,13 +86,12 @@ const visibleAddMatchDialog = ref(false);
  */
 const visibleMatchInfoDialog = ref(false);
 
-
-const setVisibleAddMatchDialog = (value: boolean,) => {
-    visibleAddMatchDialog.value = value;
+const setVisibleAddMatchDialog = (value: boolean) => {
+  visibleAddMatchDialog.value = value;
 };
 
 const setVisibleMatchInfoDialog = (value: boolean) => {
-    visibleMatchInfoDialog.value = value;
+  visibleMatchInfoDialog.value = value;
 };
 
 // const setVisible = (property: Ref<boolean>, value: boolean) => {
@@ -103,89 +105,99 @@ const matchInfo = ref<Match>(emptyMatch());
  * @param event {Event} Event
  */
 const onRowSelect = (event: any) => {
-    matchInfo.value = event.data;
-    useMatchInfoStore().matchInfo = event.data;
-    router.push({
-        name: 'matchInfo',
-        query: {
-            visible: 'true', // Example static value
-            matchInfo: JSON.stringify(matchInfo.value) // Convert the matchInfo object to a JSON string
-        }
-    });
+  matchInfo.value = event.data;
+  useMatchInfoStore().matchInfo = event.data;
+  router.push({
+    name: 'matchInfo',
+    query: {
+      visible: 'true', // Example static value
+      matchInfo: JSON.stringify(matchInfo.value), // Convert the matchInfo object to a JSON string
+    },
+  });
 };
 </script>
 
-
 <template>
-    <Panel class="panel">
-        <template #header>
-            <div class="title">
-                <v-icon name="gi-tennis-court" scale="1.2" />
-                <span class="font-bold">Últimos partidos</span>
-                <div class="right-side">
-                    <Button @click="router.push('/addMatch')">
-                        <v-icon name="gi-tennis-court" fill="white" scale="1" />
-                    </Button>
-                </div>
-            </div>
-        </template>
-        <AddMatchDialog v-bind:visible="visibleAddMatchDialog" :setVisible="setVisibleAddMatchDialog"
-            :retry="matchesQuery.refetch" />
-        <MatchInfoDialog v-bind:visible="visibleMatchInfoDialog" :setVisible="setVisibleMatchInfoDialog"
-            v-bind:matchInfo="matchInfo"></MatchInfoDialog>
-        <div>
-            <DataTable :value="lastFiveMatches" size="small" :loading="matchesQuery.isFetching.value"
-                @rowSelect="onRowSelect" selectionMode="single">
-                <!-- <Column v-for="col in columns" :field="col.field.value" :header="col.field.header" sortable /> -->
-                <Column v-for="col in columns" sortable>
-                    <template #header>
-                        <span>{{ col.field.header }}</span>
-                    </template>
-                    <template #body="matchesResponse">
-                        <span v-if="col.field.value !== 'sets'">
-                            {{ matchesResponse.data[col.field.value][propertyToAccess] }}
-                        </span>
-                        <span v-else>
-                            <!-- Renderizamos las puntuaciones de los sets -->
-                            {{ getSetsResultForMatch(matchesResponse.data.id) }}
-                        </span>
-                    </template>
-                </Column>
-            </DataTable>
+  <Panel class="panel">
+    <template #header>
+      <div class="title">
+        <v-icon name="gi-tennis-court" scale="1.2" />
+        <span class="font-bold">Últimos partidos</span>
+        <div class="right-side">
+          <Button @click="router.push('/addMatch')">
+            <v-icon name="gi-tennis-court" fill="white" scale="1" />
+          </Button>
         </div>
-    </Panel>
+      </div>
+    </template>
+    <AddMatchDialog
+      v-bind:visible="visibleAddMatchDialog"
+      :setVisible="setVisibleAddMatchDialog"
+      :retry="matchesQuery.refetch"
+    />
+    <MatchInfoDialog
+      v-bind:visible="visibleMatchInfoDialog"
+      :setVisible="setVisibleMatchInfoDialog"
+      v-bind:matchInfo="matchInfo"
+    ></MatchInfoDialog>
+    <div>
+      <DataTable
+        :value="lastFiveMatches"
+        size="small"
+        :loading="matchesQuery.isFetching.value"
+        @rowSelect="onRowSelect"
+        selectionMode="single"
+      >
+        <!-- <Column v-for="col in columns" :field="col.field.value" :header="col.field.header" sortable /> -->
+        <Column v-for="col in columns" sortable>
+          <template #header>
+            <span>{{ col.field.header }}</span>
+          </template>
+          <template #body="matchesResponse">
+            <span v-if="col.field.value !== 'sets'">
+              {{ matchesResponse.data[col.field.value][propertyToAccess] }}
+            </span>
+            <span v-else>
+              <!-- Renderizamos las puntuaciones de los sets -->
+              {{ getSetsResultForMatch(matchesResponse.data.id) }}
+            </span>
+          </template>
+        </Column>
+      </DataTable>
+    </div>
+  </Panel>
 </template>
 
 <style scoped>
 .panel {
-    border-radius: 10px;
-    /* overflow: hidden; */
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    border-color: #d9d9d9;
-    /* max-width: 50%; */
-    /* min-width: 33%;; */
-    width: 50%;
+  border-radius: 10px;
+  /* overflow: hidden; */
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-color: #d9d9d9;
+  /* max-width: 50%; */
+  /* min-width: 33%;; */
+  width: 50%;
 }
 
 .player-field {
-    /* flex-direction: row; */
-    display: flex;
-    /* align-items: center; */
-    gap: 20px;
-    padding: 14px;
-    font-size: small;
+  /* flex-direction: row; */
+  display: flex;
+  /* align-items: center; */
+  gap: 20px;
+  padding: 14px;
+  font-size: small;
 }
 
 .title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px;
-    width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  width: 100%;
 }
 
 .right-side {
-    margin-left: auto;
+  margin-left: auto;
 }
 </style>

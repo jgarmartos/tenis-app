@@ -1,35 +1,58 @@
+/**
+ * PlayerProfile.vue
+ *
+ * Displays a detailed profile for a player, including statistics and recent matches.
+ * Integrates charts for visualizing match, set, and game data.
+ *
+ * @module components/players/PlayerProfile
+ */
+
 <script setup lang="ts">
 import MenuBar from '@/components/MenuBar.vue';
 import { usePlayerQuery } from '@/services/requests/usePlayer';
 import { ref, watchEffect } from 'vue';
 import Chart from 'primevue/chart';
 import PlayerMatchesTableComponent from './PlayerMatchesTableComponent.vue';
-
 import { useRoute } from 'vue-router';
 
-// Obtén el ID de la ruta
+/**
+ * Get the player ID from the route parameters.
+ */
 const route = useRoute();
 const playerId = route.params.id;
 
-// Llama al composable para obtener los datos del jugador
+/**
+ * Fetch player data using a composable.
+ */
 const { data: player, isLoading, isError } = usePlayerQuery(playerId);
 
-// Datos del gráfico
+/**
+ * Chart data for matches played (won/lost).
+ */
 const matchesPlayedData = ref({
     labels: ['Ganados', 'Perdidos'],
     datasets: [{ data: [0, 0], backgroundColor: ['#42f59b', '#FF6384'] }],
 });
 
+/**
+ * Chart data for sets played (won/lost).
+ */
 const setsPlayedData = ref({
     labels: ['Ganados', 'Perdidos'],
     datasets: [{ data: [0, 0], backgroundColor: ['#42f59b', '#FF6384'] }],
 });
 
+/**
+ * Chart data for games played (won/lost).
+ */
 const gamesPlayedData = ref({
     labels: ['Ganados', 'Perdidos'],
     datasets: [{ data: [0, 0], backgroundColor: ['#42f59b', '#FF6384'] }],
 });
 
+/**
+ * Chart data for games won by score.
+ */
 const gamesWonToX = ref({
     labels: ['40-0', '40-15', '40-30', 'AD-40'],
     datasets: [
@@ -37,6 +60,9 @@ const gamesWonToX = ref({
     ],
 });
 
+/**
+ * Chart data for games lost by score.
+ */
 const gamesLostToX = ref({
     labels: ['40-0', '40-15', '40-30', 'AD-40'],
     datasets: [
@@ -44,19 +70,26 @@ const gamesLostToX = ref({
     ],
 });
 
-// Opciones del gráfico
+/**
+ * Chart options for all charts.
+ */
 const chartOptions = ref({
     plugins: {
         legend: { position: 'top' },
     },
 });
 
-// Cargar datos del jugador
+/**
+ * Watch for player data changes and update chart data accordingly.
+ */
 watchEffect(async () => {
     updateChartData(player.value);
 });
 
-// Actualizar datos del gráfico
+/**
+ * Updates all chart data based on the player's statistics.
+ * @param {any} playerData - Player data object
+ */
 function updateChartData(playerData: any) {
     matchesPlayedData.value.datasets[0].data = [
         playerData.playerStatistics.matchesWon,
@@ -86,6 +119,10 @@ function updateChartData(playerData: any) {
 </script>
 
 <template>
+    <!--
+      Player profile page with statistics, charts, and recent matches.
+      Displays loading and error states as needed.
+    -->
     <header>
         <MenuBar />
     </header>
@@ -115,16 +152,9 @@ function updateChartData(playerData: any) {
                                 <h3>Juegos jugados: {{ player.playerStatistics.gamesPlayed }}</h3>
                                 </p>
                             </div>
-                            <!-- <div class="flex-horizontal">
-                                <p class="flex-vertical">
-                                    <Chart type="polarArea" :data="gamesWonToX" :options="chartOptions" />
-                                <h3>Resultados en los juegos ganados</h3>
-                                </p>
-                                <p class="flex-vertical">
-                                    <Chart type="polarArea" :data="gamesLostToX" :options="chartOptions" />
-                                <h3>Resultados en los juegos perdidos</h3>
-                                </p>
-                            </div> -->
+                            <!--
+                              Additional charts for games won/lost by score can be enabled here.
+                            -->
                             <div class="grid-container-three">
                                 <div class="grid-element"> 
                                     <p> Partidos jugados </p>
@@ -231,8 +261,10 @@ function updateChartData(playerData: any) {
     </main>
 </template>
 
-
 <style scoped>
+/*
+  Styles for the player profile page, including layout, charts, and statistics grids.
+*/
 .panels-container {
     padding-top: 1%;
     display: flex;
@@ -262,7 +294,7 @@ function updateChartData(playerData: any) {
     justify-content: space-around;
     align-items: center;
     gap: 2rem;
-    flex-wrap: wrap; /* Para que los elementos se adapten en una sola columna si hay poco espacio */
+    flex-wrap: wrap; /* For responsive layout */
 }
 
 .flex-vertical {
@@ -314,12 +346,11 @@ function updateChartData(playerData: any) {
 .p-chart {
     width: 100%;
     height: 100%;
-    max-width: 200px; /* Ajusta el tamaño máximo para dispositivos pequeños */
+    max-width: 200px; /* Responsive max size */
     max-height: 200px;
     margin: 0 auto;
 }
 
-/* Estilos específicos para pantallas pequeñas */
 @media (max-width: 768px) {
     .category-box {
         padding: 0.5rem;
@@ -327,12 +358,12 @@ function updateChartData(playerData: any) {
     }
 
     .flex-horizontal {
-        flex-direction: column; /* Apila los elementos en columna */
+        flex-direction: column;
         gap: 1.5rem;
     }
 
     .grid-container-three {
-        grid-template-columns: 1fr; /* Cambia la cuadrícula a una sola columna */
+        grid-template-columns: 1fr;
         gap: 0.5rem;
     }
 

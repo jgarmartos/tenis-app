@@ -3,14 +3,18 @@ import { useInitialData } from '@/services/requests/useInitialData';
 import { useDataStore } from '@/stores/useDataStore';
 import { computed, ref } from 'vue';
 import AddPlaceDialog from './AddPlaceDialog.vue';
+import type { Place } from '@/interfaces/PlacesInterfaces';
+import { usePlaceStore } from '@/stores/usePlaceStore';
+import { usePlaceMutations } from '@/services/requests/usePlaceMutations';
 
+/**
+ * Store instance for managing place dialog state and place to edit.
+ */
+const store = usePlaceStore();
 
-const visible = ref(false);
-
-const setVisible = (value: boolean) => {
-    visible.value = value;
-};
-
+/**
+ * Query for fetching places from the backend.
+ */
 const { placesQuery } = useInitialData();
 
 const places = computed(() => useDataStore().places);
@@ -20,51 +24,121 @@ const lastPlaces = computed(() => {
 });
 
 const columns = [
-  { field: "name", sortable: true },
-  { field: "city", sortable: true },
+  { field: 'name', sortable: true },
+  { field: 'city', sortable: true },
 ];
+
+/**
+ * Opens the dialog to edit a player.
+ * @param {Player} player - Player to edit
+ */
+const editPlayer = (place: Place) => {
+  store.openDialog(place);
+};
+
+const { deletePlace } = usePlaceMutations();
+
+/**
+ * Handles player deletion with confirmation dialog.
+ * @param {number} playerId - ID of the player to delete
+ */
+const handleDelete = (placeId: number) => {
+  if (confirm('¿Estás seguro de que quieres eliminar este lugar?')) {
+    deletePlace.mutate(placeId);
+  }
+};
+
+const showPlaceInfo = (event: any) => {
+  const place = event.data as Place;
+  store.openDialog(place);
+};
 </script>
 
 <template>
-    <Panel class="panel">
-        <template #header>
-            <div class="title">
-                <i class="pi pi-user" />
-                <span class="font-bold">Últimos lugares</span>
-                <div class="right-side">
-                    <Button @click="visible = true">
-                        <v-icon name="md-place-outlined" fill="white" scale="1" />
-                    </Button>
-                </div>
-            </div>
+  <Panel class="panel">
+    <template #header>
+      <div class="title">
+        <i class="pi pi-user" />
+        <span class="font-bold">Últimos lugares</span>
+        <div class="right-side">
+          <Button @click="store.openDialog()">
+            <v-icon name="md-place-outlined" fill="white" scale="1" />
+          </Button>
+        </div>
+      </div>
+    </template>
+    <AddPlaceDialog />
+    <DataTable
+      :value="lastPlaces"
+      size="small"
+      :loading="placesQuery.isFetching.value"
+      @row-select="showPlaceInfo"
+    >
+      <Column v-for="col in columns" :field="col.field" />
+      <Column>
+        <template #body="slotProps">
+          <div class="action-buttons">
+            <Button
+              icon="pi pi-pencil"
+              class="ghost-button"
+              @click="editPlayer(slotProps.data)"
+            />
+            <Button
+              icon="pi pi-trash"
+              class="ghost-button danger"
+              @click="handleDelete(slotProps.data.id)"
+            />
+          </div>
         </template>
-        <AddPlaceDialog v-bind:visible="visible" :setVisible="setVisible" :retry="placesQuery.refetch"/>
-        <DataTable :value="lastPlaces" size="small" :loading="placesQuery.isFetching.value">
-            <Column v-for="col in columns" :field="col.field" />
-        </DataTable>
-    </Panel>
-
+      </Column>
+    </DataTable>
+  </Panel>
 </template>
 
 <style scoped>
 .panel {
-    border-radius: 10px;
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    border-color: #d9d9d9;
-    min-width: 25%;
-    min-height: 60%;
+  border-radius: 10px;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-color: #d9d9d9;
+  min-width: 25%;
+  min-height: 60%;
 }
 
 .title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 14px;
-    width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px;
+  width: 100%;
 }
 
 .right-side {
-    margin-left: auto;
+  margin-left: auto;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.ghost-button {
+  opacity: 0.4;
+  transition: all 0.2s ease-in-out;
+  background-color: transparent;
+  border: none;
+  color: inherit;
+  box-shadow: none;
+}
+
+.ghost-button:hover {
+  opacity: 1;
+  background-color: #4b80c5;
+  border-radius: 4px;
+}
+
+.ghost-button.danger:hover {
+  background-color: #f8d7da;
+  color: #c82333;
 }
 </style>

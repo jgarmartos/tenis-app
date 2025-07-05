@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import router from "@/router";
-import { ref } from "vue";
+import router from '@/router';
+import { ref } from 'vue';
 
 const navigateToPlayers = () => {
   router.push({ name: 'players' });
-}
+};
 
 const headerCategories = ref([
   {
     title: 'Inicio',
     icon: 'fa-home',
     animation: '',
-    redirect: () => router.push('/')
+    redirect: () => router.push('/'),
   },
   {
     title: 'Jugadores',
     icon: 'fa-users',
     animation: '',
-    redirect: () => router.push('/players')
+    redirect: () => router.push('/players'),
   },
   {
     title: 'Partidos',
@@ -33,31 +33,44 @@ const headerCategories = ref([
   {
     title: 'Búsqueda',
     icon: 'hi-solid-search',
-    animation: 'pulse'
-  }
+    animation: 'pulse',
+  },
 ]);
-
 </script>
 
 <template>
-
   <body>
     <div class="header">
-      <div class="block"></div>
+      <div class="block" />
       <div class="navigation-pill-list">
-        <Button v-for="category in headerCategories" class="navigation-pill" @click="category.redirect">
-          <v-icon :name="category.icon" :animation="category.animation" fill="white" />
+        <Button
+          v-for="category in headerCategories"
+          class="navigation-pill"
+          @click="category.redirect"
+        >
+          <v-icon
+            :name="category.icon"
+            :animation="category.animation"
+            fill="white"
+          />
           <span class="title">{{ category.title }}</span>
         </Button>
       </div>
 
       <div class="header-auth">
-        <Button label="Sign In" icon="pi pi-arrow-right" class="sign-in-button" />
-        <Button label="Register" icon="pi pi-user-plus" class="register-button" />
+        <Button
+          label="Sign In"
+          icon="pi pi-arrow-right"
+          class="sign-in-button"
+        />
+        <Button
+          label="Register"
+          icon="pi pi-user-plus"
+          class="register-button"
+        />
       </div>
     </div>
   </body>
-
 </template>
 
 <style scoped>
@@ -151,7 +164,7 @@ const headerCategories = ref([
   position: relative;
   width: fit-content;
   margin-top: -1px;
-  font-family: "Inter-Regular", Helvetica;
+  font-family: 'Inter-Regular', Helvetica;
   font-weight: 400;
   color: #1e1e1e;
   font-size: 16px;
