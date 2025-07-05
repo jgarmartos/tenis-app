@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/vue-query';
 import api from '@/api/api';
 
-
 export const usePlayerQuery = (id: string | string[], options = {}) => {
   return useQuery({
     queryKey: ['player', id],
@@ -13,4 +12,3 @@ export const usePlayerQuery = (id: string | string[], options = {}) => {
     ...options,
   });
 };
-
