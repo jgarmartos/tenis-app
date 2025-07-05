@@ -1,0 +1,12 @@
+# Ignore formatting for these files and directories
+node_modules/
+dist/
+build/
+target/
+*.min.js
+*.min.css
+coverage/
+.nyc_output/
+*.log
+*.jar
+*.class
