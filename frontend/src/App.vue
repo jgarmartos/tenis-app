@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView } from 'vue-router';
 </script>
 
 <template>
@@ -11,5 +11,4 @@ header {
   line-height: 2;
   max-height: 20vh;
 }
-
 </style>
