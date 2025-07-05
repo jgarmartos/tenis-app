@@ -31,7 +31,7 @@ public class PlayerController {
     private PlayerStatisticsService playerStatisticsService;
 
     @PostMapping
-    public Player createPlayer(Player player) {
+    public Player createPlayer(@RequestBody Player player) {
         return playerService.createPlayer(player);
     }
 

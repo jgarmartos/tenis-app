@@ -1,78 +1,71 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import type { PlayerSubmit } from "@/interfaces/PlayerInterfaces";
-import saveData from "@/services/requests/saveData";
+import { ref, watch } from 'vue';
+import { usePlayerStore } from '@/stores/usePlayerStore';
+import type { PlayerSubmit } from '@/interfaces/PlayerInterfaces';
+import { usePlayerMutations } from '@/services/requests/usePlayerMutations';
 
-const props = defineProps<{
-  visible: boolean;
-  setVisible: (value: boolean) => void;
-  retry: () => void;
-}>();
+const store = usePlayerStore();
+const { createPlayer, updatePlayer } = usePlayerMutations(() => store.closeDialog());
 
 const player = ref<PlayerSubmit>({
-  name: "",
-  forehand: "",
+  name: '',
+  forehand: '',
 });
 
-const selectedHand = ref({ name: "" });
+const selectedHand = ref({ name: '' });
+const preferedHand = [{ name: 'Derecha' }, { name: 'Izquierda' }];
 
-const preferedHand = [
-  { name: "Derecha" },
-  { name: "Izquierda" },
-];
+// Si hay jugador para editar, inicializar campos
+watch(
+  () => store.playerToEdit,
+  (playerToEdit) => {
+    if (playerToEdit) {
+      player.value = {
+        name: playerToEdit.name,
+        forehand: playerToEdit.forehand,
+      };
+      selectedHand.value = { name: playerToEdit.forehand };
+    } else {
+      player.value = { name: '', forehand: '' };
+      selectedHand.value = { name: '' };
+    }
+  },
+  { immediate: true }
+);
 
 const savePlayer = () => {
-  props.setVisible(false);
   player.value.forehand = selectedHand.value.name;
-  saveData.savePlayer(player.value).then((response) => {
-    props.retry();
-    console.log(response);
-  });
+
+  if (store.playerToEdit) {
+    updatePlayer.mutate({ id: store.playerToEdit.id, data: player.value });
+  } else {
+    createPlayer.mutate(player.value);
+  }
 };
 </script>
 
-
-
 <template>
-<Dialog
-      :visible="visible"
-      modal
-      header="Edit Profile"
-      :style="{ width: '25rem' }" :closable="false">
-      <template #header>
-        <div class="inline-flex align-items-center justify-content-center gap-2">
-          <span class="font-bold white-space-nowrap">Crear jugador</span>
-        </div>
-      </template>
-      <!-- <span class="p-text-secondary block mb-5">Update your information.</span> -->
-      <div class="add-player-line">
-        <label for="username" class="font-semibold w-6rem">Nombre</label>
-        <InputText v-model="player.name" id="username" class="flex-auto w-1rem" autocomplete="off" />
-      </div>
-      <div class="add-player-line">
-        <label for="email" class="font-semibold w-6rem">Mano preferida</label>
-        <Dropdown v-model="selectedHand" :options="preferedHand" optionLabel="name" placeholder="" class="w-full md:w-8rem" /> 
-        
-      </div>
-      <template #footer>
-        <Button label="Cancel" text severity="secondary"
-          @click="setVisible(false)" autofocus />
-        <Button label="Save" outlined severity="secondary"
-          @click="savePlayer" autofocus />
-      </template>
-    </Dialog>
+  <Dialog v-model:visible="store.isDialogVisible" modal header="Crear jugador" :style="{ width: '25rem' }">
+    <div class="add-player-line">
+      <label class="font-semibold w-6rem">Nombre</label>
+      <InputText v-model="player.name" class="flex-auto w-1rem" autocomplete="off" />
+    </div>
+    <div class="add-player-line">
+      <label class="font-semibold w-6rem">Mano preferida</label>
+      <Dropdown v-model="selectedHand" :options="preferedHand" optionLabel="name" class="w-full md:w-8rem" />
+    </div>
+    <template #footer>
+      <Button label="Cancelar" text severity="secondary" @click="store.closeDialog()" />
+      <Button label="Guardar" outlined severity="secondary" @click="savePlayer" />
+    </template>
+  </Dialog>
 </template>
 
 <style scoped>
-
 .add-player-line {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 10px;
-}
-
-.right-side {
-  margin-left: auto;
 }
 </style>

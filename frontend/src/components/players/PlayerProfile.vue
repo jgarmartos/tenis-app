@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import MenuBar from '@/components/MenuBar.vue';
-import { usePlayer, usePlayerQuery } from '@/services/requests/usePlayer';
+import { usePlayerQuery } from '@/services/requests/usePlayer';
 import { ref, watchEffect } from 'vue';
 import Chart from 'primevue/chart';
 import PlayerMatchesTableComponent from './PlayerMatchesTableComponent.vue';
