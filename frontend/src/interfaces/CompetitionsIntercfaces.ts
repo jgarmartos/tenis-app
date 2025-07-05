@@ -1,12 +1,12 @@
 export interface Competition {
-    id: number,
-    name: string,
-    startDate: Date,
-    endDate: Date,
+  id: number;
+  name: string;
+  startDate: Date;
+  endDate: Date;
 }
 
 export interface CompetitionSubmit {
-    name: string,
-    startDate: Date,
-    endDate: Date,
+  name: string;
+  startDate: Date;
+  endDate: Date;
 }
