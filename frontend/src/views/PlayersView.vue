@@ -1,28 +1,26 @@
 <script setup lang="ts">
 import MenuBar from '@/components/MenuBar.vue';
 import PlayerListPanel from '@/components/players/PlayerListPanel.vue';
-
-
 </script>
 
 <template>
-    <header>
-        <MenuBar />
-    </header>
+  <header>
+    <MenuBar />
+  </header>
 
-    <body>
-        <div class="panels-container">
-            <Panel class="panel">
-                <PlayerListPanel />
-            </Panel>
-        </div>
-    </body>
+  <body>
+    <div class="panels-container">
+      <Panel class="panel">
+        <PlayerListPanel />
+      </Panel>
+    </div>
+  </body>
 </template>
 
 <style scoped>
 header {
-    line-height: 2;
-    max-height: 20vh;
+  line-height: 2;
+  max-height: 20vh;
 }
 
 .panel {

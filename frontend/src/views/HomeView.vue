@@ -1,27 +1,25 @@
 <script setup lang="ts">
-import MenuBar from "@/components/MenuBar.vue";
-import PlayersPanel from "@/components/players/PlayersPanel.vue";
-import MatchesPanel from "@/components/matches/MatchesPanel.vue";
-import CompetitionsPanel from "@/components/competitions/CompetitionsPanel.vue";
-import PlacesPanel from "@/components/places/PlacesPanel.vue";
-
+import MenuBar from '@/components/MenuBar.vue';
+import PlayersPanel from '@/components/players/PlayersPanel.vue';
+import MatchesPanel from '@/components/matches/MatchesPanel.vue';
+import CompetitionsPanel from '@/components/competitions/CompetitionsPanel.vue';
+import PlacesPanel from '@/components/places/PlacesPanel.vue';
 </script>
 
 <template>
   <main>
-  <header>
-    <MenuBar />
-  </header>
+    <header>
+      <MenuBar />
+    </header>
     <div class="panels-container">
-      <PlayersPanel class="panel"/>
-      <MatchesPanel class="panel"/>
+      <PlayersPanel class="panel" />
+      <MatchesPanel class="panel" />
       <div class="flex-container">
         <CompetitionsPanel />
         <PlacesPanel />
       </div>
     </div>
   </main>
-
 </template>
 
 <style scoped>
@@ -45,7 +43,7 @@ main {
   display: flex !important;
   /* margin: 0 auto; */
   justify-content: space-between;
-  
+
   flex-direction: column;
   /* Arrange items in a column */
   gap: 16px;
@@ -64,12 +62,12 @@ main {
 }
 
 @media (min-width: 768px) {
-  .panels-container { 
+  .panels-container {
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
   }
-  
+
   .flex-container {
     width: 25%;
     flex-direction: column;
@@ -82,5 +80,4 @@ main {
   /* height: 100%; */
   /* overflow: auto; */
 }
-
 </style>
