@@ -1,26 +1,27 @@
 /* @import './base.css'; */
 
 #app {
-    max-width: 95%;
-    margin: 0 auto;
-    /* padding: 2rem; */
-    font-weight: normal;
-    /* background-color: rgb(169, 222, 169); */
-    /* display: flex; */
-    --blue-color: #3B82F6;
-    --green-color: #10B981;
+  max-width: 95%;
+  margin: 0 auto;
+  /* padding: 2rem; */
+  font-weight: normal;
+  /* background-color: rgb(169, 222, 169); */
+  /* display: flex; */
+  --blue-color: #3b82f6;
+  --green-color: #10b981;
 }
 
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden; /* Evita el scroll horizontal */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden; /* Evita el scroll horizontal */
 }
 
 body {
-    /* align-items: right; */
-    /* display: flex; */
-    background-color: rgb(134, 185, 221);
+  /* align-items: right; */
+  /* display: flex; */
+  background-color: rgb(134, 185, 221);
 }
