@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -26,8 +27,9 @@ import com.jgmartos.backend.services.MatchService;
 import com.jgmartos.backend.services.MatchStatisticsService;
 import com.jgmartos.backend.services.SetService;
 
-@RestController
-@RequestMapping("/matches")
+import jakarta.persistence.EntityNotFoundException;
+
+@RestController @RequestMapping("/matches")
 public class MatchController {
 
     @Autowired
@@ -86,7 +88,7 @@ public class MatchController {
         return matchService.updateWinner(id, winnerId);
     }
 
-    @PutMapping("/{id}")                        
+    @PutMapping("/{id}")
     public Match updateMatch(@PathVariable Integer id, @RequestBody Match match) {
         match.setId(id);
         return matchService.updateMatch(match);
@@ -125,5 +127,18 @@ public class MatchController {
 
     }
 
+    @GetMapping("byplace/{placeId}")
+    public ResponseEntity<List<Match>> getMatchesByPlace(@PathVariable Integer placeId) {
+        try {
+            List<Match> matches = matchService.getMatchesByPlace(placeId);
+            return ResponseEntity.ok(matches);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build(); // 400 Bad Request
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build(); // 404 Not Found
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build(); // 500 Internal Server Error
+        }
+    }
 
 }

@@ -10,4 +10,6 @@ public interface MatchRepository extends JpaRepository<Match, Integer> {
 
     public List<Match> findByPlayer1IdOrPlayer2Id(Integer player1, Integer player2);
 
+    public List<Match> findByPlaceId(Integer placeId);
+
 }
