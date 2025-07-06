@@ -40,6 +40,7 @@ import AvatarGroup from 'primevue/avatargroup'; //Optional for grouping
 import Menubar from 'primevue/menubar';
 import SelectButton from 'primevue/selectbutton';
 import Fieldset from 'primevue/fieldset';
+import i18n from './i18n';
 
 import {
   FaFlag,
@@ -85,6 +86,7 @@ app.use(PrimeVue, { ripple: true });
 app.use(VueQueryPlugin);
 app.use(createPinia());
 app.use(router);
+app.use(i18n);
 
 app.component('Button', Button);
 app.component('DataView', DataView);
