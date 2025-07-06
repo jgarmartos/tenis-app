@@ -4,23 +4,19 @@ import AddMatchDialog from './AddMatchDialog.vue';
 import MatchInfoDialog from './MatchInfoDialog.vue';
 import { useInitialData } from '@/services/requests/useInitialData';
 import { useDataStore } from '@/stores/useDataStore';
-import {
-  useCreateMatchStore,
-  useMatchInfoStore,
-} from '@/stores/createMatchStore';
+import { useMatchInfoStore } from '@/stores/createMatchStore';
 import type { Match } from '@/interfaces/MatchesInterfaces';
 import { emptyMatch } from '@/services/emptyObjects';
 import { getSetsResultForMatch } from '@/services/matchServices';
 import router from '@/router';
 
-const { matchesQuery, setsQuery } = useInitialData();
+const { matchesQuery } = useInitialData();
 
 const matches = computed(() => useDataStore().matches);
 
-const sets = computed(() => useDataStore().sets);
-
 /**
- * @description Setting the name of the columns
+ * Configuration for the data table columns.
+ * Defines headers and field mappings for the matches table.
  */
 const columns = [
   {
@@ -49,60 +45,54 @@ const columns = [
   },
 ];
 
+/**
+ * Property name to access from player and place objects.
+ */
 const propertyToAccess = 'name';
 
-const sortedSets = ref();
-
 /**
- * @description Mapear sets a los partidos usando el matchId
- * @param matchId {string} ID del partido
- * @returns {Array} Array de sets correspondientes
- */
-
-/**
- * @description Get the last five matches
+ * Computes the last five matches in reverse chronological order.
  * @returns {Array} Array of the last five matches
  */
 const lastFiveMatches = computed(() => {
   return matches.value.slice(-5).reverse() || [];
 });
 
-// const dialogs = {
-//     visibleAddMatchDialog: ref(false),
-//     visibleEditMatchDialog: ref(false),
-// };
-
 /**
- * @initialValue {boolean} visibleAddMatchDialog
- * @function {function} setVisible
- * @description Set the visibility of the dialog
+ * Controls the visibility of the add match dialog.
  */
 const visibleAddMatchDialog = ref(false);
 
 /**
- * @initialValue {boolean} visibleMatchInfoDialog
- * @function {function} setVisible
- * @description Set the visibility of the dialog
+ * Controls the visibility of the match info dialog.
  */
 const visibleMatchInfoDialog = ref(false);
 
+/**
+ * Sets the visibility state of the add match dialog.
+ * @param {boolean} value - The visibility state to set
+ */
 const setVisibleAddMatchDialog = (value: boolean) => {
   visibleAddMatchDialog.value = value;
 };
 
+/**
+ * Sets the visibility state of the match info dialog.
+ * @param {boolean} value - The visibility state to set
+ */
 const setVisibleMatchInfoDialog = (value: boolean) => {
   visibleMatchInfoDialog.value = value;
 };
 
-// const setVisible = (property: Ref<boolean>, value: boolean) => {
-//     property.value = value;
-// };
-
+/**
+ * Stores the currently selected match information.
+ */
 const matchInfo = ref<Match>(emptyMatch());
 
 /**
- * @description Handle the row select event
- * @param event {Event} Event
+ * Handles row selection in the matches table.
+ * Navigates to the match info page with the selected match data.
+ * @param {any} event - The row selection event containing match data
  */
 const onRowSelect = (event: any) => {
   matchInfo.value = event.data;
@@ -148,7 +138,6 @@ const onRowSelect = (event: any) => {
         @rowSelect="onRowSelect"
         selectionMode="single"
       >
-        <!-- <Column v-for="col in columns" :field="col.field.value" :header="col.field.header" sortable /> -->
         <Column v-for="col in columns" sortable>
           <template #header>
             <span>{{ col.field.header }}</span>
@@ -158,7 +147,6 @@ const onRowSelect = (event: any) => {
               {{ matchesResponse.data[col.field.value][propertyToAccess] }}
             </span>
             <span v-else>
-              <!-- Renderizamos las puntuaciones de los sets -->
               {{ getSetsResultForMatch(matchesResponse.data.id) }}
             </span>
           </template>
@@ -171,19 +159,14 @@ const onRowSelect = (event: any) => {
 <style scoped>
 .panel {
   border-radius: 10px;
-  /* overflow: hidden; */
   border-bottom-width: 1px;
   border-bottom-style: solid;
   border-color: #d9d9d9;
-  /* max-width: 50%; */
-  /* min-width: 33%;; */
   width: 50%;
 }
 
 .player-field {
-  /* flex-direction: row; */
   display: flex;
-  /* align-items: center; */
   gap: 20px;
   padding: 14px;
   font-size: small;

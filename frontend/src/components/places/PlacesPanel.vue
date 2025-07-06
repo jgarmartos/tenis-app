@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useInitialData } from '@/services/requests/useInitialData';
 import { useDataStore } from '@/stores/useDataStore';
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import AddPlaceDialog from './AddPlaceDialog.vue';
+import PlaceInfoDialog from './PlaceInfoDialog.vue';
 import type { Place } from '@/interfaces/PlacesInterfaces';
 import { usePlaceStore } from '@/stores/usePlaceStore';
 import { usePlaceMutations } from '@/services/requests/usePlaceMutations';
@@ -17,30 +18,42 @@ const store = usePlaceStore();
  */
 const { placesQuery } = useInitialData();
 
+/**
+ * Computed property for accessing places from the global store.
+ */
 const places = computed(() => useDataStore().places);
 
+/**
+ * Computed property for getting the last 3 places in reverse order.
+ */
 const lastPlaces = computed(() => {
   return places.value?.slice(-3).reverse() || [];
 });
 
+/**
+ * Column configuration for the places data table.
+ */
 const columns = [
   { field: 'name', sortable: true },
   { field: 'city', sortable: true },
 ];
 
 /**
- * Opens the dialog to edit a player.
- * @param {Player} player - Player to edit
+ * Opens the dialog to edit a place.
+ * @param {Place} place - The place to edit
  */
 const editPlayer = (place: Place) => {
   store.openDialog(place);
 };
 
+/**
+ * Place mutation functions for CRUD operations.
+ */
 const { deletePlace } = usePlaceMutations();
 
 /**
- * Handles player deletion with confirmation dialog.
- * @param {number} playerId - ID of the player to delete
+ * Handles place deletion with confirmation dialog.
+ * @param {number} placeId - ID of the place to delete
  */
 const handleDelete = (placeId: number) => {
   if (confirm('¿Estás seguro de que quieres eliminar este lugar?')) {
@@ -48,9 +61,14 @@ const handleDelete = (placeId: number) => {
   }
 };
 
+/**
+ * Handles place selection to show detailed information.
+ * @param {any} event - The selection event containing place data
+ */
 const showPlaceInfo = (event: any) => {
+  console.log('showPlaceInfo', event);
   const place = event.data as Place;
-  store.openDialog(place);
+  store.showPlaceInfo(place);
 };
 </script>
 
@@ -68,11 +86,13 @@ const showPlaceInfo = (event: any) => {
       </div>
     </template>
     <AddPlaceDialog />
+    <PlaceInfoDialog/>
     <DataTable
       :value="lastPlaces"
       size="small"
       :loading="placesQuery.isFetching.value"
       @row-select="showPlaceInfo"
+      selectionMode="single"
     >
       <Column v-for="col in columns" :field="col.field" />
       <Column>

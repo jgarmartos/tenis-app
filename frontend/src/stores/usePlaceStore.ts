@@ -1,14 +1,15 @@
-// src/stores/playerStore.ts
 import { defineStore } from 'pinia';
 import type { Place } from '@/interfaces/PlacesInterfaces';
 
 /**
- * Store for managing place dialog state and editing.
+ * Pinia store for managing place dialog state and editing operations.
+ * Handles both creation/editing dialog and information display dialog.
  */
 export const usePlaceStore = defineStore('placeStore', {
   state: () => ({
     placeToEdit: null as Place | null,
     isDialogVisible: false,
+    isInfoVisible: false,
   }),
   actions: {
     /**
@@ -25,6 +26,21 @@ export const usePlaceStore = defineStore('placeStore', {
     closeDialog() {
       this.placeToEdit = null;
       this.isDialogVisible = false;
+    },
+    /**
+     * Shows the place information dialog.
+     * @param {Place} place - The place to show information for.
+     */
+    showPlaceInfo(place: Place) {
+      this.placeToEdit = place;
+      this.isInfoVisible = true;
+    },
+    /**
+     * Hides the place information dialog.
+     */
+    hidePlaceInfo() {
+      this.isInfoVisible = false;
+      this.placeToEdit = null;
     },
   },
 });
