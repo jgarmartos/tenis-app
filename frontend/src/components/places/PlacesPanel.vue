@@ -27,7 +27,7 @@ const places = computed(() => useDataStore().places);
  * Computed property for getting the last 3 places in reverse order.
  */
 const lastPlaces = computed(() => {
-  return places.value?.slice(-3).reverse() || [];
+  return places.value?.reverse() || [];
 });
 
 /**
@@ -86,7 +86,7 @@ const showPlaceInfo = (event: any) => {
       </div>
     </template>
     <AddPlaceDialog />
-    <PlaceInfoDialog/>
+    <PlaceInfoDialog />
     <DataTable
       :value="lastPlaces"
       size="small"
