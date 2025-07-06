@@ -15,8 +15,8 @@ import PlacesPanel from '@/components/places/PlacesPanel.vue';
       <PlayersPanel class="panel" />
       <MatchesPanel class="panel" />
       <div class="flex-container">
-        <CompetitionsPanel />
         <PlacesPanel />
+        <CompetitionsPanel />
       </div>
     </div>
   </main>

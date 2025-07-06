@@ -90,6 +90,8 @@ const showPlaceInfo = (event: any) => {
     <DataTable
       :value="lastPlaces"
       size="small"
+      paginator
+      :rows="5"
       :loading="placesQuery.isFetching.value"
       @row-select="showPlaceInfo"
       selectionMode="single"
