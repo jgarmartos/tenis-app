@@ -16,11 +16,9 @@ import com.jgmartos.backend.models.Place;
 import com.jgmartos.backend.services.PlaceService;
 
 /**
- * REST controller for managing tennis court places.
- * Provides CRUD operations for Place entities through HTTP endpoints.
+ * REST controller for managing tennis court places. Provides CRUD operations for Place entities through HTTP endpoints.
  */
-@RestController
-@RequestMapping("/places")
+@RestController @RequestMapping("/places")
 public class PlaceController {
 
     @Autowired
@@ -51,12 +49,14 @@ public class PlaceController {
     /**
      * Updates an existing place with new information.
      *
+     * @param id    the unique identifier of the place to update
      * @param place the place entity with updated information
      * @return the updated place entity
      */
     @PutMapping("/{id}")
-    public Place updatePlace(@RequestBody Place place) {
-        return placeService.updatePlace(place);
+    public Place updatePlace(@PathVariable Integer id, @RequestBody Place place) {
+        // Use the new update method that merges existing data
+        return placeService.updatePlace(id, place);
     }
 
     /**
@@ -78,7 +78,5 @@ public class PlaceController {
     public List<Place> getAllPlaces() {
         return placeService.getAllPlaces();
     }
-
-
 
 }

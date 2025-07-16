@@ -38,7 +38,7 @@ public class CompetitionController {
 
     @DeleteMapping("/{id}")
     public void deleteCompetition(Integer id) {
-        competitionService.deleteCompetition(id);;
+        competitionService.deleteCompetition(id);
     }
 
     @GetMapping

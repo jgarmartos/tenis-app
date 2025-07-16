@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jgmartos.backend.models.Game;
@@ -20,7 +19,6 @@ public class PlayerStatisticsService {
     private final GameService gameService;
     private final SetService setService;
 
-    @Autowired
     public PlayerStatisticsService(MatchService matchService, PlayerService playerService,
             GameService gameService, SetService setService) {
         this.matchService = matchService;
@@ -109,7 +107,7 @@ public class PlayerStatisticsService {
     private void processSet(Set set, Match match, Integer playerId, PlayerStatistics stats) {
         stats.setSetsPlayed(stats.getSetsPlayed() + 1);
 
-        boolean isWinner = false;
+        boolean isWinner;
         if (set.getWinner() == null) {
             isWinner = false;
         } else {
@@ -220,26 +218,28 @@ public class PlayerStatisticsService {
     }
 
     private void categorizeGameByPoints(PlayerStatistics stats, int playerPoints, int opponentPoints, boolean isWon) {
-        if (opponentPoints == 0) {
-            stats.setGamesWonTo0(stats.getGamesWonTo0() + 1);
-        } else if (opponentPoints == 1) {
-            stats.setGamesWonTo15(stats.getGamesWonTo15() + 1);
-        } else if (opponentPoints == 2) {
-            stats.setGamesWonTo30(stats.getGamesWonTo30() + 1);
-        } else if (opponentPoints == 3) {
-            if (isWon)
-                stats.setGamesWonTo40(stats.getGamesWonTo40() + 1);
-            else
-                stats.setGamesLostTo40(stats.getGamesLostTo40() + 1);
-        } else if (opponentPoints == 4) {
-            if (playerPoints == 0)
-                stats.setGamesLostTo0(stats.getGamesLostTo0() + 1);
-            else if (playerPoints == 1)
-                stats.setGamesLostTo15(stats.getGamesLostTo15() + 1);
-            else if (playerPoints == 2)
-                stats.setGamesLostTo30(stats.getGamesLostTo30() + 1);
-            else if (playerPoints >= 3)
-                stats.setGamesLostTo40(stats.getGamesLostTo40() + 1);
+        switch (opponentPoints) {
+            case 0 -> stats.setGamesWonTo0(stats.getGamesWonTo0() + 1);
+            case 1 -> stats.setGamesWonTo15(stats.getGamesWonTo15() + 1);
+            case 2 -> stats.setGamesWonTo30(stats.getGamesWonTo30() + 1);
+            case 3 -> {
+                if (isWon)
+                    stats.setGamesWonTo40(stats.getGamesWonTo40() + 1);
+                else
+                    stats.setGamesLostTo40(stats.getGamesLostTo40() + 1);
+            }
+            case 4 -> {
+                if (playerPoints == 0)
+                    stats.setGamesLostTo0(stats.getGamesLostTo0() + 1);
+                else if (playerPoints == 1)
+                    stats.setGamesLostTo15(stats.getGamesLostTo15() + 1);
+                else if (playerPoints == 2)
+                    stats.setGamesLostTo30(stats.getGamesLostTo30() + 1);
+                else if (playerPoints >= 3)
+                    stats.setGamesLostTo40(stats.getGamesLostTo40() + 1);
+            }
+            default -> {
+            }
         }
     }
 
