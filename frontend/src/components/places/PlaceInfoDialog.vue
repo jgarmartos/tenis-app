@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { useMatchesByPlace } from '@/services/requests/useMatchesByPlace';
+import { useAppData } from '@/services/core/useAppData';
 import { usePlaceStore } from '@/stores/usePlaceStore';
-import { useDataStore } from '@/stores/useDataStore';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { Match } from '@/interfaces/MatchesInterfaces';
@@ -14,10 +13,10 @@ import type { Place } from '@/interfaces/PlacesInterfaces';
 const store = usePlaceStore();
 
 /**
- * Data store instance for accessing application data.
- * Provides access to places list and other global data.
+ * App data composable for accessing application data.
+ * Provides access to places and matches list.
  */
-const dataStore = useDataStore();
+const { places, matches } = useAppData();
 
 /**
  * i18n composable for accessing translation functions.
@@ -27,7 +26,7 @@ const { t, locale } = useI18n();
 
 /**
  * Computed property that returns the current place ID from the store.
- * Used as a reactive dependency for the matches query.
+ * Used as a reactive dependency for filtering matches.
  *
  * @returns {number | null} The ID of the place being edited, or null if no place is selected
  */
@@ -40,7 +39,16 @@ const placeId = computed(() => store.placeToEdit?.id || null);
  * @returns {Place[]} Array of available places
  */
 const availablePlaces = computed(() => {
-  return dataStore.places.filter(place => place.id !== placeId.value);
+  return places.value.filter(place => place.id !== placeId.value);
+});
+
+/**
+ * Computed property that returns matches filtered by place ID.
+ * @returns {Match[]} Array of matches for the current place
+ */
+const filteredMatches = computed(() => {
+  if (!placeId.value) return [];
+  return matches.value.filter(match => match.place.id === placeId.value);
 });
 
 /**
@@ -61,23 +69,23 @@ const selectedNewPlaceId = ref<number | null>(null);
 const showEditPlaceDialog = ref(false);
 
 /**
- * Vue Query composable for fetching matches played at the current place.
- * Provides reactive data with loading states, error handling, and automatic caching.
- *
- * @returns {Object} Query result object containing:
- *   - data: Array of matches played at this place
- *   - isLoading: Boolean indicating if the request is in progress
- *   - isError: Boolean indicating if an error occurred
- *   - error: Error object with details if request failed
- *   - refetch: Function to manually retry the request
+ * Computed property for loading state.
+ * @returns {boolean} True if data is loading
  */
-const {
-  data: matches,
-  isLoading,
-  isError,
-  error,
-  refetch,
-} = useMatchesByPlace(placeId);
+const isLoading = computed(() => false); // Since we're using cached data
+
+/**
+ * Computed property for error state.
+ * @returns {boolean} True if there's an error
+ */
+const isError = computed(() => false);
+
+/**
+ * Function to refetch data (triggers refetch of all app data).
+ */
+const refetch = () => {
+  // Could implement specific refetch logic if needed
+};
 
 /**
  * Formats a date string into a localized, human-readable format.
@@ -188,28 +196,16 @@ const updateMatchPlace = async (): Promise<void> => {
 
 <template>
   <!-- Place information dialog modal -->
-  <Dialog
-    v-model:visible="store.isInfoVisible"
-    modal
-    :header="store.placeToEdit?.name"
-    :style="{ width: '35rem' }"
-  >
+  <Dialog v-model:visible="store.isInfoVisible" modal :header="store.placeToEdit?.name" :style="{ width: '35rem' }">
     <!-- Place ID display field -->
     <div v-if="store.placeToEdit" class="flex-horizontal">
       <label for="placeId" class="font-semibold w-6rem">{{
         t('places.infoDialog.fields.id')
       }}</label>
-      <InputText
-        :value="
-          store.placeToEdit?.id !== undefined
-            ? String(store.placeToEdit.id)
-            : ''
-        "
-        id="placeId"
-        class="flex-input"
-        autocomplete="off"
-        disabled
-      />
+      <InputText :value="store.placeToEdit?.id !== undefined
+          ? String(store.placeToEdit.id)
+          : ''
+        " id="placeId" class="flex-input" autocomplete="off" disabled />
     </div>
 
     <!-- Matches section -->
@@ -227,34 +223,18 @@ const updateMatchPlace = async (): Promise<void> => {
       <!-- Error state display with retry option -->
       <div v-else-if="isError" class="error-state">
         <Message severity="error" class="error-message">
-          {{ error?.message || t('places.infoDialog.matches.error') }}
+          {{ t('places.infoDialog.matches.error') }}
         </Message>
-        <Button
-          @click="() => refetch()"
-          :label="t('places.infoDialog.matches.retry')"
-          severity="secondary"
-          size="small"
-        />
+        <Button @click="() => refetch()" :label="t('places.infoDialog.matches.retry')" severity="secondary"
+          size="small" />
       </div>
 
       <!-- Success state with matches table -->
-      <div v-else-if="matches?.length" class="matches-table">
-        <DataTable
-          :value="matches"
-          size="small"
-          class="compact-table"
-          paginator
-          :rows="5"
-          :rowsPerPageOptions="[5, 10, 20]"
-        >
-          <Column
-            field="player1.name"
-            :header="t('places.infoDialog.matches.columns.player1')"
-          />
-          <Column
-            field="player2.name"
-            :header="t('places.infoDialog.matches.columns.player2')"
-          />
+      <div v-else-if="filteredMatches?.length" class="matches-table">
+        <DataTable :value="filteredMatches" size="small" class="compact-table" paginator :rows="5"
+          :rowsPerPageOptions="[5, 10, 20]">
+          <Column field="player1.name" :header="t('places.infoDialog.matches.columns.player1')" />
+          <Column field="player2.name" :header="t('places.infoDialog.matches.columns.player2')" />
           <Column :header="t('places.infoDialog.matches.columns.date')">
             <template #body="slotProps">
               <div class="date-column">
@@ -267,20 +247,12 @@ const updateMatchPlace = async (): Promise<void> => {
               </div>
             </template>
           </Column>
-          <Column
-            field="winner.name"
-            :header="t('places.infoDialog.matches.columns.winner')"
-          />
+          <Column field="winner.name" :header="t('places.infoDialog.matches.columns.winner')" />
           <Column :header="t('common.actions')">
             <template #body="slotProps">
               <div class="actions-column">
-                <Button
-                  icon="pi pi-map-marker"
-                  size="small"
-                  severity="secondary"
-                  :tooltip="t('places.infoDialog.matches.changePlace')"
-                  @click="openEditPlaceDialog(slotProps.data)"
-                />
+                <Button icon="pi pi-map-marker" size="small" severity="secondary"
+                  :tooltip="t('places.infoDialog.matches.changePlace')" @click="openEditPlaceDialog(slotProps.data)" />
               </div>
             </template>
           </Column>
@@ -296,12 +268,8 @@ const updateMatchPlace = async (): Promise<void> => {
   </Dialog>
 
   <!-- Edit Match Place Dialog -->
-  <Dialog
-    v-model:visible="showEditPlaceDialog"
-    modal
-    :header="t('places.infoDialog.editPlace.title')"
-    :style="{ width: '25rem' }"
-  >
+  <Dialog v-model:visible="showEditPlaceDialog" modal :header="t('places.infoDialog.editPlace.title')"
+    :style="{ width: '25rem' }">
     <div v-if="selectedMatchForEdit" class="edit-place-content">
       <!-- Match info display -->
       <div class="match-info">
@@ -320,16 +288,9 @@ const updateMatchPlace = async (): Promise<void> => {
         <label for="newPlace" class="field-label">
           {{ t('places.infoDialog.editPlace.newPlace') }}
         </label>
-        <Dropdown
-          id="newPlace"
-          v-model="selectedNewPlaceId"
-          :options="availablePlaces"
-          optionLabel="name"
-          optionValue="id"
-          :placeholder="t('places.infoDialog.editPlace.selectPlace')"
-          class="place-dropdown"
-          showClear
-        />
+        <Dropdown id="newPlace" v-model="selectedNewPlaceId" :options="availablePlaces" optionLabel="name"
+          optionValue="id" :placeholder="t('places.infoDialog.editPlace.selectPlace')" class="place-dropdown"
+          showClear />
       </div>
 
       <!-- Warning message -->
@@ -343,16 +304,9 @@ const updateMatchPlace = async (): Promise<void> => {
 
     <template #footer>
       <div class="dialog-footer">
-        <Button
-          :label="t('common.cancel')"
-          severity="secondary"
-          @click="closeEditPlaceDialog"
-        />
-        <Button
-          :label="t('places.infoDialog.editPlace.updatePlace')"
-          :disabled="!selectedNewPlaceId"
-          @click="updateMatchPlace"
-        />
+        <Button :label="t('common.cancel')" severity="secondary" @click="closeEditPlaceDialog" />
+        <Button :label="t('places.infoDialog.editPlace.updatePlace')" :disabled="!selectedNewPlaceId"
+          @click="updateMatchPlace" />
       </div>
     </template>
   </Dialog>

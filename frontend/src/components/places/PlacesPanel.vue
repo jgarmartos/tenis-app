@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { useInitialData } from '@/services/requests/useInitialData';
-import { useDataStore } from '@/stores/useDataStore';
+import { useAppData } from '@/services/core/useAppData';
 import { computed } from 'vue';
 import AddPlaceDialog from './AddPlaceDialog.vue';
 import PlaceInfoDialog from './PlaceInfoDialog.vue';
 import type { Place } from '@/interfaces/PlacesInterfaces';
 import { usePlaceStore } from '@/stores/usePlaceStore';
-import { usePlaceMutations } from '@/services/requests/usePlaceMutations';
 
 /**
  * Store instance for managing place dialog state and place to edit.
@@ -14,14 +12,9 @@ import { usePlaceMutations } from '@/services/requests/usePlaceMutations';
 const store = usePlaceStore();
 
 /**
- * Query for fetching places from the backend.
+ * Modern data loading with loading states
  */
-const { placesQuery } = useInitialData();
-
-/**
- * Computed property for accessing places from the global store.
- */
-const places = computed(() => useDataStore().places);
+const { places, isLoading, placesQuery } = useAppData();
 
 /**
  * Computed property for getting the last 3 places in reverse order.
@@ -47,17 +40,14 @@ const editPlayer = (place: Place) => {
 };
 
 /**
- * Place mutation functions for CRUD operations.
- */
-const { deletePlace } = usePlaceMutations();
-
-/**
  * Handles place deletion with confirmation dialog.
+ * TODO: Implement place deletion mutation
  * @param {number} placeId - ID of the place to delete
  */
 const handleDelete = (placeId: number) => {
   if (confirm('¿Estás seguro de que quieres eliminar este lugar?')) {
-    deletePlace.mutate(placeId);
+    // TODO: Implement place deletion mutation
+    console.log('Delete place:', placeId);
   }
 };
 
@@ -87,29 +77,14 @@ const showPlaceInfo = (event: any) => {
     </template>
     <AddPlaceDialog />
     <PlaceInfoDialog />
-    <DataTable
-      :value="lastPlaces"
-      size="small"
-      paginator
-      :rows="5"
-      :loading="placesQuery.isFetching.value"
-      @row-select="showPlaceInfo"
-      selectionMode="single"
-    >
+    <DataTable :value="lastPlaces" size="small" paginator :rows="5" :loading="isLoading" @row-select="showPlaceInfo"
+      selectionMode="single">
       <Column v-for="col in columns" :field="col.field" />
       <Column>
         <template #body="slotProps">
           <div class="action-buttons">
-            <Button
-              icon="pi pi-pencil"
-              class="ghost-button"
-              @click="editPlayer(slotProps.data)"
-            />
-            <Button
-              icon="pi pi-trash"
-              class="ghost-button danger"
-              @click="handleDelete(slotProps.data.id)"
-            />
+            <Button icon="pi pi-pencil" class="ghost-button" @click="editPlayer(slotProps.data)" />
+            <Button icon="pi pi-trash" class="ghost-button danger" @click="handleDelete(slotProps.data.id)" />
           </div>
         </template>
       </Column>

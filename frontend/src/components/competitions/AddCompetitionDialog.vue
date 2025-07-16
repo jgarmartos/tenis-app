@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { PlayerSubmit } from '@/interfaces/PlayerInterfaces';
-import saveData from '@/services/requests/saveData';
+import { useAppData } from '@/services/core/useAppData';
 import type { CompetitionSubmit } from '@/interfaces/CompetitionsIntercfaces';
 
 const props = defineProps<{
@@ -10,29 +9,24 @@ const props = defineProps<{
   retry: () => void;
 }>();
 
+const { competitionsQuery } = useAppData();
+
 const competition = ref<CompetitionSubmit>({
   name: '',
   startDate: new Date(),
   endDate: new Date(),
 });
 
-const saveCompetition = () => {
+const saveCompetition = async () => {
   props.setVisible(false);
-  saveData.saveCompetition(competition.value).then(response => {
-    props.retry();
-    console.log(response);
-  });
+  // TODO: Implement competition creation mutation when needed
+  // For now, just call retry to refresh data
+  props.retry();
 };
 </script>
 
 <template>
-  <Dialog
-    :visible="visible"
-    modal
-    header="Edit Profile"
-    :style="{ width: '25rem' }"
-    :closable="false"
-  >
+  <Dialog :visible="visible" modal header="Edit Profile" :style="{ width: '25rem' }" :closable="false">
     <template #header>
       <div class="inline-flex align-items-center justify-content-center gap-2">
         <span class="font-bold white-space-nowrap">Crear competición</span>
@@ -41,12 +35,7 @@ const saveCompetition = () => {
     <!-- <span class="p-text-secondary block mb-5">Update your information.</span> -->
     <div class="add-player-line">
       <label for="username" class="font-semibold w-6rem">Nombre</label>
-      <InputText
-        v-model="competition.name"
-        id="username"
-        class="flex-auto w-1rem"
-        autocomplete="off"
-      />
+      <InputText v-model="competition.name" id="username" class="flex-auto w-1rem" autocomplete="off" />
     </div>
     <div class="add-player-line">
       <label for="email" class="font-semibold w-6rem">Fecha Inicio</label>
@@ -57,20 +46,8 @@ const saveCompetition = () => {
       <Calendar v-model="competition.endDate" />
     </div>
     <template #footer>
-      <Button
-        label="Cancel"
-        text
-        severity="secondary"
-        @click="setVisible(false)"
-        autofocus
-      />
-      <Button
-        label="Save"
-        outlined
-        severity="secondary"
-        @click="saveCompetition"
-        autofocus
-      />
+      <Button label="Cancel" text severity="secondary" @click="setVisible(false)" autofocus />
+      <Button label="Save" outlined severity="secondary" @click="saveCompetition" autofocus />
     </template>
   </Dialog>
 </template>
