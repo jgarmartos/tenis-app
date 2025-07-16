@@ -21,7 +21,8 @@ public class BackendApplication {
                 registry.addMapping("/**") // Allow all paths
                         .allowedOrigins("http://localhost:3000",
                         "https://master--lovely-gecko-25dc57.netlify.app",
-                        "https://hytasa-tennis-db.es"
+                        "https://hytasa-tennis-db.es",
+                        "https://www.hytasa-tennis-db.es"
                         ) // Allow requests from your frontend
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH") // Allow common HTTP methods
                         .allowedHeaders("*") // Allow all headers

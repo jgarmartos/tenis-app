@@ -141,4 +141,10 @@ public class MatchController {
         }
     }
 
+    @PatchMapping("/{id}/place")
+    public Match updateMatchPlace(@PathVariable Integer id, @RequestBody Map<String, Integer> placeRequest) {
+        Integer placeId = placeRequest.get("placeId");
+        return matchService.updateMatchPlace(id, placeId);
+    }
+
 }
