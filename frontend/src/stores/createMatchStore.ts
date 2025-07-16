@@ -10,6 +10,7 @@ import type { Player } from '@/interfaces/PlayerInterfaces';
 import type { Competition } from '@/interfaces/CompetitionsIntercfaces';
 
 import { emptyMatch, emptyPlace, emptyPlayer } from '@/services/emptyObjects';
+// Temporary: Keep using saveData until sets/games services are implemented
 import saveData from '@/services/requests/saveData';
 
 export const useCreateMatchStore = defineStore('createMatch', {

@@ -56,7 +56,8 @@ main {
 .flex-container {
   display: flex;
   flex-direction: column;
-  gap: 2rem; /* Espacio entre los componentes, ajusta según sea necesario */
+  gap: 2rem;
+  /* Espacio entre los componentes, ajusta según sea necesario */
   width: 100%;
   height: 100%;
 }
