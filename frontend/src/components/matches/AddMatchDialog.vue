@@ -2,8 +2,7 @@
 import { computed } from 'vue';
 import { useCreateMatchStore } from '@/stores/createMatchStore';
 import MatchTabView from './MatchTabView.vue';
-import { useInitialData } from '@/services/requests/useInitialData';
-import { useDataStore } from '@/stores/useDataStore';
+import { useAppData } from '@/services/core/useAppData';
 
 const props = defineProps<{
   visible: boolean;
@@ -11,7 +10,7 @@ const props = defineProps<{
   retry: () => void;
 }>();
 
-const { matchesQuery } = useInitialData();
+const { competitions, places, players, matchesQuery } = useAppData();
 
 const handleSaveMatch = async () => {
   props.setVisible(false);
@@ -21,32 +20,10 @@ const handleSaveMatch = async () => {
 };
 
 const surfaces = ['Tierra batida', 'Hierba', 'Pista dura'];
-
-/**
- * Competitions
- */
-const { competitionsQuery } = useInitialData();
-
-const competitions = computed(() => useDataStore().competitions);
-
-/**
- * Places
- */
-const { placesQuery } = useInitialData();
-
-const places = computed(() => useDataStore().places);
-
-const players = computed(() => useDataStore().players);
 </script>
 
 <template>
-  <Dialog
-    :visible="visible"
-    modal
-    header="Crear partido"
-    class="dialog"
-    :closable="false"
-  >
+  <Dialog :visible="visible" modal header="Crear partido" class="dialog" :closable="false">
     <template #header>
       <div class="inline-flex align-items-center justify-content-center gap-2">
         <span class="font-bold white-space-nowrap">Crear partido</span>
@@ -54,17 +31,9 @@ const players = computed(() => useDataStore().players);
     </template>
     <div class="dialog-content">
       <div class="add-player-line" name="competition">
-        <label for="competition" class="font-semibold w-6rem"
-          >Competición</label
-        >
-        <Dropdown
-          v-model="useCreateMatchStore().selectedCompetition"
-          :options="competitions"
-          filter
-          optionLabel="name"
-          placeholder="Competición: "
-          class="right-side"
-        >
+        <label for="competition" class="font-semibold w-6rem">Competición</label>
+        <Dropdown v-model="useCreateMatchStore().selectedCompetition" :options="competitions" filter optionLabel="name"
+          placeholder="Competición: " class="right-side">
           <template #option="slotProps">
             <div class="flex align-items-center">
               <div>{{ slotProps.option.name }}</div>
@@ -74,14 +43,8 @@ const players = computed(() => useDataStore().players);
       </div>
       <div class="add-player-line" name="place">
         <label for="place" class="font-semibold w-6rem">Lugar</label>
-        <Dropdown
-          v-model="useCreateMatchStore().selectedPlace"
-          :options="places"
-          filter
-          optionLabel="name"
-          placeholder="Lugar: "
-          class="right-side"
-        >
+        <Dropdown v-model="useCreateMatchStore().selectedPlace" :options="places" filter optionLabel="name"
+          placeholder="Lugar: " class="right-side">
           <template #option="slotProps">
             <div class="flex align-items-center">
               <div>{{ slotProps.option.name }}</div>
@@ -91,12 +54,8 @@ const players = computed(() => useDataStore().players);
       </div>
       <div class="add-player-line" name="surface">
         <label for="place" class="font-semibold w-6rem">Superficie</label>
-        <Dropdown
-          v-model="useCreateMatchStore().selectedSurface"
-          :options="surfaces"
-          placeholder="Superficie: "
-          class="right-side"
-        >
+        <Dropdown v-model="useCreateMatchStore().selectedSurface" :options="surfaces" placeholder="Superficie: "
+          class="right-side">
           <template #option="slotProps">
             <div class="flex align-items-center">
               <div>{{ slotProps.option }}</div>
@@ -110,13 +69,8 @@ const players = computed(() => useDataStore().players);
       </div> -->
       <div class="add-player-line" name="endDate">
         <label for="date" class="font-semibold w-6rem">Fecha</label>
-        <Calendar
-          id="calendar-timeonly"
-          v-model="useCreateMatchStore().startTime"
-          showTime
-          dateFormat="dd/mm/yy"
-          hourFormat="24"
-        />
+        <Calendar id="calendar-timeonly" v-model="useCreateMatchStore().startTime" showTime dateFormat="dd/mm/yy"
+          hourFormat="24" />
         <!-- <Calendar id="calendar-timeonly" v-model="useCreateMatchStore().endTime" timeOnly /> -->
       </div>
       <div class="add-player-line">
@@ -124,23 +78,13 @@ const players = computed(() => useDataStore().players);
         <div class="right-side-players">
           <div class="players-imput">
             <div>
-              <Dropdown
-                v-model="useCreateMatchStore().selectedPlayer1"
-                :options="players"
-                filter
-                optionLabel="name"
-                placeholder="Jugador 1"
-              >
+              <Dropdown v-model="useCreateMatchStore().selectedPlayer1" :options="players" filter optionLabel="name"
+                placeholder="Jugador 1">
               </Dropdown>
             </div>
             <div>
-              <Dropdown
-                v-model="useCreateMatchStore().selectedPlayer2"
-                :options="players"
-                filter
-                optionLabel="name"
-                placeholder="Jugador 2"
-              >
+              <Dropdown v-model="useCreateMatchStore().selectedPlayer2" :options="players" filter optionLabel="name"
+                placeholder="Jugador 2">
               </Dropdown>
             </div>
           </div>
@@ -150,20 +94,8 @@ const players = computed(() => useDataStore().players);
       <MatchTabView />
     </div>
     <template #footer>
-      <Button
-        label="Cancelar"
-        text
-        severity="secondary"
-        @click="setVisible(false)"
-        autofocus
-      />
-      <Button
-        label="Guardar"
-        outlined
-        severity="secondary"
-        @click="handleSaveMatch"
-        autofocus
-      />
+      <Button label="Cancelar" text severity="secondary" @click="setVisible(false)" autofocus />
+      <Button label="Guardar" outlined severity="secondary" @click="handleSaveMatch" autofocus />
     </template>
   </Dialog>
 </template>

@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import MenuBar from '@/components/MenuBar.vue';
-import { useInitialData } from '@/services/requests/useInitialData';
+import { useAppData } from '@/services/core/useAppData';
 import { useCreateMatchStore } from '@/stores/createMatchStore';
-import { useDataStore } from '@/stores/useDataStore';
 import { computed, ref } from 'vue';
 import MatchTabView from './MatchTabView.vue';
 import router from '@/router';
 import { validateMatch } from '@/services/validations';
 import type { MatchSubmit } from '@/interfaces/MatchesInterfaces';
 
-const { matchesQuery } = useInitialData();
+const { matchesQuery, competitions, places, players } = useAppData();
 
 const invalidPlace = ref(false);
 
@@ -59,22 +58,6 @@ const handleSaveMatch = async () => {
 };
 
 const surfaces = ['Tierra batida', 'Hierba', 'Pista dura'];
-
-/**
- * Competitions
- */
-const { competitionsQuery } = useInitialData();
-
-const competitions = computed(() => useDataStore().competitions);
-
-/**
- * Places
- */
-const { placesQuery } = useInitialData();
-
-const places = computed(() => useDataStore().places);
-
-const players = computed(() => useDataStore().players);
 </script>
 
 <template>
@@ -94,14 +77,8 @@ const players = computed(() => useDataStore().players);
         <div class="dialog-content">
           <div class="center-div" name="competition">
             <div>
-              <Dropdown
-                v-model="useCreateMatchStore().selectedCompetition"
-                :options="competitions"
-                filter
-                class="right-side"
-                optionLabel="name"
-                placeholder="Competición: "
-              >
+              <Dropdown v-model="useCreateMatchStore().selectedCompetition" :options="competitions" filter
+                class="right-side" optionLabel="name" placeholder="Competición: ">
                 <template #option="slotProps">
                   <div class="flex align-items-center">
                     <div>{{ slotProps.option.name }}</div>
@@ -110,15 +87,8 @@ const players = computed(() => useDataStore().players);
               </Dropdown>
             </div>
             <div>
-              <Dropdown
-                v-model="useCreateMatchStore().selectedPlace"
-                :options="places"
-                filter
-                :invalid="invalidPlace"
-                optionLabel="name"
-                placeholder="Lugar: "
-                class="right-side"
-              >
+              <Dropdown v-model="useCreateMatchStore().selectedPlace" :options="places" filter :invalid="invalidPlace"
+                optionLabel="name" placeholder="Lugar: " class="right-side">
                 <template #option="slotProps">
                   <div class="flex align-items-center">
                     <div>{{ slotProps.option.name }}</div>
@@ -127,14 +97,8 @@ const players = computed(() => useDataStore().players);
               </Dropdown>
             </div>
             <div>
-              <Dropdown
-                v-model="useCreateMatchStore().selectedSurface"
-                :options="surfaces"
-                filter
-                :invalid="invalidSurface"
-                placeholder="Superficie: "
-                class="right-side"
-              >
+              <Dropdown v-model="useCreateMatchStore().selectedSurface" :options="surfaces" filter
+                :invalid="invalidSurface" placeholder="Superficie: " class="right-side">
                 <template #option="slotProps">
                   <div class="flex align-items-center">
                     <div>{{ slotProps.option }}</div>
@@ -143,43 +107,21 @@ const players = computed(() => useDataStore().players);
               </Dropdown>
             </div>
             <div>
-              <Calendar
-                id="calendar-timeonly"
-                v-model="useCreateMatchStore().startTime"
-                showTime
-                :invalid="invalidDate"
-                dateFormat="dd/mm/yy"
-                hourFormat="24"
-              />
-              <label
-                style="font-size: small; display: inline; color: brown"
-                v-if="invalidDate"
-                >Mínimo 2024</label
-              >
+              <Calendar id="calendar-timeonly" v-model="useCreateMatchStore().startTime" showTime :invalid="invalidDate"
+                dateFormat="dd/mm/yy" hourFormat="24" />
+              <label style="font-size: small; display: inline; color: brown" v-if="invalidDate">Mínimo 2024</label>
             </div>
           </div>
 
           <div class="center-div">
             <div>
-              <Dropdown
-                v-model="useCreateMatchStore().selectedPlayer1"
-                :options="players"
-                filter
-                :invalid="invalidPlayer1"
-                optionLabel="name"
-                placeholder="Jugador 1"
-              >
+              <Dropdown v-model="useCreateMatchStore().selectedPlayer1" :options="players" filter
+                :invalid="invalidPlayer1" optionLabel="name" placeholder="Jugador 1">
               </Dropdown>
             </div>
             <div>
-              <Dropdown
-                v-model="useCreateMatchStore().selectedPlayer2"
-                :options="players"
-                filter
-                :invalid="invalidPlayer2"
-                optionLabel="name"
-                placeholder="Jugador 2"
-              >
+              <Dropdown v-model="useCreateMatchStore().selectedPlayer2" :options="players" filter
+                :invalid="invalidPlayer2" optionLabel="name" placeholder="Jugador 2">
               </Dropdown>
             </div>
           </div>
@@ -250,19 +192,22 @@ header {
   border-bottom-style: solid;
   border-color: #d9d9d9;
   width: 100%;
-  padding: 0.5rem; /* Reduce padding en móviles */
+  padding: 0.5rem;
+  /* Reduce padding en móviles */
 }
 
 .panels-container {
   padding-top: 1%;
   display: flex;
-  flex-direction: column; /* Colocar los elementos en columna en móviles */
+  flex-direction: column;
+  /* Colocar los elementos en columna en móviles */
   width: 100%;
   height: 100%;
 }
 
 .dialog-content {
-  padding: 0.5rem; /* Reduce padding para móviles */
+  padding: 0.5rem;
+  /* Reduce padding para móviles */
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -271,7 +216,8 @@ header {
 
 .center-div {
   display: flex;
-  align-items: flex-start; /* Alinea los elementos al inicio */
+  align-items: flex-start;
+  /* Alinea los elementos al inicio */
   justify-content: center;
   gap: 10px;
   padding: 10px;
@@ -288,7 +234,8 @@ header {
   .panel {
     padding: 1rem;
     margin: 0.5rem;
-    box-shadow: none; /* Eliminar sombras en móviles */
+    box-shadow: none;
+    /* Eliminar sombras en móviles */
   }
 
   .dialog-content {
@@ -297,7 +244,8 @@ header {
 
   .center-div {
     flex-direction: column;
-    align-items: stretch; /* Asegura que los elementos ocupen todo el ancho */
+    align-items: stretch;
+    /* Asegura que los elementos ocupen todo el ancho */
   }
 
   .p-calendar {

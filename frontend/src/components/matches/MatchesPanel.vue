@@ -2,17 +2,14 @@
 import { computed, ref, type Ref } from 'vue';
 import AddMatchDialog from './AddMatchDialog.vue';
 import MatchInfoDialog from './MatchInfoDialog.vue';
-import { useInitialData } from '@/services/requests/useInitialData';
-import { useDataStore } from '@/stores/useDataStore';
+import { useAppData } from '@/services/core/useAppData';
 import { useMatchInfoStore } from '@/stores/createMatchStore';
 import type { Match } from '@/interfaces/MatchesInterfaces';
 import { emptyMatch } from '@/services/emptyObjects';
 import { getSetsResultForMatch } from '@/services/matchServices';
 import router from '@/router';
 
-const { matchesQuery } = useInitialData();
-
-const matches = computed(() => useDataStore().matches);
+const { matches, isLoading, matchesQuery } = useAppData();
 
 /**
  * Configuration for the data table columns.
@@ -120,24 +117,13 @@ const onRowSelect = (event: any) => {
         </div>
       </div>
     </template>
-    <AddMatchDialog
-      v-bind:visible="visibleAddMatchDialog"
-      :setVisible="setVisibleAddMatchDialog"
-      :retry="matchesQuery.refetch"
-    />
-    <MatchInfoDialog
-      v-bind:visible="visibleMatchInfoDialog"
-      :setVisible="setVisibleMatchInfoDialog"
-      v-bind:matchInfo="matchInfo"
-    ></MatchInfoDialog>
+    <AddMatchDialog v-bind:visible="visibleAddMatchDialog" :setVisible="setVisibleAddMatchDialog"
+      :retry="matchesQuery.refetch" />
+    <MatchInfoDialog v-bind:visible="visibleMatchInfoDialog" :setVisible="setVisibleMatchInfoDialog"
+      v-bind:matchInfo="matchInfo"></MatchInfoDialog>
     <div>
-      <DataTable
-        :value="lastFiveMatches"
-        size="small"
-        :loading="matchesQuery.isFetching.value"
-        @rowSelect="onRowSelect"
-        selectionMode="single"
-      >
+      <DataTable :value="lastFiveMatches" size="small" :loading="isLoading" @rowSelect="onRowSelect"
+        selectionMode="single">
         <Column v-for="col in columns" sortable>
           <template #header>
             <span>{{ col.field.header }}</span>
