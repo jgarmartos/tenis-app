@@ -13,7 +13,7 @@ import {
 import { computed, watch } from 'vue';
 
 // You'll need to create these services following the same pattern
-import api from '@/api/api';
+import apiClient from '@/api/';
 import type { Competition } from '@/interfaces/CompetitionsIntercfaces';
 import type { Place } from '@/interfaces/PlacesInterfaces';
 import type { Set, SetResponse } from '@/interfaces/SetsInterfaces';
@@ -41,7 +41,7 @@ export function useInitialDataV2() {
             {
                 queryKey: ['competitions'],
                 queryFn: async () => {
-                    const response = await api.get<Competition[]>('/competitions');
+                    const response = await apiClient.get<Competition[]>('/competitions');
                     return response.data;
                 },
                 staleTime: 1000 * 60 * 10, // 10 minutes (competitions change less)
@@ -49,7 +49,7 @@ export function useInitialDataV2() {
             {
                 queryKey: ['places'],
                 queryFn: async () => {
-                    const response = await api.get<Place[]>('/places');
+                    const response = await apiClient.get<Place[]>('/places');
                     return response.data;
                 },
                 staleTime: 1000 * 60 * 10,
@@ -57,7 +57,7 @@ export function useInitialDataV2() {
             {
                 queryKey: ['sets'],
                 queryFn: async () => {
-                    const response = await api.get<SetResponse[]>('/sets');
+                    const response = await apiClient.get<SetResponse[]>('/sets');
                     return response.data;
                 },
                 staleTime: 1000 * 60 * 2, // Sets change more frequently
@@ -65,7 +65,7 @@ export function useInitialDataV2() {
             {
                 queryKey: ['games'],
                 queryFn: async () => {
-                    const response = await api.get<Game[]>('/games');
+                    const response = await apiClient.get<Game[]>('/games');
                     return response.data;
                 },
                 staleTime: 1000 * 60 * 1, // Games change very frequently

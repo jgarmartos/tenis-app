@@ -10,7 +10,7 @@ import {
     playerService
 } from '@/services';
 import { computed, watch } from 'vue';
-import api from '@/api/api';
+import apiClient from '@/api';
 import type { Competition } from '@/interfaces/CompetitionsIntercfaces';
 import type { Place } from '@/interfaces/PlacesInterfaces';
 import type { SetResponse } from '@/interfaces/SetsInterfaces';
@@ -39,7 +39,7 @@ export function useAppData() {
     const competitionsQuery = useQuery({
         queryKey: ['competitions'],
         queryFn: async () => {
-            const response = await api.get<Competition[]>('/competitions');
+            const response = await apiClient.get<Competition[]>('/competitions');
             return response.data;
         },
         staleTime: 1000 * 60 * 10, // 10 minutes
@@ -48,7 +48,7 @@ export function useAppData() {
     const placesQuery = useQuery({
         queryKey: ['places'],
         queryFn: async () => {
-            const response = await api.get<Place[]>('/places');
+            const response = await apiClient.get<Place[]>('/places');
             return response.data;
         },
         staleTime: 1000 * 60 * 10,
@@ -57,7 +57,7 @@ export function useAppData() {
     const setsQuery = useQuery({
         queryKey: ['sets'],
         queryFn: async () => {
-            const response = await api.get<SetResponse[]>('/sets');
+            const response = await apiClient.get<SetResponse[]>('/sets');
             return response.data;
         },
         staleTime: 1000 * 60 * 2,
@@ -66,7 +66,7 @@ export function useAppData() {
     const gamesQuery = useQuery({
         queryKey: ['games'],
         queryFn: async () => {
-            const response = await api.get<Game[]>('/games');
+            const response = await apiClient.get<Game[]>('/games');
             return response.data;
         },
         staleTime: 1000 * 60 * 1,

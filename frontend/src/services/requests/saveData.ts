@@ -1,4 +1,4 @@
-import api from '@/api/api';
+import apiClient from '@/api';
 import type {
   Competition,
   CompetitionSubmit,
@@ -11,7 +11,7 @@ import type { Set, SetSubmit } from '@/interfaces/SetsInterfaces';
 
 const savePlayer = async (player: PlayerSubmit) => {
   //make a custom requets
-  const response = await api.post<PlayerResponse>(
+  const response = await apiClient.post<PlayerResponse>(
     '/players?name=' + player.name + '&forehand=' + player.forehand
   );
   return response.data;
@@ -19,14 +19,14 @@ const savePlayer = async (player: PlayerSubmit) => {
 
 const saveMatch = async (match: MatchSubmit) => {
   //make a custom requets
-  const response = await api.post<Match>('/matches', match);
+  const response = await apiClient.post<Match>('/matches', match);
   return response.data;
 };
 
 const updateWinner = async (matchId: number, match: MatchSubmit) => {
   //make a custom requets
   const matchWinner = { winnerId: match.winner };
-  const response = await api.patch<Match>(
+  const response = await apiClient.patch<Match>(
     '/matches/' + matchId + '/winner',
     matchWinner
   );
@@ -35,25 +35,25 @@ const updateWinner = async (matchId: number, match: MatchSubmit) => {
 
 const saveSet = async (set: SetSubmit) => {
   //make a custom requets
-  const response = await api.post<Set>('/sets', set);
+  const response = await apiClient.post<Set>('/sets', set);
   return response.data;
 };
 
 const saveGame = async (game: GameSubmit) => {
   //make a custom requets
-  const response = await api.post<Game>('/games', game);
+  const response = await apiClient.post<Game>('/games', game);
   return response.data;
 };
 
 const saveCompetition = async (competition: CompetitionSubmit) => {
   //make a custom requets
-  const response = await api.post<Competition>('/competitions', competition);
+  const response = await apiClient.post<Competition>('/competitions', competition);
   return response.data;
 };
 
 const savePlace = async (place: PlaceSubmit) => {
   //make a custom requets
-  const response = await api.post<Place>('/places', place);
+  const response = await apiClient.post<Place>('/places', place);
   return response.data;
 };
 

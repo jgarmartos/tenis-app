@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/vue-query';
-import api from '@/api/api';
+import apiClient from '@/api';
 import type { MatchStatistics } from '@/interfaces/StatisticsInterface';
 
 export const useMatchStatistics = (matchId: number | null) => {
@@ -9,7 +9,7 @@ export const useMatchStatistics = (matchId: number | null) => {
       if (!matchId) {
         throw new Error('matchId no está disponibles.');
       }
-      const response = await api.get<MatchStatistics>(
+      const response = await apiClient.get<MatchStatistics>(
         `/matches/statistics/${matchId}`
       );
       return response.data;
@@ -20,13 +20,13 @@ export const useMatchStatistics = (matchId: number | null) => {
 };
 
 export const getStats = async (matchId: number) => {
-  const response = await api.get<MatchStatistics>(
+  const response = await apiClient.get<MatchStatistics>(
     `/matches/statistics/${matchId}`
   );
   return response.data;
 };
 
 export const getPlayer = async (playerId: number) => {
-  const response = await api.get(`/players/${playerId}`);
+  const response = await apiClient.get(`/players/${playerId}`);
   return response.data;
 };
