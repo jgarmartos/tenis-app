@@ -7,19 +7,15 @@ components/players/PlayerMatchesTableComponent */
 import type { Match } from '@/interfaces/MatchesInterfaces';
 import router from '@/router';
 import { emptyMatch } from '@/services/emptyObjects';
-import { useInitialData } from '@/services/requests/useInitialData';
+import { useAppData } from '@/services/core/useAppData';
 import { useMatchInfoStore } from '@/stores/createMatchStore';
-import { useDataStore } from '@/stores/useDataStore';
 import { computed, ref } from 'vue';
 import { getSetsResultForMatch } from '@/services/matchServices';
 
-// Initialize data from the backend
-useInitialData();
-
 /**
- * Computed property for all matches from the store.
+ * Modern data loading
  */
-const matches = computed(() => useDataStore().matches);
+const { matches, isLoading } = useAppData();
 
 /**
  * Props for the player ID whose matches are displayed.
@@ -115,12 +111,7 @@ const onRowSelect = (event: any) => {
       DataTable displaying matches for the given player.
       Allows row selection to view match details.
     -->
-  <DataTable
-    :value="playerMatches"
-    size="small"
-    @rowSelect="onRowSelect"
-    selectionMode="single"
-  >
+  <DataTable :value="playerMatches" size="small" @rowSelect="onRowSelect" selectionMode="single">
     <Column v-for="col in columns" sortable>
       <template #header>
         <span>{{ col.field.header }}</span>

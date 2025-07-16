@@ -5,8 +5,8 @@ player. * Handles form state, validation, and submission for player data. * *
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { usePlayerStore } from '@/stores/usePlayerStore';
+import { useCreatePlayer, useUpdatePlayer, useDeletePlayer } from '@/services/players/playerMutations';
 import type { PlayerSubmit } from '@/interfaces/PlayerInterfaces';
-import { usePlayerMutations } from '@/services/requests/usePlayerMutations';
 
 /**
  * Store instance for managing player dialog state and player to edit.
@@ -17,9 +17,9 @@ const store = usePlayerStore();
  * Player mutation functions for creating and updating players.
  * Closes the dialog after mutation is complete.
  */
-const { createPlayer, updatePlayer } = usePlayerMutations(() =>
-  store.closeDialog()
-);
+const { mutate: createPlayer } = useCreatePlayer();
+const { mutate: updatePlayer } = useUpdatePlayer();
+const { mutate: deletePlayer } = useDeletePlayer();
 
 /**
  * Reactive player form state.
@@ -73,9 +73,13 @@ const savePlayer = (): void => {
   player.value.forehand = selectedHand.value.name;
 
   if (store.playerToEdit) {
-    updatePlayer.mutate({ id: store.playerToEdit.id, data: player.value });
+    updatePlayer({ id: store.playerToEdit.id, data: player.value }, {
+      onSuccess: () => store.closeDialog()
+    });
   } else {
-    createPlayer.mutate(player.value);
+    createPlayer(player.value, {
+      onSuccess: () => store.closeDialog()
+    });
   }
 };
 </script>
@@ -86,42 +90,19 @@ const savePlayer = (): void => {
     Contains form fields for player name and preferred hand.
     Footer has Cancel and Save buttons.
   -->
-  <Dialog
-    v-model:visible="store.isDialogVisible"
-    modal
-    :header="store.playerToEdit ? 'Actualizar jugador' : 'Crear jugador'"
-    :style="{ width: '25rem' }"
-  >
+  <Dialog v-model:visible="store.isDialogVisible" modal
+    :header="store.playerToEdit ? 'Actualizar jugador' : 'Crear jugador'" :style="{ width: '25rem' }">
     <div class="add-player-line">
       <label class="font-semibold w-6rem">Nombre</label>
-      <InputText
-        v-model="player.name"
-        class="flex-auto w-1rem"
-        autocomplete="off"
-      />
+      <InputText v-model="player.name" class="flex-auto w-1rem" autocomplete="off" />
     </div>
     <div class="add-player-line">
       <label class="font-semibold w-6rem">Mano preferida</label>
-      <Dropdown
-        v-model="selectedHand"
-        :options="preferedHand"
-        optionLabel="name"
-        class="w-full md:w-8rem"
-      />
+      <Dropdown v-model="selectedHand" :options="preferedHand" optionLabel="name" class="w-full md:w-8rem" />
     </div>
     <template #footer>
-      <Button
-        label="Cancelar"
-        text
-        severity="secondary"
-        @click="store.closeDialog()"
-      />
-      <Button
-        label="Guardar"
-        outlined
-        severity="secondary"
-        @click="savePlayer"
-      />
+      <Button label="Cancelar" text severity="secondary" @click="store.closeDialog()" />
+      <Button label="Guardar" outlined severity="secondary" @click="savePlayer" />
     </template>
   </Dialog>
 </template>

@@ -3,14 +3,11 @@ with basic statistics. * Allows navigation to a player's profile on row
 selection. * * @module components/players/PlayerListPanel */
 
 <script setup lang="ts">
-import { useDataStore } from '@/stores/useDataStore';
 import { ref, computed } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
-import { useInitialData } from '@/services/requests/useInitialData';
+import { useAppData } from '@/services/core/useAppData';
 import router from '@/router';
-// import { CustomerService } from '@/service/CustomerService';
 
-// const customers = ref();
 /**
  * Filters for the DataTable, including global and name filters.
  */
@@ -19,12 +16,10 @@ const filters = ref({
   name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
 });
 
-useInitialData();
-
 /**
- * Computed property for the list of players from the store.
+ * Modern data loading with loading states
  */
-const players = computed(() => useDataStore().players);
+const { players, isLoading } = useAppData();
 
 /**
  * Loading state for the table (not currently used).
@@ -57,25 +52,12 @@ const onRowSelect = (event: any) => {
       Allows searching, sorting, and navigation to player profiles.
     -->
   <div class="card">
-    <DataTable
-      v-model:filters="filters"
-      :value="players"
-      paginator
-      :rows="10"
-      dataKey="id"
-      filterDisplay="row"
-      @rowSelect="onRowSelect"
-      :globalFilter="filters['global'].value"
-      :sortMode="'multiple'"
-      :sortOrder="1"
-      selection-mode="single"
-    >
+    <DataTable v-model:filters="filters" :value="players" paginator :rows="10" dataKey="id" filterDisplay="row"
+      @rowSelect="onRowSelect" :globalFilter="filters['global'].value" :sortMode="'multiple'" :sortOrder="1"
+      selection-mode="single">
       <template #header>
         <div style="display: flex; justify-content: end">
-          <InputText
-            v-model="filters['global'].value"
-            placeholder="Keyword Search"
-          />
+          <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
           <i class="pi pi-search" style="margin: 4px 4px 0 0"></i>
         </div>
       </template>
@@ -84,23 +66,14 @@ const onRowSelect = (event: any) => {
           {{ data.name }}
         </template>
       </Column>
-      <Column
-        header="Mano preferida"
-        filterField="forehand"
-        style="min-width: 12rem"
-      >
+      <Column header="Mano preferida" filterField="forehand" style="min-width: 12rem">
         <template #body="{ data }">
           <div class="flex align-items-center gap-2">
             <span>{{ data.forehand }}</span>
           </div>
         </template>
       </Column>
-      <Column
-        header="Nº partidos"
-        filterField="number-of-matches"
-        style="min-width: 14rem"
-        sortable
-      >
+      <Column header="Nº partidos" filterField="number-of-matches" style="min-width: 14rem" sortable>
         <template #body="{ data }">
           <div class="flex align-items-center gap-2">
             <span> {{ data.playerStatistics.matchesPlayed }} </span>
