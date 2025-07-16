@@ -6,12 +6,12 @@ import type {
 import type { Game, GameSubmit } from '@/interfaces/GamesInterfaces';
 import type { Match, MatchSubmit } from '@/interfaces/MatchesInterfaces';
 import type { Place, PlaceSubmit } from '@/interfaces/PlacesInterfaces';
-import type { Player, PlayerSubmit } from '@/interfaces/PlayerInterfaces';
+import type { PlayerResponse, PlayerSubmit } from '@/interfaces/PlayerInterfaces';
 import type { Set, SetSubmit } from '@/interfaces/SetsInterfaces';
 
 const savePlayer = async (player: PlayerSubmit) => {
   //make a custom requets
-  const response = await api.post<Player>(
+  const response = await api.post<PlayerResponse>(
     '/players?name=' + player.name + '&forehand=' + player.forehand
   );
   return response.data;
