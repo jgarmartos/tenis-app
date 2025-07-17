@@ -10,7 +10,9 @@ export * from './base/queryKeys';
 // Entity services
 export * from './matches';
 export * from './players';
-
-// You can add more entities here as you create them:
-// export * from './places';
-// export * from './competitions';
+export * from './sets';
+export * from './games';
+export * from './competitions';
+export * from './places';
+// Note: Statistics exports handled separately to avoid conflicts
+export { statisticsService } from './statistics/index';
