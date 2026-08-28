@@ -50,7 +50,7 @@ class MatchService extends BaseService<Match, MatchSubmit> {
      */
     async updateWinner(matchId: number, winnerId: number | null): Promise<Match> {
         const response: AxiosResponse<Match> = await apiClient.patch(
-            `${this.endpoint}/${matchId}`,
+            `${this.endpoint}/${matchId}/winner`,
             { winner: winnerId }
         );
         return response.data;

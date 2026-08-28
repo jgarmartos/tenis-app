@@ -1,25 +1,53 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useCreateMatchStore } from '@/stores/createMatchStore';
+import { useMatchCreation } from '@/composables/useMatchCreation';
 import MatchTabView from './MatchTabView.vue';
 import { useAppData } from '@/services/core/useAppData';
 
+/**
+ * Component props
+ */
 const props = defineProps<{
   visible: boolean;
   setVisible: (value: boolean) => void;
   retry: () => void;
 }>();
 
+/**
+ * App data and match creation composable
+ */
 const { competitions, places, players, matchesQuery } = useAppData();
+const {
+  formData,
+  isLoading,
+  createMatch,
+  hasFieldError,
+  getFieldError
+} = useMatchCreation();
 
-const handleSaveMatch = async () => {
-  props.setVisible(false);
-  // props.getSetsForMatch();
-  await useCreateMatchStore().saveMatch(); // Guardar el partido
-  await matchesQuery.refetch(); // Esperar a que la refetch complete
-};
-
+/**
+ * Available surface types
+ */
 const surfaces = ['Tierra batida', 'Hierba', 'Pista dura'];
+
+/**
+ * Handles match creation
+ */
+const handleSaveMatch = async () => {
+  try {
+    const matchId = await createMatch({
+      validate: true,
+      onSuccess: async (id: number) => {
+        props.setVisible(false);
+        await matchesQuery.refetch();
+      },
+      onError: (error: Error) => {
+        console.error('Error creating match:', error);
+      }
+    });
+  } catch (error) {
+    console.error('Failed to create match:', error);
+  }
+};
 </script>
 
 <template>
@@ -32,7 +60,7 @@ const surfaces = ['Tierra batida', 'Hierba', 'Pista dura'];
     <div class="dialog-content">
       <div class="add-player-line" name="competition">
         <label for="competition" class="font-semibold w-6rem">Competición</label>
-        <Dropdown v-model="useCreateMatchStore().selectedCompetition" :options="competitions" filter optionLabel="name"
+        <Dropdown v-model="formData.competition" :options="competitions" filter optionLabel="name"
           placeholder="Competición: " class="right-side">
           <template #option="slotProps">
             <div class="flex align-items-center">
@@ -43,7 +71,7 @@ const surfaces = ['Tierra batida', 'Hierba', 'Pista dura'];
       </div>
       <div class="add-player-line" name="place">
         <label for="place" class="font-semibold w-6rem">Lugar</label>
-        <Dropdown v-model="useCreateMatchStore().selectedPlace" :options="places" filter optionLabel="name"
+        <Dropdown v-model="formData.place" :options="places" filter optionLabel="name" :invalid="hasFieldError('place')"
           placeholder="Lugar: " class="right-side">
           <template #option="slotProps">
             <div class="flex align-items-center">
@@ -54,8 +82,8 @@ const surfaces = ['Tierra batida', 'Hierba', 'Pista dura'];
       </div>
       <div class="add-player-line" name="surface">
         <label for="place" class="font-semibold w-6rem">Superficie</label>
-        <Dropdown v-model="useCreateMatchStore().selectedSurface" :options="surfaces" placeholder="Superficie: "
-          class="right-side">
+        <Dropdown v-model="formData.surface" :options="surfaces" :invalid="hasFieldError('surface')"
+          placeholder="Superficie: " class="right-side">
           <template #option="slotProps">
             <div class="flex align-items-center">
               <div>{{ slotProps.option }}</div>
@@ -63,39 +91,32 @@ const surfaces = ['Tierra batida', 'Hierba', 'Pista dura'];
           </template>
         </Dropdown>
       </div>
-      <!-- <div class="add-player-line" name="startDate">
-        <label for="date" class="font-semibold w-6rem">Fecha</label>
-        <Calendar v-model="useCreateMatchStore().date" showIcon :showOnFocus="false" dateFormat="dd/mm/yy" />
-      </div> -->
       <div class="add-player-line" name="endDate">
         <label for="date" class="font-semibold w-6rem">Fecha</label>
-        <Calendar id="calendar-timeonly" v-model="useCreateMatchStore().startTime" showTime dateFormat="dd/mm/yy"
-          hourFormat="24" />
-        <!-- <Calendar id="calendar-timeonly" v-model="useCreateMatchStore().endTime" timeOnly /> -->
+        <Calendar id="calendar-timeonly" v-model="formData.startTime" showTime dateFormat="dd/mm/yy"
+          :invalid="hasFieldError('date')" hourFormat="24" />
       </div>
       <div class="add-player-line">
         <label for="date" class="font-semibold w-6rem">Jugadores</label>
         <div class="right-side-players">
           <div class="players-imput">
             <div>
-              <Dropdown v-model="useCreateMatchStore().selectedPlayer1" :options="players" filter optionLabel="name"
-                placeholder="Jugador 1">
-              </Dropdown>
+              <Dropdown v-model="formData.player1" :options="players" filter optionLabel="name"
+                :invalid="hasFieldError('player1')" placeholder="Jugador 1" />
             </div>
             <div>
-              <Dropdown v-model="useCreateMatchStore().selectedPlayer2" :options="players" filter optionLabel="name"
-                placeholder="Jugador 2">
-              </Dropdown>
+              <Dropdown v-model="formData.player2" :options="players" filter optionLabel="name"
+                :invalid="hasFieldError('player2')" placeholder="Jugador 2" />
             </div>
           </div>
         </div>
       </div>
 
-      <MatchTabView />
+      <MatchTabView :formData="formData" />
     </div>
     <template #footer>
       <Button label="Cancelar" text severity="secondary" @click="setVisible(false)" autofocus />
-      <Button label="Guardar" outlined severity="secondary" @click="handleSaveMatch" autofocus />
+      <Button label="Guardar" outlined severity="secondary" :loading="isLoading" @click="handleSaveMatch" autofocus />
     </template>
   </Dialog>
 </template>

@@ -3,7 +3,7 @@ import { computed, ref, type Ref } from 'vue';
 import AddMatchDialog from './AddMatchDialog.vue';
 import MatchInfoDialog from './MatchInfoDialog.vue';
 import { useAppData } from '@/services/core/useAppData';
-import { useMatchInfoStore } from '@/stores/createMatchStore';
+import { useMatchUIStore } from '@/stores/matchUIStore';
 import type { Match } from '@/interfaces/MatchesInterfaces';
 import { emptyMatch } from '@/services/emptyObjects';
 import { getSetsResultForMatch } from '@/services/matchServices';
@@ -93,7 +93,7 @@ const matchInfo = ref<Match>(emptyMatch());
  */
 const onRowSelect = (event: any) => {
   matchInfo.value = event.data;
-  useMatchInfoStore().matchInfo = event.data;
+  useMatchUIStore().setSelectedMatch(event.data);
   router.push({
     name: 'matchInfo',
     query: {

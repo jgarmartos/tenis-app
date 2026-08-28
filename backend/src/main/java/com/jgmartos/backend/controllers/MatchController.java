@@ -84,7 +84,7 @@ public class MatchController {
 
     @PatchMapping("/{id}/winner")
     public Match updateWinner(@PathVariable Integer id, @RequestBody Map<String, Integer> winnerRequest) {
-        Integer winnerId = winnerRequest.get("winnerId");
+        Integer winnerId = winnerRequest.get("winner");
         return matchService.updateWinner(id, winnerId);
     }
 
