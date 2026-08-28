@@ -9,6 +9,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.jgmartos.backend.models.Match;
+import com.jgmartos.backend.models.Place;
 import com.jgmartos.backend.repositories.MatchRepository;
 import com.jgmartos.backend.repositories.PlaceRepository;
 import com.jgmartos.backend.repositories.PlayerRepository;
@@ -108,6 +109,7 @@ public class MatchService {
      * @return list of matches at the specified place
      * @throws IllegalArgumentException if placeId is null
      * @throws EntityNotFoundException  if place is not found
+     * @throws RuntimeException if there is an error accessing data from the database
      */
     public List<Match> getMatchesByPlace(Integer placeId) {
 
@@ -139,6 +141,49 @@ public class MatchService {
         } catch (DataAccessException e) {
             logger.error("Error accessing data for place ID: {}", placeId, e);
             throw new RuntimeException("Error fetching matches for place ID: " + placeId, e);
+        }
+    }
+
+    /**
+     * Update the place of a match
+     *
+     * @param matchId the match ID
+     * @param placeId the new place ID
+     * @return the updated match
+     * @throws IllegalArgumentException if matchId or placeId is null or invalid
+     * @throws EntityNotFoundException if match or place is not found
+     * @throws RuntimeException if there is an error accessing data from the database
+     */
+    public Match updateMatchPlace(Integer matchId, Integer placeId) {
+        // Critical validations - always keep these
+        if (matchId == null || matchId <= 0) {
+            throw new IllegalArgumentException("Match ID must be a positive number");
+        }
+        if (placeId == null || placeId <= 0) {
+            throw new IllegalArgumentException("Place ID must be a positive number");
+        }
+
+        logger.info("Updating place for match ID: {} to place ID: {}", matchId, placeId);
+
+        try {
+            // Find match
+            Match match = matchRepository.findById(matchId)
+                    .orElseThrow(() -> new EntityNotFoundException("Match with ID " + matchId + " not found"));
+
+            // Find place
+            Place place = placeRepository.findById(placeId)
+                    .orElseThrow(() -> new EntityNotFoundException("Place with ID " + placeId + " not found"));
+
+            // Update and save
+            match.setPlace(place);
+            Match updatedMatch = matchRepository.save(match);
+            
+            logger.info("Successfully updated match ID: {} with new place ID: {}", matchId, placeId);
+            return updatedMatch;
+
+        } catch (DataAccessException e) {
+            logger.error("Error updating match place for match ID: {} and place ID: {}", matchId, placeId, e);
+            throw new RuntimeException("Error updating match place: " + e.getMessage(), e);
         }
     }
 

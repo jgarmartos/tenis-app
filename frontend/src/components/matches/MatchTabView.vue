@@ -1,543 +1,210 @@
 <script setup lang="ts">
-import { useCreateMatchStore } from '@/stores/createMatchStore';
-import { useDataStore } from '@/stores/useDataStore';
-import SelectButton from 'primevue/selectbutton';
-import { computed, ref, watch } from 'vue';
+import { computed, watch } from 'vue';
+import type { MatchFormData } from '@/interfaces/MatchFormInterfaces';
+import { useSetsManagement } from '@/composables/useSetsManagement';
 
-const players = computed(() => useDataStore().players);
+/**
+ * Props for the match tab view component
+ */
+const props = defineProps<{
+  formData: MatchFormData;
+}>();
 
+/**
+ * Use sets management for reactive scoring
+ */
+const { setupAllSetsScoring } = useSetsManagement();
+
+/**
+ * Available set types
+ */
 const setTypes = ['Set', 'Super Tie Break'];
 
-const selectedSetType = ref(setTypes[0]);
-
-useCreateMatchStore().sets.forEach(set => {
-  if (!set.startsServing) {
-    set.startsServing = null; // Asegurar que initialServer está definido
-  }
-
-  watch(
-    () =>
-      set.games.map(game => [
-        game.selectedPuntuation1,
-        game.selectedPuntuation2,
-      ]),
-    () => {
-      let score1 = 0;
-      let score2 = 0;
-
-      set.games.forEach((game, index) => {
-        if (index === 12) {
-          if (
-            game.selectedPuntuation1 >= 7 &&
-            game.selectedPuntuation1 > game.selectedPuntuation2 &&
-            game.selectedPuntuation1 - game.selectedPuntuation2 >= 2
-          ) {
-            score1++;
-          } else if (
-            game.selectedPuntuation2 >= 7 &&
-            game.selectedPuntuation2 > game.selectedPuntuation1 &&
-            game.selectedPuntuation2 - game.selectedPuntuation1 >= 2
-          ) {
-            score2++;
-          }
-        } else {
-          if (
-            game.selectedPuntuation1 == 40 &&
-            ['0', '15', '30'].includes(game.selectedPuntuation2.toString())
-          ) {
-            score1++;
-          } else if (
-            game.selectedPuntuation2 == 40 &&
-            ['0', '15', '30'].includes(game.selectedPuntuation1.toString())
-          ) {
-            score2++;
-          } else if (
-            game.selectedPuntuation1 == 50 &&
-            game.selectedPuntuation2 != 50
-          ) {
-            score1++;
-          } else if (
-            game.selectedPuntuation2 == 50 &&
-            game.selectedPuntuation1 != 50
-          ) {
-            score2++;
-          }
-        }
-      });
-
-      set.score1 = score1;
-      set.score2 = score2;
-    },
-    { deep: true }
-  );
-});
+/**
+ * Setup reactive scoring for the sets when component mounts
+ */
+setupAllSetsScoring(props.formData.sets);
 </script>
 
 <template>
   <div class="add-player-line" name="setResults">
     <TabView>
-      <TabPanel
-        v-for="set in useCreateMatchStore().sets"
-        :key="set.name"
-        :header="set.name"
-      >
-        <!-- RADIOBUTTONS TO SET THE SET TYPE -->
-
+      <TabPanel v-for="set in formData.sets" :key="set.name" :header="set.name">
+        <!-- Set type selection -->
         <div class="flex-options">
           <SelectButton v-model="set.type" :options="setTypes" />
         </div>
 
-        <!-- PANEL WITH THE PLAYERS DROPDOWN AND PUNTUATIONS -->
-
+        <!-- Set content based on type -->
         <div class="flex-container">
-          <!-- PUNTUATIONS -->
-
+          <!-- Regular Set -->
           <div v-if="set.type == 'Set'" id="Set" class="flex-container-points">
             <Stepper>
-              <StepperPanel
-                v-for="(game, index) in set.games"
-                :header="game.number + 'º juego'"
-              >
+              <StepperPanel v-for="(game, index) in set.games" :key="index" :header="game.number + 'º juego'">
+                <!-- First game template -->
                 <template v-if="index == 0" #content="{ nextCallback }">
                   <div class="flex-container">
+                    <!-- Player 1 scores -->
                     <div>
                       <div class="flex-container-row">
-                        <div>
-                          <span
-                            v-if="useCreateMatchStore().selectedPlayer1.name"
-                            >{{ useCreateMatchStore().selectedPlayer1.name }}
-                          </span>
-                          <span v-else> Jugador 1 </span>
-                        </div>
-                        <div
-                          v-for="option in [0, 15, 30, 40, 50]"
-                          :key="option"
-                          class="flex-container"
-                        >
-                          <RadioButton
-                            v-model="game.selectedPuntuation1"
-                            :input-id="'puntuation' + option"
-                            :name="option.toString()"
-                            :value="option"
-                          />
-                          <label
-                            v-if="option === 50"
-                            :for="'puntuation' + option"
-                            class="ml-2"
-                            >AD</label
-                          >
-                          <label
-                            v-else
-                            :for="'puntuation' + option"
-                            class="ml-2"
-                            >{{ option }}</label
-                          >
-                        </div>
-                        <div class="flex-container">
-                          <RadioButton
-                            id="sever"
-                            v-model="set.startsServing"
-                            value="player1"
-                          />
-                          <v-icon name="gi-tennis-ball" fill="green" />
-                        </div>
-                        <div class="flex-container">
-                          <InputNumber
-                            v-model="set.score1"
-                            input-id="integeronly"
-                            class="score"
-                            :input-style="{ width: '50px' }"
-                          />
+                        <div>{{ formData.player1.name || 'Jugador 1' }}</div>
+                        <div v-for="option in [0, 15, 30, 40, 50]" :key="option" class="flex-container">
+                          <RadioButton v-model="game.selectedPuntuation1" :inputId="`player1-${index}-${option}`"
+                            :value="option" />
+                          <label :for="`player1-${index}-${option}`">
+                            {{ option === 50 ? 'AD' : option }}
+                          </label>
                         </div>
                       </div>
                     </div>
+                    <!-- Player 2 scores -->
                     <div>
                       <div class="flex-container-row">
-                        <div>
-                          <span
-                            v-if="useCreateMatchStore().selectedPlayer2.name"
-                          >
-                            {{ useCreateMatchStore().selectedPlayer2.name }}
-                          </span>
-                          <span v-else> Jugador 2 </span>
-                        </div>
-                        <div
-                          v-for="option in [0, 15, 30, 40, 50]"
-                          :key="option"
-                          class="flex-container"
-                        >
-                          <RadioButton
-                            v-model="game.selectedPuntuation2"
-                            :input-id="'puntuation' + option"
-                            :name="option.toString()"
-                            :value="option"
-                          />
-                          <label
-                            v-if="option === 50"
-                            :for="'puntuation' + option"
-                            class="ml-2"
-                            >AD</label
-                          >
-                          <label
-                            v-else
-                            :for="'puntuation' + option"
-                            class="ml-2"
-                            >{{ option }}</label
-                          >
-                        </div>
-                        <div class="flex-container">
-                          <RadioButton
-                            id="sever"
-                            v-model="set.startsServing"
-                            value="player2"
-                          />
-                          <v-icon name="gi-tennis-ball" fill="green" />
-                        </div>
-                        <div class="flex-container">
-                          <InputNumber
-                            v-model="set.score2"
-                            input-id="integeronly"
-                            class="score"
-                            :input-style="{ width: '50px' }"
-                          />
+                        <div>{{ formData.player2.name || 'Jugador 2' }}</div>
+                        <div v-for="option in [0, 15, 30, 40, 50]" :key="option" class="flex-container">
+                          <RadioButton v-model="game.selectedPuntuation2" :inputId="`player2-${index}-${option}`"
+                            :value="option" />
+                          <label :for="`player2-${index}-${option}`">
+                            {{ option === 50 ? 'AD' : option }}
+                          </label>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div
-                    v-if="
-                      game.selectedPuntuation1 == 50 ||
-                      game.selectedPuntuation2 == 50
-                    "
-                    class="flex-container"
-                  >
-                    <span> Nº iguales: </span>
-                    <InputNumber
-                      v-model="game.deuceNumber"
-                      input-id="minmax-buttons"
-                      mode="decimal"
-                      show-buttons
-                      :min="1"
-                      :max="100"
-                      fluid
-                      :input-style="{ width: '4rem' }"
-                    />
+                  <!-- Deuce counter -->
+                  <div v-if="game.selectedPuntuation1 == 50 || game.selectedPuntuation2 == 50" class="flex-container">
+                    <span>Nº iguales:</span>
+                    <InputNumber v-model="game.deuceNumber" inputId="minmax-buttons" mode="decimal" showButtons :min="1"
+                      :max="100" fluid :inputStyle="{ width: '4rem' }" />
                   </div>
 
+                  <!-- Navigation buttons -->
                   <div class="flex-container-buttons">
-                    <!-- <Button label="Back" severity="secondary" icon="pi pi-arrow-left" @click="prevCallback" /> -->
                     <div class="white-border">
-                      <span class="bold-font">
-                        {{ index + 1 + 'º juego' }}
-                      </span>
+                      <span class="bold-font">{{ index + 1 }}º juego</span>
                     </div>
-                    <Button
-                      :label="index + 2 + 'º juego'"
-                      icon="pi pi-arrow-right"
-                      :icon-pos="'right'"
-                      @click="nextCallback"
-                    />
+                    <Button :label="`${index + 2}º juego`" icon="pi pi-arrow-right" iconPos="right"
+                      @click="nextCallback" />
                   </div>
                 </template>
-                <template
-                  v-else-if="index < 12"
-                  #content="{ prevCallback, nextCallback }"
-                >
+
+                <!-- Middle games template -->
+                <template v-else-if="index < 12" #content="{ prevCallback, nextCallback }">
                   <div class="flex-container">
+                    <!-- Player 1 scores -->
                     <div>
                       <div class="flex-container-row">
-                        <div>
-                          <span
-                            v-if="useCreateMatchStore().selectedPlayer1.name"
-                            >{{ useCreateMatchStore().selectedPlayer1.name }}
-                          </span>
-                          <span v-else> Jugador 1 </span>
-                        </div>
-                        <div
-                          v-if="index === 12"
-                          class="flex-container"
-                          style="justify-content: right"
-                        >
-                          <InputNumber
-                            v-model="game.selectedPuntuation1"
-                            input-id="integeronly"
-                            class="score"
-                            :input-style="{ width: '100px' }"
-                          />
-                        </div>
-                        <div
-                          v-for="option in [0, 15, 30, 40, 50]"
-                          v-else
-                          :key="option"
-                          class="flex-container"
-                        >
-                          <RadioButton
-                            v-model="game.selectedPuntuation1"
-                            :input-id="'puntuation' + option"
-                            :name="option.toString()"
-                            :value="option"
-                          />
-                          <label
-                            v-if="option === 50"
-                            :for="'puntuation' + option"
-                            class="ml-2"
-                            >AD</label
-                          >
-                          <label
-                            v-else
-                            :for="'puntuation' + option"
-                            class="ml-2"
-                            >{{ option }}</label
-                          >
-                        </div>
-                        <div
-                          class="flex-container"
-                          style="justify-content: right"
-                        >
-                          <InputNumber
-                            v-model="set.score1"
-                            input-id="integeronly"
-                            class="score"
-                            :input-style="{ width: '50px' }"
-                          />
+                        <div>{{ formData.player1.name || 'Jugador 1' }}</div>
+                        <div v-for="option in [0, 15, 30, 40, 50]" :key="option" class="flex-container">
+                          <RadioButton v-model="game.selectedPuntuation1" :inputId="`player1-${index}-${option}`"
+                            :value="option" />
+                          <label :for="`player1-${index}-${option}`">
+                            {{ option === 50 ? 'AD' : option }}
+                          </label>
                         </div>
                       </div>
                     </div>
+                    <!-- Player 2 scores -->
                     <div>
                       <div class="flex-container-row">
-                        <div>
-                          <span
-                            v-if="useCreateMatchStore().selectedPlayer2.name"
-                          >
-                            {{ useCreateMatchStore().selectedPlayer2.name }}
-                          </span>
-                          <span v-else> Jugador 2 </span>
-                        </div>
-                        <div v-if="index === 12" class="flex-container">
-                          <InputNumber
-                            v-model="game.selectedPuntuation2"
-                            input-id="integeronly"
-                            class="score"
-                            :input-style="{ width: '100px' }"
-                          />
-                        </div>
-                        <div
-                          v-for="option in [0, 15, 30, 40, 50]"
-                          v-else
-                          :key="option"
-                          class="flex-container"
-                        >
-                          <RadioButton
-                            v-model="game.selectedPuntuation2"
-                            :input-id="'puntuation' + option"
-                            :name="option.toString()"
-                            :value="option"
-                          />
-                          <label
-                            v-if="option === 50"
-                            :for="'puntuation' + option"
-                            class="ml-2"
-                            >AD</label
-                          >
-                          <label
-                            v-else
-                            :for="'puntuation' + option"
-                            class="ml-2"
-                            >{{ option }}</label
-                          >
-                        </div>
-                        <div class="flex-container">
-                          <InputNumber
-                            v-model="set.score2"
-                            input-id="integeronly"
-                            class="score"
-                            :input-style="{ width: '50px' }"
-                          />
+                        <div>{{ formData.player2.name || 'Jugador 2' }}</div>
+                        <div v-for="option in [0, 15, 30, 40, 50]" :key="option" class="flex-container">
+                          <RadioButton v-model="game.selectedPuntuation2" :inputId="`player2-${index}-${option}`"
+                            :value="option" />
+                          <label :for="`player2-${index}-${option}`">
+                            {{ option === 50 ? 'AD' : option }}
+                          </label>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div
-                    v-if="
-                      game.selectedPuntuation1 == 50 ||
-                      game.selectedPuntuation2 == 50
-                    "
-                    class="flex-container"
-                  >
-                    <InputNumber
-                      v-model="game.deuceNumber"
-                      input-id="minmax-buttons"
-                      mode="decimal"
-                      show-buttons
-                      :min="1"
-                      :max="100"
-                      fluid
-                      :input-style="{ width: '4rem' }"
-                    />
+                  <!-- Deuce counter -->
+                  <div v-if="game.selectedPuntuation1 == 50 || game.selectedPuntuation2 == 50" class="flex-container">
+                    <span>Nº iguales:</span>
+                    <InputNumber v-model="game.deuceNumber" inputId="minmax-buttons" mode="decimal" showButtons :min="1"
+                      :max="100" fluid :inputStyle="{ width: '4rem' }" />
                   </div>
 
+                  <!-- Navigation buttons -->
                   <div class="flex-container-buttons">
-                    <Button
-                      :label="index + 'º juego'"
-                      severity="secondary"
-                      icon="pi pi-arrow-left"
-                      @click="prevCallback"
-                    />
+                    <Button :label="`${index}º juego`" severity="secondary" icon="pi pi-arrow-left"
+                      @click="prevCallback" />
                     <div class="white-border">
-                      <span class="bold-font">
-                        {{ index + 1 + 'º juego' }}
-                      </span>
+                      <span class="bold-font">{{ index + 1 }}º juego</span>
                     </div>
-
-                    <Button
-                      :label="index + 2 + 'º juego'"
-                      icon="pi pi-arrow-right"
-                      icon-pos="right"
-                      @click="nextCallback"
-                    />
+                    <Button :label="`${index + 2}º juego`" icon="pi pi-arrow-right" iconPos="right"
+                      @click="nextCallback" />
                   </div>
                 </template>
+
+                <!-- Last game template -->
                 <template v-else #content="{ prevCallback }">
                   <div class="flex-container">
+                    <!-- Tiebreak scores -->
                     <div>
                       <div class="flex-container-row">
-                        <div>
-                          <span
-                            v-if="useCreateMatchStore().selectedPlayer1.name"
-                            >{{ useCreateMatchStore().selectedPlayer1.name }}
-                          </span>
-                          <span v-else> Jugador 1 </span>
-                        </div>
-                        <div v-if="index === 12" class="flex-container">
-                          <InputNumber
-                            v-model="game.selectedPuntuation1"
-                            input-id="integeronly"
-                            class="score"
-                            :input-style="{ width: '100px' }"
-                          />
-                        </div>
-                        <div
-                          class="flex-container-row"
-                          style="justify-content: right"
-                        >
-                          <InputNumber
-                            v-model="set.score1"
-                            input-id="integeronly"
-                            class="score"
-                            :input-style="{ width: '50px' }"
-                          />
-                        </div>
+                        <div>{{ formData.player1.name || 'Jugador 1' }}</div>
+                        <InputNumber v-model="game.selectedPuntuation1" inputId="tiebreak1" :min="0" :max="50"
+                          :inputStyle="{ width: '4rem' }" />
                       </div>
                     </div>
                     <div>
                       <div class="flex-container-row">
-                        <div>
-                          <span
-                            v-if="useCreateMatchStore().selectedPlayer2.name"
-                          >
-                            {{ useCreateMatchStore().selectedPlayer2.name }}
-                          </span>
-                          <span v-else> Jugador 2 </span>
-                        </div>
-                        <div v-if="index === 12" class="flex-container">
-                          <InputNumber
-                            v-model="game.selectedPuntuation2"
-                            input-id="integeronly"
-                            class="score"
-                            :input-style="{ width: '100px' }"
-                          />
-                        </div>
-                        <div
-                          class="flex-container"
-                          style="justify-content: right"
-                        >
-                          <InputNumber
-                            v-model="set.score2"
-                            input-id="integeronly"
-                            class="score"
-                            :input-style="{ width: '50px' }"
-                          />
-                        </div>
+                        <div>{{ formData.player2.name || 'Jugador 2' }}</div>
+                        <InputNumber v-model="game.selectedPuntuation2" inputId="tiebreak2" :min="0" :max="50"
+                          :inputStyle="{ width: '4rem' }" />
                       </div>
                     </div>
                   </div>
 
-                  <div
-                    v-if="
-                      game.selectedPuntuation1 == 50 ||
-                      game.selectedPuntuation2 == 50
-                    "
-                    class="flex-container"
-                  >
-                    <InputNumber
-                      v-model="game.deuceNumber"
-                      input-id="minmax-buttons"
-                      mode="decimal"
-                      show-buttons
-                      :min="1"
-                      :max="100"
-                      fluid
-                      :input-style="{ width: '4rem' }"
-                    />
-                  </div>
-
+                  <!-- Navigation buttons -->
                   <div class="flex-container-buttons">
-                    <Button
-                      :label="index + 'º juego'"
-                      severity="secondary"
-                      icon="pi pi-arrow-left"
-                      @click="prevCallback"
-                    />
+                    <Button :label="`${index}º juego`" severity="secondary" icon="pi pi-arrow-left"
+                      @click="prevCallback" />
                     <div class="white-border">
-                      <span class="bold-font">
-                        {{ index + 1 + 'º juego' }}
-                      </span>
+                      <span class="bold-font">{{ index + 1 }}º juego (Tiebreak)</span>
                     </div>
                   </div>
                 </template>
               </StepperPanel>
             </Stepper>
           </div>
+
+          <!-- Super Tie Break -->
           <div v-else id="Super-Tie-Break" class="flex-container-points">
             <div class="flex-container" style="margin-top: 2rem">
               <div class="flex-container" style="justify-content: left">
                 <FloatLabel>
-                  <InputNumber
-                    id="score1"
-                    v-model="set.score1"
-                    input-id="integeronly"
-                    class="score"
-                    :input-style="{ width: '150px' }"
-                  />
-                  <label for="score1" style="min-width: 5rem">{{
-                    useCreateMatchStore().selectedPlayer1.name
-                  }}</label>
+                  <InputNumber id="score1" v-model="set.score1" inputId="integeronly" class="score"
+                    :inputStyle="{ width: '150px' }" />
+                  <label for="score1" style="min-width: 5rem">
+                    {{ formData.player1.name || 'Jugador 1' }}
+                  </label>
                 </FloatLabel>
               </div>
               <div class="flex-container" style="justify-content: left">
                 <FloatLabel>
-                  <InputNumber
-                    id="score1"
-                    v-model="set.score2"
-                    input-id="integeronly"
-                    class="score"
-                    :input-style="{ width: '150px' }"
-                  />
-                  <label for="score2" style="min-width: 10rem">{{
-                    useCreateMatchStore().selectedPlayer2.name
-                  }}</label>
+                  <InputNumber id="score2" v-model="set.score2" inputId="integeronly" class="score"
+                    :inputStyle="{ width: '150px' }" />
+                  <label for="score2" style="min-width: 10rem">
+                    {{ formData.player2.name || 'Jugador 2' }}
+                  </label>
                 </FloatLabel>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- Serving indicator -->
         <div class="flex-container-row">
           <v-icon name="gi-tennis-ball" fill="green" />
-          <span> => </span>
-          <span> Empieza sacando</span>
+          <span>Empieza sacando:</span>
+          <SelectButton v-model="set.startsServing" :options="[
+            { label: formData.player1.name || 'Jugador 1', value: 'player1' },
+            { label: formData.player2.name || 'Jugador 2', value: 'player2' }
+          ]" optionLabel="label" optionValue="value" />
         </div>
       </TabPanel>
     </TabView>
@@ -564,7 +231,6 @@ useCreateMatchStore().sets.forEach(set => {
   gap: 1rem;
   padding: 5px;
   width: 100%;
-  /* min-width: 70%; */
   flex-direction: column;
 }
 
@@ -574,7 +240,6 @@ useCreateMatchStore().sets.forEach(set => {
   gap: 1rem;
   padding: 5px;
   width: 70%;
-  /* flex-direction: column; */
 }
 
 .flex-options {
@@ -613,23 +278,6 @@ useCreateMatchStore().sets.forEach(set => {
 
 .p-tabview.p-component {
   width: 100%;
-}
-
-p-inputnumber {
-  width: 20%;
-  max-width: 20%;
-}
-
-p-inputnumber-input {
-  width: 100%;
-  max-width: 100%;
-}
-
-.p-inputnumber p-component {
-  font-family: var(--font-family);
-  font-feature-settings: var(--font-feature-settings, normal);
-  font-size: 1rem;
-  font-weight: normal;
 }
 
 @media (max-width: 600px) {

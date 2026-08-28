@@ -1,80 +1,46 @@
 <script setup lang="ts">
 import MenuBar from '@/components/MenuBar.vue';
-import { useInitialData } from '@/services/requests/useInitialData';
-import { useCreateMatchStore } from '@/stores/createMatchStore';
-import { useDataStore } from '@/stores/useDataStore';
-import { computed, ref } from 'vue';
+import { useAppData } from '@/services/core/useAppData';
+import { useMatchCreation } from '@/composables/useMatchCreation';
 import MatchTabView from './MatchTabView.vue';
 import router from '@/router';
-import { validateMatch } from '@/services/validations';
-import type { MatchSubmit } from '@/interfaces/MatchesInterfaces';
 
-const { matchesQuery } = useInitialData();
+/**
+ * App data and match creation composable
+ */
+const { matchesQuery, competitions, places, players } = useAppData();
+const {
+  formData,
+  isLoading,
+  createMatch,
+  hasFieldError,
+  getFieldError
+} = useMatchCreation();
 
-const invalidPlace = ref(false);
-
-const invalidPlayer1 = ref(false);
-
-const invalidPlayer2 = ref(false);
-
-const invalidSurface = ref(false);
-
-const invalidDate = ref(false);
-
-const handleSaveMatch = async () => {
-  const match = ref<MatchSubmit>({
-    competition: useCreateMatchStore().selectedCompetition?.id,
-    place: useCreateMatchStore().selectedPlace?.id,
-    surface: useCreateMatchStore().selectedSurface,
-    date: useCreateMatchStore().startTime,
-    player1: useCreateMatchStore().selectedPlayer1.id,
-    player2: useCreateMatchStore().selectedPlayer2.id,
-    startTime: useCreateMatchStore().startTime.getTime(),
-    endTime: useCreateMatchStore().startTime.getTime() + 3600000, // Añadir una hora
-    winner: null,
-  });
-  try {
-    await validateMatch(match.value);
-    await useCreateMatchStore().saveMatch(); // Guardar el partido
-    await matchesQuery.refetch();
-    router.push('/'); // Esperar a que la refetch complete
-  } catch (error: any) {
-    // console.log(error);
-    error.inner.forEach((err: any) => {
-      if (err.path === 'place') {
-        invalidPlace.value = true;
-      } else if (err.path === 'player1') {
-        invalidPlayer1.value = true;
-      } else if (err.path === 'player2') {
-        invalidPlayer2.value = true;
-      } else if (err.path === 'surface') {
-        invalidSurface.value = true;
-      } else if (err.path === 'date') {
-        invalidDate.value = true;
-      }
-    });
-    console.log('Error al guardar el partido');
-    return;
-  }
-};
-
+/**
+ * Available surface types
+ */
 const surfaces = ['Tierra batida', 'Hierba', 'Pista dura'];
 
 /**
- * Competitions
+ * Handles match creation
  */
-const { competitionsQuery } = useInitialData();
-
-const competitions = computed(() => useDataStore().competitions);
-
-/**
- * Places
- */
-const { placesQuery } = useInitialData();
-
-const places = computed(() => useDataStore().places);
-
-const players = computed(() => useDataStore().players);
+const handleSaveMatch = async () => {
+  try {
+    const matchId = await createMatch({
+      validate: true,
+      onSuccess: async (id: number) => {
+        await matchesQuery.refetch();
+        router.push('/');
+      },
+      onError: (error: Error) => {
+        console.error('Error creating match:', error);
+      }
+    });
+  } catch (error) {
+    console.error('Failed to create match:', error);
+  }
+};
 </script>
 
 <template>
@@ -94,14 +60,8 @@ const players = computed(() => useDataStore().players);
         <div class="dialog-content">
           <div class="center-div" name="competition">
             <div>
-              <Dropdown
-                v-model="useCreateMatchStore().selectedCompetition"
-                :options="competitions"
-                filter
-                class="right-side"
-                optionLabel="name"
-                placeholder="Competición: "
-              >
+              <Dropdown v-model="formData.competition" :options="competitions" filter class="right-side"
+                optionLabel="name" placeholder="Competición: ">
                 <template #option="slotProps">
                   <div class="flex align-items-center">
                     <div>{{ slotProps.option.name }}</div>
@@ -110,15 +70,8 @@ const players = computed(() => useDataStore().players);
               </Dropdown>
             </div>
             <div>
-              <Dropdown
-                v-model="useCreateMatchStore().selectedPlace"
-                :options="places"
-                filter
-                :invalid="invalidPlace"
-                optionLabel="name"
-                placeholder="Lugar: "
-                class="right-side"
-              >
+              <Dropdown v-model="formData.place" :options="places" filter :invalid="hasFieldError('place')"
+                optionLabel="name" placeholder="Lugar: " class="right-side">
                 <template #option="slotProps">
                   <div class="flex align-items-center">
                     <div>{{ slotProps.option.name }}</div>
@@ -127,14 +80,8 @@ const players = computed(() => useDataStore().players);
               </Dropdown>
             </div>
             <div>
-              <Dropdown
-                v-model="useCreateMatchStore().selectedSurface"
-                :options="surfaces"
-                filter
-                :invalid="invalidSurface"
-                placeholder="Superficie: "
-                class="right-side"
-              >
+              <Dropdown v-model="formData.surface" :options="surfaces" filter :invalid="hasFieldError('surface')"
+                placeholder="Superficie: " class="right-side">
                 <template #option="slotProps">
                   <div class="flex align-items-center">
                     <div>{{ slotProps.option }}</div>
@@ -143,53 +90,30 @@ const players = computed(() => useDataStore().players);
               </Dropdown>
             </div>
             <div>
-              <Calendar
-                id="calendar-timeonly"
-                v-model="useCreateMatchStore().startTime"
-                showTime
-                :invalid="invalidDate"
-                dateFormat="dd/mm/yy"
-                hourFormat="24"
-              />
-              <label
-                style="font-size: small; display: inline; color: brown"
-                v-if="invalidDate"
-                >Mínimo 2024</label
-              >
+              <Calendar id="calendar-timeonly" v-model="formData.startTime" showTime :invalid="hasFieldError('date')"
+                dateFormat="dd/mm/yy" hourFormat="24" />
+              <label v-if="hasFieldError('date')" style="font-size: small; display: inline; color: brown">
+                {{ getFieldError('date') }}
+              </label>
             </div>
           </div>
 
           <div class="center-div">
             <div>
-              <Dropdown
-                v-model="useCreateMatchStore().selectedPlayer1"
-                :options="players"
-                filter
-                :invalid="invalidPlayer1"
-                optionLabel="name"
-                placeholder="Jugador 1"
-              >
-              </Dropdown>
+              <Dropdown v-model="formData.player1" :options="players" filter :invalid="hasFieldError('player1')"
+                optionLabel="name" placeholder="Jugador 1" />
             </div>
             <div>
-              <Dropdown
-                v-model="useCreateMatchStore().selectedPlayer2"
-                :options="players"
-                filter
-                :invalid="invalidPlayer2"
-                optionLabel="name"
-                placeholder="Jugador 2"
-              >
-              </Dropdown>
+              <Dropdown v-model="formData.player2" :options="players" filter :invalid="hasFieldError('player2')"
+                optionLabel="name" placeholder="Jugador 2" />
             </div>
           </div>
 
-          <MatchTabView />
+          <MatchTabView :formData="formData" />
         </div>
         <template #footer>
-          <!-- <Button label="Cancelar" text severity="secondary" @click="setVisible(false)" autofocus /> -->
           <div class="center-div">
-            <Button label="Guardar" @click="handleSaveMatch" autofocus />
+            <Button label="Guardar" :loading="isLoading" @click="handleSaveMatch" autofocus />
           </div>
         </template>
       </Panel>
@@ -250,19 +174,22 @@ header {
   border-bottom-style: solid;
   border-color: #d9d9d9;
   width: 100%;
-  padding: 0.5rem; /* Reduce padding en móviles */
+  padding: 0.5rem;
+  /* Reduce padding en móviles */
 }
 
 .panels-container {
   padding-top: 1%;
   display: flex;
-  flex-direction: column; /* Colocar los elementos en columna en móviles */
+  flex-direction: column;
+  /* Colocar los elementos en columna en móviles */
   width: 100%;
   height: 100%;
 }
 
 .dialog-content {
-  padding: 0.5rem; /* Reduce padding para móviles */
+  padding: 0.5rem;
+  /* Reduce padding para móviles */
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -271,7 +198,8 @@ header {
 
 .center-div {
   display: flex;
-  align-items: flex-start; /* Alinea los elementos al inicio */
+  align-items: flex-start;
+  /* Alinea los elementos al inicio */
   justify-content: center;
   gap: 10px;
   padding: 10px;
@@ -288,7 +216,8 @@ header {
   .panel {
     padding: 1rem;
     margin: 0.5rem;
-    box-shadow: none; /* Eliminar sombras en móviles */
+    box-shadow: none;
+    /* Eliminar sombras en móviles */
   }
 
   .dialog-content {
@@ -297,7 +226,8 @@ header {
 
   .center-div {
     flex-direction: column;
-    align-items: stretch; /* Asegura que los elementos ocupen todo el ancho */
+    align-items: stretch;
+    /* Asegura que los elementos ocupen todo el ancho */
   }
 
   .p-calendar {

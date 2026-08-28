@@ -1,30 +1,57 @@
 /**
- * PlayerProfile.vue
- *
- * Displays a detailed profile for a player, including statistics and recent matches.
- * Integrates charts for visualizing match, set, and game data.
- *
- * @module components/players/PlayerProfile
- */
+* PlayerProfile.vue
+*
+* Displays a detailed profile for a player, including statistics and recent matches.
+* Integrates charts for visualizing match, set, and game data.
+*
+* @module components/players/PlayerProfile
+*/
 
 <script setup lang="ts">
 import MenuBar from '@/components/MenuBar.vue';
-import { usePlayerQuery } from '@/services/requests/usePlayer';
-import { ref, watchEffect } from 'vue';
+import { useAppData } from '@/services/core/useAppData';
+import { ref, watchEffect, computed } from 'vue';
 import Chart from 'primevue/chart';
+import Knob from 'primevue/knob';
+import Panel from 'primevue/panel';
+import Fieldset from 'primevue/fieldset';
 import PlayerMatchesTableComponent from './PlayerMatchesTableComponent.vue';
 import { useRoute } from 'vue-router';
+import type { Player, PlayerResponse } from '@/interfaces/PlayerInterfaces';
 
 /**
  * Get the player ID from the route parameters.
  */
 const route = useRoute();
-const playerId = route.params.id;
+const playerId = Number(route.params.id);
 
 /**
- * Fetch player data using a composable.
+ * Fetch player data using the new app data composable.
  */
-const { data: player, isLoading, isError } = usePlayerQuery(playerId);
+const { players, isLoading } = useAppData();
+
+/**
+ * Computed property to get the current player
+ * The API actually returns PlayerResponse objects
+ */
+const player = computed(() => {
+    return (players.value as PlayerResponse[]).find(p => p.id === playerId);
+});
+
+/**
+ * Computed property to get the player's statistics
+ * Handles backend field name (playerStatistics)
+ */
+const playerStats = computed(() => {
+    if (!player.value) return null;
+    // Backend returns playerStatistics field
+    return player.value.playerStatistics || null;
+});
+
+/**
+ * Computed property for error state
+ */
+const isError = computed(() => !isLoading.value && !player.value);
 
 /**
  * Chart data for matches played (won/lost).
@@ -83,37 +110,47 @@ const chartOptions = ref({
  * Watch for player data changes and update chart data accordingly.
  */
 watchEffect(async () => {
-    updateChartData(player.value);
+    if (player.value) {
+        updateChartData(player.value);
+    }
 });
 
 /**
  * Updates all chart data based on the player's statistics.
- * @param {any} playerData - Player data object
+ * @param {PlayerResponse} playerData - Player data object from backend
  */
-function updateChartData(playerData: any) {
+function updateChartData(playerData: PlayerResponse) {
+    // Backend uses playerStatistics field
+    const stats = playerData.playerStatistics;
+
+    if (!stats) {
+        console.warn('No statistics found for player:', playerData.name);
+        return;
+    }
+
     matchesPlayedData.value.datasets[0].data = [
-        playerData.playerStatistics.matchesWon,
-        playerData.playerStatistics.matchesLost,
+        stats.matchesWon || 0,
+        stats.matchesLost || 0,
     ];
     setsPlayedData.value.datasets[0].data = [
-        playerData.playerStatistics.setsWon,
-        playerData.playerStatistics.setsLost,
+        stats.setsWon || 0,
+        stats.setsLost || 0,
     ];
     gamesPlayedData.value.datasets[0].data = [
-        playerData.playerStatistics.gamesWon,
-        playerData.playerStatistics.gamesLost,
+        stats.gamesWon || 0,
+        stats.gamesLost || 0,
     ];
     gamesWonToX.value.datasets[0].data = [
-        playerData.playerStatistics.gamesWonTo0,
-        playerData.playerStatistics.gamesWonTo15,
-        playerData.playerStatistics.gamesWonTo30,
-        playerData.playerStatistics.gamesWonTo40,
+        stats.gamesWonTo0 || 0,
+        stats.gamesWonTo15 || 0,
+        stats.gamesWonTo30 || 0,
+        stats.gamesWonTo40 || 0,
     ];
     gamesLostToX.value.datasets[0].data = [
-        playerData.playerStatistics.gamesLostTo0,
-        playerData.playerStatistics.gamesLostTo15,
-        playerData.playerStatistics.gamesLostTo30,
-        playerData.playerStatistics.gamesLostTo40,
+        stats.gamesLostTo0 || 0,
+        stats.gamesLostTo15 || 0,
+        stats.gamesLostTo30 || 0,
+        stats.gamesLostTo40 || 0,
     ];
 }
 </script>
@@ -135,118 +172,124 @@ function updateChartData(playerData: any) {
                     <div v-else-if="isError">Error al cargar los datos del jugador.</div>
                     <div v-else>
                         <header>
-                            <h1>{{ player.name }}</h1>
+                            <h1>{{ player?.name || 'Player not found' }}</h1>
                         </header>
                         <Fieldset legend="Estadísticas" :toggleable="true" class="category-box">
                             <div class="flex-horizontal">
                                 <p class="flex-vertical">
                                     <Chart type="doughnut" :data="matchesPlayedData" :options="chartOptions" />
-                                <h3>Partidos jugados: {{ player.playerStatistics.matchesPlayed }}</h3>
+                                <h3>Partidos jugados: {{ playerStats?.matchesPlayed || 0 }}</h3>
                                 </p>
                                 <p class="flex-vertical">
                                     <Chart type="doughnut" :data="setsPlayedData" :options="chartOptions" />
-                                <h3>Sets jugados: {{ player.playerStatistics.setsPlayed }}</h3>
+                                <h3>Sets jugados: {{ playerStats?.setsPlayed || 0 }}</h3>
                                 </p>
                                 <p class="flex-vertical">
                                     <Chart type="doughnut" :data="gamesPlayedData" :options="chartOptions" />
-                                <h3>Juegos jugados: {{ player.playerStatistics.gamesPlayed }}</h3>
+                                <h3>Juegos jugados: {{ playerStats?.gamesPlayed || 0 }}</h3>
                                 </p>
                             </div>
                             <!--
                               Additional charts for games won/lost by score can be enabled here.
                             -->
                             <div class="grid-container-three">
-                                <div class="grid-element"> 
+                                <div class="grid-element">
                                     <p> Partidos jugados </p>
                                     <div class="grid-statistic">
-                                        {{ player.playerStatistics.matchesPlayed }}
+                                        {{ playerStats?.matchesPlayed || 0 }}
                                     </div>
                                 </div>
-                                <div class="grid-element"> 
+                                <div class="grid-element">
                                     <p> Partidos ganados </p>
                                     <div class="grid-statistic-won">
-                                        {{ player.playerStatistics.matchesWon }}
+                                        {{ playerStats?.matchesWon || 0 }}
                                     </div>
                                 </div>
-                                <div class="grid-element"> 
+                                <div class="grid-element">
                                     <p> Partidos perdidos </p>
                                     <div class="grid-statistic-lost">
-                                        {{ player.playerStatistics.matchesLost }}
+                                        {{ playerStats?.matchesLost || 0 }}
                                     </div>
                                 </div>
-                                <div class="grid-element"> 
+                                <div class="grid-element">
                                     <p> Sets jugados </p>
                                     <div class="grid-statistic">
-                                        {{ player.playerStatistics.setsPlayed }}
+                                        {{ playerStats?.setsPlayed || 0 }}
                                     </div>
                                 </div>
-                                <div class="grid-element"> 
+                                <div class="grid-element">
                                     <p> Sets ganados </p>
                                     <div class="grid-statistic-won">
-                                        {{ player.playerStatistics.setsWon }}
+                                        {{ playerStats?.setsWon || 0 }}
                                     </div>
-                                    </div>
+                                </div>
                                 <div class="grid-element">
                                     <p> Sets perdidos </p>
                                     <div class="grid-statistic-lost">
-                                        {{ player.playerStatistics.setsLost }}
+                                        {{ playerStats?.setsLost || 0 }}
                                     </div>
-                                    </div>
+                                </div>
                                 <div class="grid-element">
                                     <p> Juegos jugados </p>
                                     <div class="grid-statistic">
-                                        {{ player.playerStatistics.gamesPlayed }}
+                                        {{ playerStats?.gamesPlayed || 0 }}
                                     </div>
-                                    </div>
+                                </div>
                                 <div class="grid-element">
                                     <p> Juegos ganados </p>
                                     <div class="grid-statistic-won">
-                                        {{ player.playerStatistics.gamesWon }}
+                                        {{ playerStats?.gamesWon || 0 }}
                                     </div>
-                                    </div>
+                                </div>
                                 <div class="grid-element">
                                     <p> Juegos perdidos </p>
                                     <div class="grid-statistic-lost">
-                                        {{ player.playerStatistics.gamesLost }}
+                                        {{ playerStats?.gamesLost || 0 }}
                                     </div>
-                                    </div>
+                                </div>
 
                             </div>
                             <div class="grid-container-three">
                                 <div class="grid-element">
                                     <p> Partidos ganados </p>
                                     <div class="grid-statistic-knob">
-                                        <Knob v-model="player.playerStatistics.winPercentage" :valueTemplate="val => `${val}%`" />
+                                        <Knob :value="playerStats?.winPercentage || 0" :readonly="true"
+                                            :valueTemplate="val => `${val}%`" />
                                     </div>
                                 </div>
                                 <div class="grid-element">
                                     <p> Sets ganados </p>
                                     <div class="grid-statistic-knob">
-                                        <Knob v-model="player.playerStatistics.setsWinPercentage" :valueTemplate="val => `${val}%`" />
+                                        <Knob :value="playerStats?.setsWinPercentage || 0" :readonly="true"
+                                            :valueTemplate="val => `${val}%`" />
                                     </div>
                                 </div>
                                 <div class="grid-element">
                                     <p> Juegos ganados </p>
                                     <div class="grid-statistic-knob">
-                                        <Knob v-model="player.playerStatistics.gamesWinPercentage" :valueTemplate="val => `${val}%`" />
+                                        <Knob :value="playerStats?.gamesWinPercentage || 0" :readonly="true"
+                                            :valueTemplate="val => `${val}%`" />
                                     </div>
                                 </div>
                                 <div class="grid-element">
                                     <p> Puntos ganados </p>
                                     <div class="grid-statistic-knob">
-                                        <Knob v-model="player.playerStatistics.pointsWinPercentage" :valueTemplate="val => `${val}%`" />
+                                        <Knob :value="playerStats?.pointsWinPercentage || 0" :readonly="true"
+                                            :valueTemplate="val => `${val}%`" />
                                     </div>
                                 </div>
                                 <div class="grid-element">
                                     <p> Servicios ganados </p>
                                     <div class="grid-statistic-knob">
-                                        <Knob v-model="player.playerStatistics.gamesWinPercentageAsServer" :valueTemplate="val => `${val}%`" />
+                                        <Knob :value="playerStats?.gamesWinPercentageAsServer || 0" :readonly="true"
+                                            :valueTemplate="val => `${val}%`" />
                                     </div>
                                 </div>
                                 <div class="grid-element">
                                     <p> Restos ganados </p>
                                     <div class="grid-statistic-knob">
-                                        <Knob v-model="player.playerStatistics.gamesWinPercentageAsReceiver" :valueTemplate="val => `${val}%`" />
+                                        <Knob :value="playerStats?.gamesWinPercentageAsReceiver || 0" :readonly="true"
+                                            :valueTemplate="val => `${val}%`" />
                                     </div>
                                 </div>
                             </div>
@@ -294,7 +337,8 @@ function updateChartData(playerData: any) {
     justify-content: space-around;
     align-items: center;
     gap: 2rem;
-    flex-wrap: wrap; /* For responsive layout */
+    flex-wrap: wrap;
+    /* For responsive layout */
 }
 
 .flex-vertical {
@@ -346,7 +390,8 @@ function updateChartData(playerData: any) {
 .p-chart {
     width: 100%;
     height: 100%;
-    max-width: 200px; /* Responsive max size */
+    max-width: 200px;
+    /* Responsive max size */
     max-height: 200px;
     margin: 0 auto;
 }
@@ -380,4 +425,3 @@ function updateChartData(playerData: any) {
     }
 }
 </style>
-

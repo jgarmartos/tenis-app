@@ -94,7 +94,12 @@ public class PlayerStatisticsService {
     }
 
     private void processMatch(Match match, Integer playerId, PlayerStatistics stats) {
-        // TODO: manage the possibility of a match without winner
+        // Handle matches without winners (incomplete matches)
+        if (match.getWinner() == null) {
+            // Skip incomplete matches for statistics calculation
+            return;
+        }
+        
         boolean isWinner = match.getWinner().equals(playerService.getPlayer(playerId));
         updateMatchStats(stats, isWinner);
 
@@ -116,7 +121,8 @@ public class PlayerStatisticsService {
 
         updateSetStats(stats, isWinner);
 
-        if (set.getType().equals("Super Tie Break")) {
+        // Handle sets without type (incomplete sets)
+        if (set.getType() != null && set.getType().equals("Super Tie Break")) {
             processSuperTieBreak(set, match, playerId, stats);
         } else {
             List<Game> games = gameService.getGamesBySet(set.getId());
@@ -135,6 +141,11 @@ public class PlayerStatisticsService {
     }
 
     private void processGame(Game game, Match match, Integer playerId, PlayerStatistics stats) {
+        // Skip games for matches with incomplete player data
+        if (match.getPlayer1() == null || match.getPlayer2() == null) {
+            return;
+        }
+        
         stats.setGamesPlayed(stats.getGamesPlayed() + 1);
         stats.setPointsPlayed(stats.getPointsPlayed() + game.getPlayer1Points() + game.getPlayer2Points());
 
@@ -166,7 +177,7 @@ public class PlayerStatisticsService {
         if (isGameWinner) {
             stats.setGamesWon(stats.getGamesWon() + 1);
             updatePointsStats(stats, game, isPlayer1, true);
-            if (!game.getType().equals("tiebreak")) {
+            if (game.getType() != null && !game.getType().equals("tiebreak")) {
                 if (isPlayer1) {
                     categorizeGameByPoints(stats, game.getPlayer1Points(), game.getPlayer2Points(), true);
                 } else {
@@ -183,7 +194,7 @@ public class PlayerStatisticsService {
         } else {
             stats.setGamesLost(stats.getGamesLost() + 1);
             updatePointsStats(stats, game, isPlayer1, false);
-            if (!game.getType().equals("tiebreak")) {
+            if (game.getType() != null && !game.getType().equals("tiebreak")) {
                 if (isPlayer1) {
                     categorizeGameByPoints(stats, game.getPlayer1Points(),
                             game.getPlayer2Points(), true);
@@ -201,7 +212,7 @@ public class PlayerStatisticsService {
             // }
         }
 
-        if (!game.getType().equals("tiebreak"))
+        if (game.getType() != null && !game.getType().equals("tiebreak"))
         updateServeStats(stats, game, isPlayer1, match);
     }
 
@@ -244,6 +255,11 @@ public class PlayerStatisticsService {
     }
 
     private void updateServeStats(PlayerStatistics stats, Game game, boolean isPlayer1, Match match) {
+        // Skip if game server is null or match players are null
+        if (game.getServer() == null || match.getPlayer1() == null || match.getPlayer2() == null) {
+            return;
+        }
+        
         boolean isServer = (isPlayer1 && game.getServer().equals(match.getPlayer1())) ||
                 (!isPlayer1 && game.getServer().equals(match.getPlayer2()));
 

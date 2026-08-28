@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { useInitialData } from '@/services/requests/useInitialData';
-import { useDataStore } from '@/stores/useDataStore';
+import { useAppData } from '@/services/core/useAppData';
 import { computed, ref } from 'vue';
 import AddCompetitionDialog from './AddCompetitionDialog.vue';
 
@@ -10,9 +9,7 @@ const setVisible = (value: boolean) => {
   visible.value = value;
 };
 
-const { competitionsQuery } = useInitialData();
-
-const competitions = computed(() => useDataStore().competitions);
+const { competitions, isLoading, competitionsQuery } = useAppData();
 
 const lastCompetitions = computed(() => {
   return competitions.value?.slice(-3).reverse() || [];
@@ -34,16 +31,8 @@ const columns = [{ field: 'name', sortable: true }];
         </div>
       </div>
     </template>
-    <AddCompetitionDialog
-      v-bind:visible="visible"
-      :setVisible="setVisible"
-      :retry="competitionsQuery.refetch"
-    />
-    <DataTable
-      :value="lastCompetitions"
-      size="small"
-      :loading="competitionsQuery.isFetching.value"
-    >
+    <AddCompetitionDialog v-bind:visible="visible" :setVisible="setVisible" :retry="competitionsQuery.refetch" />
+    <DataTable :value="lastCompetitions" size="small" :loading="isLoading">
       <Column v-for="col in columns" :field="col.field" />
     </DataTable>
   </Panel>

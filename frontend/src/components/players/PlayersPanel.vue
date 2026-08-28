@@ -5,11 +5,10 @@ editing. * * @module components/players/PlayersPanel */
 <script setup lang="ts">
 import { computed } from 'vue';
 import AddPlayerDialog from './AddPlayerDialog.vue';
-import { useInitialData } from '@/services/requests/useInitialData';
-import { useDataStore } from '@/stores/useDataStore';
+import { useAppData } from '@/services/core/useAppData';
 import { usePlayerStore } from '@/stores/usePlayerStore';
 import type { Player } from '@/interfaces/PlayerInterfaces';
-import { usePlayerMutations } from '@/services/requests/usePlayerMutations';
+import { useDeletePlayer } from '@/services/players';
 
 /**
  * Store instance for managing player dialog state and player to edit.
@@ -17,14 +16,9 @@ import { usePlayerMutations } from '@/services/requests/usePlayerMutations';
 const store = usePlayerStore();
 
 /**
- * Query for fetching players from the backend.
+ * Modern data loading: Get players data with loading states
  */
-const { playersQuery } = useInitialData();
-
-/**
- * Computed property for the list of players from the global store.
- */
-const players = computed(() => useDataStore().players);
+const { players, isLoading } = useAppData();
 
 /**
  * Computed property for the last 10 players (most recent first).
@@ -48,9 +42,16 @@ const editPlayer = (player: Player) => {
 };
 
 /**
- * Player mutation for deleting a player.
+ * Modern player deletion mutation with automatic refetch
  */
-const { deletePlayer } = usePlayerMutations();
+const deletePlayer = useDeletePlayer({
+  onSuccess: () => {
+    console.log('Jugador eliminado correctamente');
+  },
+  onError: (error) => {
+    console.error('Error al eliminar jugador:', error);
+  }
+});
 
 /**
  * Handles player deletion with confirmation dialog.
@@ -83,42 +84,19 @@ const handleDelete = (playerId: number) => {
 
     <AddPlayerDialog />
 
-    <DataTable
-      :value="lastFivePlayers"
-      paginator
-      :rows="5"
-      :rowsPerPageOptions="[5, 10, 20]"
-      size="small"
-      :loading="playersQuery.isFetching.value"
-    >
+    <DataTable :value="lastFivePlayers" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20]" size="small"
+      :loading="isLoading">
       <Column>
         <template #body="playersResponse">
-          <Avatar
-            :label="playersResponse.data.name.charAt(0).toUpperCase()"
-            class="mr-2"
-            size="normal"
-          />
+          <Avatar :label="playersResponse.data.name.charAt(0).toUpperCase()" class="mr-2" size="normal" />
         </template>
       </Column>
-      <Column
-        v-for="col in columns"
-        :field="col.field"
-        :key="col.field"
-        sortable
-      />
+      <Column v-for="col in columns" :field="col.field" :key="col.field" sortable />
       <Column>
         <template #body="slotProps">
           <div class="action-buttons">
-            <Button
-              icon="pi pi-pencil"
-              class="ghost-button"
-              @click="editPlayer(slotProps.data)"
-            />
-            <Button
-              icon="pi pi-trash"
-              class="ghost-button danger"
-              @click="handleDelete(slotProps.data.id)"
-            />
+            <Button icon="pi pi-pencil" class="ghost-button" @click="editPlayer(slotProps.data)" />
+            <Button icon="pi pi-trash" class="ghost-button danger" @click="handleDelete(slotProps.data.id)" />
           </div>
         </template>
       </Column>

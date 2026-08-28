@@ -8,6 +8,7 @@ import App from './App.vue';
 import router from './router';
 
 import { VueQueryPlugin } from '@tanstack/vue-query';
+import { queryClient } from '@/config/queryClient';
 
 import PrimeVue from 'primevue/config';
 import Button from 'primevue/button';
@@ -83,7 +84,7 @@ const app = createApp(App);
 app.directive('ripple', Ripple);
 
 app.use(PrimeVue, { ripple: true });
-app.use(VueQueryPlugin);
+app.use(VueQueryPlugin, { queryClient });
 app.use(createPinia());
 app.use(router);
 app.use(i18n);

@@ -2,13 +2,13 @@ import { defineStore } from 'pinia';
 import type { Competition } from '@/interfaces/CompetitionsIntercfaces';
 import type { Match } from '@/interfaces/MatchesInterfaces';
 import type { Place } from '@/interfaces/PlacesInterfaces';
-import type { Player } from '@/interfaces/PlayerInterfaces';
+import type { PlayerResponse } from '@/interfaces/PlayerInterfaces';
 import type { Set, SetResponse } from '@/interfaces/SetsInterfaces';
 import type { Game } from '@/interfaces/GamesInterfaces';
 
 export const useDataStore = defineStore('dataStore', {
   state: () => ({
-    players: [] as Player[],
+    players: [] as PlayerResponse[],
     matches: [] as Match[],
     competitions: [] as Competition[],
     places: [] as Place[],
@@ -16,7 +16,7 @@ export const useDataStore = defineStore('dataStore', {
     games: [] as Game[],
   }),
   actions: {
-    setPlayers(players: Player[]) {
+    setPlayers(players: PlayerResponse[]) {
       this.players = players;
     },
     setMatches(matches: Match[]) {

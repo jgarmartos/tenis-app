@@ -1,9 +1,15 @@
 package com.jgmartos.backend;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 
 import com.jgmartos.backend.models.Game;
@@ -16,13 +22,6 @@ import com.jgmartos.backend.services.MatchService;
 import com.jgmartos.backend.services.PlayerService;
 import com.jgmartos.backend.services.PlayerStatisticsService;
 import com.jgmartos.backend.services.SetService;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 class PlayerStatisticsServiceTest {
 
@@ -56,11 +55,17 @@ class PlayerStatisticsServiceTest {
         // Mock matches
         Match match1 = new Match();
         match1.setId(1);
+        match1.setPlayer1(player);
+        match1.setPlayer2(new Player()); // Opponent
         match1.setWinner(player);
 
+        Player opponent = new Player();
+        opponent.setId(2);
         Match match2 = new Match();
         match2.setId(2);
-        match2.setWinner(new Player()); // Another player won
+        match2.setPlayer1(player);
+        match2.setPlayer2(opponent);
+        match2.setWinner(opponent); // Another player won
 
         List<Match> matches = Arrays.asList(match1, match2);
         when(matchService.getMatchesByPlayer(1)).thenReturn(matches);
@@ -68,21 +73,27 @@ class PlayerStatisticsServiceTest {
         // Mock sets
         Set set1 = new Set();
         set1.setId(1);
+        set1.setType("NORMAL");
         set1.setWinner(player);
 
         Set set2 = new Set();
         set2.setId(2);
-        set2.setWinner(new Player()); // Another player won
+        set2.setType("NORMAL");
+        set2.setWinner(opponent); // Another player won
 
         when(setService.getSetsByMatch(1)).thenReturn(Collections.singletonList(set1));
         when(setService.getSetsByMatch(2)).thenReturn(Collections.singletonList(set2));
 
         // Mock games
         Game game1 = new Game();
+        game1.setType("NORMAL");
+        game1.setServer(player);
         game1.setPlayer1Points(4);
         game1.setPlayer2Points(2);
 
         Game game2 = new Game();
+        game2.setType("NORMAL");
+        game2.setServer(opponent);
         game2.setPlayer1Points(2);
         game2.setPlayer2Points(4);
 

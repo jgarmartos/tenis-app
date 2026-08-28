@@ -265,3 +265,14 @@ logs/
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Keep example files for reference
+!.env.example
+!.env.local.example
+!frontend/.env.example
+!frontend/.env.local.example
+
+# Sensitive files
+.env.secret
+.env.private
+*.env.backup

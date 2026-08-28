@@ -84,7 +84,7 @@ public class MatchController {
 
     @PatchMapping("/{id}/winner")
     public Match updateWinner(@PathVariable Integer id, @RequestBody Map<String, Integer> winnerRequest) {
-        Integer winnerId = winnerRequest.get("winnerId");
+        Integer winnerId = winnerRequest.get("winner");
         return matchService.updateWinner(id, winnerId);
     }
 
@@ -139,6 +139,12 @@ public class MatchController {
         } catch (RuntimeException e) {
             return ResponseEntity.internalServerError().build(); // 500 Internal Server Error
         }
+    }
+
+    @PatchMapping("/{id}/place")
+    public Match updateMatchPlace(@PathVariable Integer id, @RequestBody Map<String, Integer> placeRequest) {
+        Integer placeId = placeRequest.get("placeId");
+        return matchService.updateMatchPlace(id, placeId);
     }
 
 }
