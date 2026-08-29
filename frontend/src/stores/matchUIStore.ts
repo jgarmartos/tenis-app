@@ -91,19 +91,3 @@ export const useMatchUIStore = defineStore('matchUI', () => {
     };
 });
 
-/**
- * @deprecated Use useMatchUIStore instead
- * Keeping for backward compatibility during migration
- */
-export const useMatchInfoStore = defineStore('matchInfo', () => {
-    const matchInfo = ref<Match>(emptyMatch());
-
-    const setMatchInfo = (match: Match) => {
-        matchInfo.value = match;
-    };
-
-    return {
-        matchInfo,
-        setMatchInfo,
-    };
-});

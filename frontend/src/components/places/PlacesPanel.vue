@@ -5,6 +5,7 @@ import AddPlaceDialog from './AddPlaceDialog.vue';
 import PlaceInfoDialog from './PlaceInfoDialog.vue';
 import type { Place } from '@/interfaces/PlacesInterfaces';
 import { usePlaceStore } from '@/stores/usePlaceStore';
+import { useDeletePlace } from '@/services/places/placeMutations';
 
 /**
  * Store instance for managing place dialog state and place to edit.
@@ -15,6 +16,11 @@ const store = usePlaceStore();
  * Modern data loading with loading states
  */
 const { places, isLoading, placesQuery } = useAppData();
+
+/**
+ * Place deletion mutation.
+ */
+const { mutate: deletePlace } = useDeletePlace();
 
 /**
  * Computed property for getting the last 3 places in reverse order.
@@ -41,13 +47,11 @@ const editPlayer = (place: Place) => {
 
 /**
  * Handles place deletion with confirmation dialog.
- * TODO: Implement place deletion mutation
  * @param {number} placeId - ID of the place to delete
  */
 const handleDelete = (placeId: number) => {
   if (confirm('¿Estás seguro de que quieres eliminar este lugar?')) {
-    // TODO: Implement place deletion mutation
-    console.log('Delete place:', placeId);
+    deletePlace(placeId);
   }
 };
 

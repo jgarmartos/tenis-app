@@ -1,5 +1,7 @@
 import { BaseService } from '../base/baseService';
+import { apiClient } from '@/api';
 import type { Game, GameSubmit } from '@/interfaces/GamesInterfaces';
+import type { AxiosResponse } from 'axios';
 
 /**
  * Game service for tennis game operations
@@ -11,20 +13,12 @@ class GameService extends BaseService<Game, GameSubmit> {
     }
 
     /**
-     * Get games by set ID
+     * Get games for a set, sorted by game number (delegates to the backend endpoint
+     * instead of filtering client-side, since Game's set relation is nested, not a flat id)
      */
     async getBySetId(setId: number): Promise<Game[]> {
-        const allGames = await this.getAll();
-        return allGames.filter(game => game.set === setId);
-    }
-
-    /**
-     * Get games by match (through set relationship)
-     * Note: Games don't have direct matchId, need to filter through sets
-     */
-    async getBySetNumber(setNumber: number): Promise<Game[]> {
-        const allGames = await this.getAll();
-        return allGames.filter(game => game.set === setNumber);
+        const response: AxiosResponse<Game[]> = await apiClient.get(`${this.endpoint}/set/${setId}`);
+        return response.data;
     }
 }
 

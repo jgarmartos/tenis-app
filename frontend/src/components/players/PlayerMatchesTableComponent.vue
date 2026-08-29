@@ -10,12 +10,12 @@ import { emptyMatch } from '@/services/emptyObjects';
 import { useAppData } from '@/services/core/useAppData';
 import { useMatchUIStore } from '@/stores/matchUIStore';
 import { computed, ref } from 'vue';
-import { getSetsResultForMatch } from '@/services/matchServices';
+import { getSetsResultForMatch } from '@/services/matches/matchSetsHelpers';
 
 /**
  * Modern data loading
  */
-const { matches, isLoading } = useAppData();
+const { matches, sets, isLoading } = useAppData();
 
 /**
  * Props for the player ID whose matches are displayed.
@@ -122,7 +122,7 @@ const onRowSelect = (event: any) => {
         </span>
         <span v-else>
           <!-- Render set scores for the match -->
-          {{ getSetsResultForMatch(matchesResponse.data.id) }}
+          {{ getSetsResultForMatch(sets, matchesResponse.data.id) }}
         </span>
       </template>
     </Column>

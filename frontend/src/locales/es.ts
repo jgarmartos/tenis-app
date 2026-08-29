@@ -68,7 +68,9 @@ export default {
         newPlace: 'Nuevo lugar',
         selectPlace: 'Selecciona un nuevo lugar',
         updatePlace: 'Actualizar Lugar',
-        warning: 'Esta acción cambiará permanentemente el lugar donde se jugó este partido. Esta acción no se puede deshacer.'
+        warning: 'Esta acción cambiará permanentemente el lugar donde se jugó este partido. Esta acción no se puede deshacer.',
+        success: 'Lugar del partido actualizado correctamente',
+        error: 'No se pudo actualizar el lugar del partido'
       }
     },
     /**
@@ -80,6 +82,17 @@ export default {
       editButton: 'Editar',
       deleteButton: 'Eliminar',
       noPlaces: 'No se encontraron lugares'
+    },
+    /**
+     * Add/edit place dialog strings
+     */
+    form: {
+      createTitle: 'Crear lugar',
+      editTitle: 'Actualizar lugar',
+      name: 'Nombre',
+      address: 'Dirección',
+      city: 'Ciudad',
+      error: 'No se pudo guardar el lugar. Inténtalo de nuevo.'
     }
   },
 
@@ -110,7 +123,25 @@ export default {
       title: 'Información del Partido',
       statistics: 'Estadísticas',
       sets: 'Sets',
-      games: 'Juegos'
+      games: 'Juegos',
+      matchLine: 'Línea de partido',
+      close: 'Cerrar'
+    }
+  },
+
+  /**
+   * Competition-related strings
+   */
+  competitions: {
+    /**
+     * Add competition dialog strings
+     */
+    form: {
+      createTitle: 'Crear competición',
+      name: 'Nombre',
+      startDate: 'Fecha inicio',
+      endDate: 'Fecha fin',
+      error: 'No se pudo crear la competición. Inténtalo de nuevo.'
     }
   },
 
@@ -128,6 +159,40 @@ export default {
         name: 'Nombre',
         ranking: 'Ranking',
         matches: 'Partidos'
+      }
+    },
+    /**
+     * Add/edit player dialog strings
+     */
+    form: {
+      createTitle: 'Crear jugador',
+      editTitle: 'Actualizar jugador',
+      name: 'Nombre',
+      forehand: 'Mano preferida',
+      handRight: 'Derecha',
+      handLeft: 'Izquierda',
+      error: 'No se pudo guardar el jugador. Inténtalo de nuevo.'
+    },
+    /**
+     * Player information dialog strings
+     */
+    infoDialog: {
+      fields: {
+        id: 'ID',
+        forehand: 'Mano preferida'
+      },
+      stats: {
+        title: 'Estadísticas',
+        matchesPlayed: 'Partidos jugados',
+        matchesWon: 'Partidos ganados',
+        winPercentage: '% de victorias',
+        setsWon: 'Sets ganados',
+        gamesWon: 'Juegos ganados',
+        pointsWinPercentage: '% de puntos ganados'
+      },
+      matches: {
+        title: 'Partidos recientes',
+        empty: 'Este jugador todavía no tiene partidos registrados.'
       }
     }
   },

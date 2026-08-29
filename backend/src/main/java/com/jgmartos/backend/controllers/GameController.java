@@ -48,18 +48,19 @@ public class GameController {
     }
 
     @GetMapping("/{id}")
-    public Game getGame(Integer id) {
+    public Game getGame(@PathVariable Integer id) {
         return gameService.getGame(id);
     }
 
     @PutMapping("/{id}")
-    public Game updateGame(Game game) {
+    public Game updateGame(@PathVariable Integer id, @RequestBody Game game) {
+        game.setId(id);
         return gameService.updateGame(game);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteGame(Integer id) {
-        gameService.deleteGame(id);;
+    public void deleteGame(@PathVariable Integer id) {
+        gameService.deleteGame(id);
     }
 
     @GetMapping

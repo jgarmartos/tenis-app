@@ -1,12 +1,21 @@
 <script setup lang="ts">
 import type { Match } from '@/interfaces/MatchesInterfaces';
+import { useAppData } from '@/services/core/useAppData';
 import {
   getSetsForMatch,
   getSetsForMatchByPlayer,
-} from '@/services/matchServices';
+} from '@/services/matches/matchSetsHelpers';
 import { onMounted, ref, watch } from 'vue';
-import { getGamesBySet } from '@/services/gameService';
+import { getGamesBySet } from '@/services/games/gameHelpers';
+import { useI18n } from 'vue-i18n';
 import MatchCharts from './MatchCharts.vue';
+
+const { sets, games, isLoading } = useAppData();
+
+/**
+ * i18n composable for accessing translation functions.
+ */
+const { t } = useI18n();
 
 /**
  * Properties of the component
@@ -27,7 +36,7 @@ const calculateSetsPuntuations = () => {
   setPuntationP1.value = 0;
   setPuntationP2.value = 0;
 
-  getSetsForMatch(props.matchInfo.id).forEach(set => {
+  getSetsForMatch(sets.value, props.matchInfo.id).forEach(set => {
     if (set.winner?.id === props.matchInfo.player1.id) {
       setPuntationP1.value++;
     } else if (set.winner?.id === props.matchInfo.player2.id) {
@@ -43,14 +52,14 @@ const calculatePuntuations = () => {
   gamesPuntuationsPerSetP1.value = {};
   gamesPuntuationsPerSetP2.value = {};
 
-  getSetsForMatch(props.matchInfo.id).forEach(set => {
+  getSetsForMatch(sets.value, props.matchInfo.id).forEach(set => {
     let player1GamesWon = 0;
     let player2GamesWon = 0;
 
     gamesPuntuationsPerSetP1.value[set.id] = [];
     gamesPuntuationsPerSetP2.value[set.id] = [];
 
-    getGamesBySet(set.id).forEach(game => {
+    getGamesBySet(games.value, set.id).forEach(game => {
       if (game.winner?.id === props.matchInfo.player1.id) {
         player1GamesWon++;
         gamesPuntuationsPerSetP1.value[set.id].push(player1GamesWon);
@@ -76,8 +85,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <Dialog :visible="visible" class="dialog" :closable="false">
-    <div class="dialog">
+  <Dialog :visible="visible" class="dialog" :header="t('matches.infoDialog.title')" :closable="false">
+    <!-- Loading state while sets/games are being fetched -->
+    <div v-if="isLoading" class="loading-state">
+      <ProgressSpinner />
+      <span class="loading-text">{{ t('common.loading') }}</span>
+    </div>
+    <div v-else class="dialog">
       <div class="playersResult">
         <div class="flex-container" id="player1">
           <div class="flex-container">
@@ -93,6 +107,7 @@ onMounted(() => {
               <div
                 class="flex-container-result"
                 v-for="setScore in getSetsForMatchByPlayer(
+                  sets,
                   matchInfo.id,
                   matchInfo.player1.id
                 )"
@@ -123,6 +138,7 @@ onMounted(() => {
               <div
                 class="flex-container-result"
                 v-for="setScore in getSetsForMatchByPlayer(
+                  sets,
                   matchInfo.id,
                   matchInfo.player2.id
                 )"
@@ -144,18 +160,18 @@ onMounted(() => {
         class="flex-container-vertical"
         style="justify-content: center; margin-top: 1rem"
       >
-        <span style="justify-content: center; font-weight: bold"
-          >Línea de partido</span
-        >
+        <span style="justify-content: center; font-weight: bold">{{
+          t('matches.infoDialog.matchLine')
+        }}</span>
         <div style="width: 100%">
           <Accordion :activeIndex="0">
             <AccordionTab
-              v-for="set in getSetsForMatch(matchInfo.id)"
+              v-for="set in getSetsForMatch(sets, matchInfo.id)"
               :header="'Set ' + set.numberSet"
             >
               <div
                 id="games-results"
-                v-for="(game, index) in getGamesBySet(set.id)"
+                v-for="(game, index) in getGamesBySet(games, set.id)"
                 class="flex-container"
               >
                 <div
@@ -238,15 +254,15 @@ onMounted(() => {
         class="flex-container-vertical"
         style="justify-content: center; margin-top: 1rem"
       >
-        <span style="justify-content: center; font-weight: bold"
-          >Estadísticas</span
-        >
+        <span style="justify-content: center; font-weight: bold">{{
+          t('matches.infoDialog.statistics')
+        }}</span>
         <MatchCharts :matchInfo="matchInfo" />
       </div>
     </div>
     <template #footer>
       <Button
-        label="Cerrar"
+        :label="t('matches.infoDialog.close')"
         text
         severity="secondary"
         @click="setVisible(false)"
@@ -259,6 +275,19 @@ onMounted(() => {
 <style scoped>
 .dialog {
   width: 50rem;
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  justify-content: center;
+}
+
+.loading-text {
+  font-size: 0.9rem;
+  color: #666;
 }
 
 .right-side {

@@ -3,13 +3,12 @@
  */
 
 import { useQuery } from '@tanstack/vue-query';
-import { useDataStore } from '@/stores/useDataStore';
 import { queryKeys } from '@/services/base/queryKeys';
 import {
     matchService,
     playerService
 } from '@/services';
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 import apiClient from '@/api';
 import type { Competition } from '@/interfaces/CompetitionsIntercfaces';
 import type { Place } from '@/interfaces/PlacesInterfaces';
@@ -20,8 +19,6 @@ import type { Game } from '@/interfaces/GamesInterfaces';
  * Modern approach: Clean individual queries with centralized loading states
  */
 export function useAppData() {
-    const store = useDataStore();
-
     // Individual queries using new services
     const playersQuery = useQuery({
         queryKey: queryKeys.players.all,
@@ -79,31 +76,6 @@ export function useAppData() {
     const places = computed(() => placesQuery.data.value || []);
     const sets = computed(() => setsQuery.data.value || []);
     const games = computed(() => gamesQuery.data.value || []);
-
-    // Optional: Sync with store for backward compatibility
-    watch(players, (newPlayers) => {
-        if (newPlayers.length) store.setPlayers(newPlayers);
-    });
-
-    watch(matches, (newMatches) => {
-        if (newMatches.length) store.setMatches(newMatches);
-    });
-
-    watch(competitions, (newCompetitions) => {
-        if (newCompetitions.length) store.setCompetitions(newCompetitions);
-    });
-
-    watch(places, (newPlaces) => {
-        if (newPlaces.length) store.setPlaces(newPlaces);
-    });
-
-    watch(sets, (newSets) => {
-        if (newSets.length) store.setSets(newSets);
-    });
-
-    watch(games, (newGames) => {
-        if (newGames.length) store.setGames(newGames);
-    });
 
     // Global loading states
     const isLoading = computed(() =>

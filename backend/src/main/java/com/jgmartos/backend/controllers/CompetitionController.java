@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,17 +28,18 @@ public class CompetitionController {
     }
 
     @GetMapping("/{id}")
-    public Competition getCompetition(Integer id) {
+    public Competition getCompetition(@PathVariable Integer id) {
         return competitionService.getCompetition(id);
     }
 
     @PutMapping("/{id}")
-    public Competition updateCompetition(Competition competition) {
+    public Competition updateCompetition(@PathVariable Integer id, @RequestBody Competition competition) {
+        competition.setId(id);
         return competitionService.updateCompetition(competition);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCompetition(Integer id) {
+    public void deleteCompetition(@PathVariable Integer id) {
         competitionService.deleteCompetition(id);
     }
 

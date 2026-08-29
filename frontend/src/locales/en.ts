@@ -68,7 +68,9 @@ export default {
                 newPlace: 'New place',
                 selectPlace: 'Select a new place',
                 updatePlace: 'Update Place',
-                warning: 'This action will permanently change the place where this match was played. This cannot be undone.'
+                warning: 'This action will permanently change the place where this match was played. This cannot be undone.',
+                success: 'Match place updated successfully',
+                error: 'Failed to update the match place'
             }
         },
         /**
@@ -80,6 +82,17 @@ export default {
             editButton: 'Edit',
             deleteButton: 'Delete',
             noPlaces: 'No places found'
+        },
+        /**
+         * Add/edit place dialog strings
+         */
+        form: {
+            createTitle: 'Create place',
+            editTitle: 'Update place',
+            name: 'Name',
+            address: 'Address',
+            city: 'City',
+            error: 'Failed to save the place. Please try again.'
         }
     },
 
@@ -110,7 +123,25 @@ export default {
             title: 'Match Information',
             statistics: 'Statistics',
             sets: 'Sets',
-            games: 'Games'
+            games: 'Games',
+            matchLine: 'Match timeline',
+            close: 'Close'
+        }
+    },
+
+    /**
+     * Competition-related strings
+     */
+    competitions: {
+        /**
+         * Add competition dialog strings
+         */
+        form: {
+            createTitle: 'Create competition',
+            name: 'Name',
+            startDate: 'Start date',
+            endDate: 'End date',
+            error: 'Failed to create the competition. Please try again.'
         }
     },
 
@@ -128,6 +159,40 @@ export default {
                 name: 'Name',
                 ranking: 'Ranking',
                 matches: 'Matches'
+            }
+        },
+        /**
+         * Add/edit player dialog strings
+         */
+        form: {
+            createTitle: 'Create player',
+            editTitle: 'Update player',
+            name: 'Name',
+            forehand: 'Preferred hand',
+            handRight: 'Right',
+            handLeft: 'Left',
+            error: 'Failed to save the player. Please try again.'
+        },
+        /**
+         * Player information dialog strings
+         */
+        infoDialog: {
+            fields: {
+                id: 'ID',
+                forehand: 'Preferred hand'
+            },
+            stats: {
+                title: 'Statistics',
+                matchesPlayed: 'Matches played',
+                matchesWon: 'Matches won',
+                winPercentage: 'Win %',
+                setsWon: 'Sets won',
+                gamesWon: 'Games won',
+                pointsWinPercentage: 'Points won %'
+            },
+            matches: {
+                title: 'Recent matches',
+                empty: 'This player has no matches recorded yet.'
             }
         }
     },

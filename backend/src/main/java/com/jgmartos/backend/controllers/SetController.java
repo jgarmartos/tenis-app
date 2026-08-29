@@ -52,7 +52,8 @@ public class SetController {
     }
 
     @PutMapping("/{id}")
-    public Set updateSet(Set set) {
+    public Set updateSet(@PathVariable Integer id, @RequestBody Set set) {
+        set.setId(id);
         return setService.updateSet(set);
     }
 

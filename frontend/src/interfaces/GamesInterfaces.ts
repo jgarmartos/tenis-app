@@ -2,7 +2,7 @@ import type { Player } from './PlayerInterfaces';
 
 export interface Game {
   id: number;
-  set: number;
+  set: { id: number };
   gameNumber: number;
   pointsPlayer1: number;
   pointsPlayer2: number;

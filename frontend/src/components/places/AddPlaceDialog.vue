@@ -1,11 +1,36 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { PlaceSubmit } from '@/interfaces/PlacesInterfaces';
 import { usePlaceStore } from '@/stores/usePlaceStore';
-import { useAppData } from '@/services/core/useAppData';
+import { useCreatePlace, useUpdatePlace } from '@/services/places/placeMutations';
 
 const store = usePlaceStore();
-const { placesQuery } = useAppData();
+
+/**
+ * i18n composable for accessing translation functions.
+ */
+const { t } = useI18n();
+
+/**
+ * Feedback message shown when the create/update request fails.
+ */
+const errorMessage = ref('');
+
+/**
+ * Place mutation functions for creating and updating places.
+ * Closes the dialog after mutation is complete.
+ */
+const { mutate: createPlace, isPending: isCreating } = useCreatePlace({
+  onError: () => {
+    errorMessage.value = t('places.form.error');
+  },
+});
+const { mutate: updatePlace, isPending: isUpdating } = useUpdatePlace({
+  onError: () => {
+    errorMessage.value = t('places.form.error');
+  },
+});
 
 const place = ref<PlaceSubmit>({
   name: '',
@@ -20,6 +45,7 @@ const place = ref<PlaceSubmit>({
 watch(
   () => store.placeToEdit,
   placeToEdit => {
+    errorMessage.value = '';
     if (placeToEdit) {
       place.value = {
         name: placeToEdit.name,
@@ -35,62 +61,67 @@ watch(
 
 /**
  * Save the place (create or update).
- * TODO: Implement place mutations when needed
+ * Calls the appropriate mutation based on whether editing or creating.
  * @returns {void}
  */
 const savePlace = (): void => {
-  try {
-    // TODO: Implement place creation/update mutations
-    console.log('Save place:', place.value);
-    store.closeDialog();
-    // Trigger refetch of places data
-    placesQuery.refetch();
-  } catch (error) {
-    // Handle error appropriately (e.g., show notification)
-    console.error('Error saving place:', error);
+  errorMessage.value = '';
+
+  if (store.placeToEdit) {
+    updatePlace({ id: store.placeToEdit.id, data: place.value }, {
+      onSuccess: () => store.closeDialog()
+    });
+  } else {
+    createPlace(place.value, {
+      onSuccess: () => store.closeDialog()
+    });
   }
 };
 </script>
 
 <template>
-  <Dialog v-model:visible="store.isDialogVisible" modal :header="store.placeToEdit ? 'Actualizar lugar' : 'Crear lugar'"
+  <Dialog v-model:visible="store.isDialogVisible" modal
+    :header="store.placeToEdit ? t('places.form.editTitle') : t('places.form.createTitle')"
     :style="{ width: '25rem' }">
-    <!-- <span class="p-text-secondary block mb-5">Update your information.</span> -->
-    <div v-if="store.placeToEdit" class="add-player-line">
-      <label for="username" class="font-semibold w-6rem">ID</label>
-      <InputText :value="store.placeToEdit?.id !== undefined
-          ? String(store.placeToEdit.id)
-          : ''
-        " id="username" class="flex-auto w-1rem" autocomplete="off" disabled />
+    <div v-if="store.placeToEdit" class="form-field">
+      <label for="placeId" class="field-label">ID</label>
+      <InputText :value="String(store.placeToEdit.id)" id="placeId" class="flex-auto" autocomplete="off" disabled />
     </div>
-    <div class="add-player-line">
-      <label for="username" class="font-semibold w-6rem">Nombre</label>
-      <InputText v-model="place.name" id="username" class="flex-auto w-1rem" autocomplete="off" />
+    <div class="form-field">
+      <label for="placeName" class="field-label">{{ t('places.form.name') }}</label>
+      <InputText v-model="place.name" id="placeName" class="flex-auto" autocomplete="off" />
     </div>
-    <div class="add-player-line">
-      <label for="username" class="font-semibold w-6rem">Dirección</label>
-      <InputText v-model="place.address" id="address" class="flex-auto w-1rem" autocomplete="off" />
+    <div class="form-field">
+      <label for="placeAddress" class="field-label">{{ t('places.form.address') }}</label>
+      <InputText v-model="place.address" id="placeAddress" class="flex-auto" autocomplete="off" />
     </div>
-    <div class="add-player-line">
-      <label for="username" class="font-semibold w-6rem">Ciudad</label>
-      <InputText v-model="place.city" id="city" class="flex-auto w-1rem" autocomplete="off" />
+    <div class="form-field">
+      <label for="placeCity" class="field-label">{{ t('places.form.city') }}</label>
+      <InputText v-model="place.city" id="placeCity" class="flex-auto" autocomplete="off" />
     </div>
+
+    <!-- Feedback after attempting to save -->
+    <Message v-if="errorMessage" severity="error">{{ errorMessage }}</Message>
+
     <template #footer>
-      <Button label="Cancel" text severity="secondary" @click="store.closeDialog()" autofocus />
-      <Button label="Save" outlined severity="secondary" @click="savePlace" autofocus />
+      <Button :label="t('common.cancel')" text severity="secondary" @click="store.closeDialog()" />
+      <Button :label="t('common.save')" outlined severity="secondary" :loading="isCreating || isUpdating"
+        @click="savePlace" />
     </template>
   </Dialog>
 </template>
 
 <style scoped>
-.add-player-line {
+.form-field {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 10px;
 }
 
-.right-side {
-  margin-left: auto;
+.field-label {
+  font-weight: 600;
+  width: 6rem;
+  flex-shrink: 0;
 }
 </style>

@@ -28,7 +28,7 @@ class MatchService extends BaseService<Match, MatchSubmit> {
      */
     async getByPlace(placeId: number): Promise<Match[]> {
         const response: AxiosResponse<Match[]> = await apiClient.get(
-            `${this.endpoint}/place/${placeId}`
+            `${this.endpoint}/byplace/${placeId}`
         );
         return response.data;
     }

@@ -5,9 +5,10 @@ editing. * * @module components/players/PlayersPanel */
 <script setup lang="ts">
 import { computed } from 'vue';
 import AddPlayerDialog from './AddPlayerDialog.vue';
+import PlayerInfoDialog from './PlayerInfoDialog.vue';
 import { useAppData } from '@/services/core/useAppData';
 import { usePlayerStore } from '@/stores/usePlayerStore';
-import type { Player } from '@/interfaces/PlayerInterfaces';
+import type { Player, PlayerResponse } from '@/interfaces/PlayerInterfaces';
 import { useDeletePlayer } from '@/services/players';
 
 /**
@@ -39,6 +40,14 @@ const columns = [
  */
 const editPlayer = (player: Player) => {
   store.openDialog(player);
+};
+
+/**
+ * Handles player row selection to show detailed information.
+ * @param {any} event - The selection event containing player data
+ */
+const showPlayerInfo = (event: any) => {
+  store.showPlayerInfo(event.data as PlayerResponse);
 };
 
 /**
@@ -83,9 +92,10 @@ const handleDelete = (playerId: number) => {
     </template>
 
     <AddPlayerDialog />
+    <PlayerInfoDialog />
 
     <DataTable :value="lastFivePlayers" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20]" size="small"
-      :loading="isLoading">
+      :loading="isLoading" selectionMode="single" @row-select="showPlayerInfo">
       <Column>
         <template #body="playersResponse">
           <Avatar :label="playersResponse.data.name.charAt(0).toUpperCase()" class="mr-2" size="normal" />
@@ -95,8 +105,8 @@ const handleDelete = (playerId: number) => {
       <Column>
         <template #body="slotProps">
           <div class="action-buttons">
-            <Button icon="pi pi-pencil" class="ghost-button" @click="editPlayer(slotProps.data)" />
-            <Button icon="pi pi-trash" class="ghost-button danger" @click="handleDelete(slotProps.data.id)" />
+            <Button icon="pi pi-pencil" class="ghost-button" @click.stop="editPlayer(slotProps.data)" />
+            <Button icon="pi pi-trash" class="ghost-button danger" @click.stop="handleDelete(slotProps.data.id)" />
           </div>
         </template>
       </Column>

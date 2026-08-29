@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAppData } from '@/services/core/useAppData';
+import { useUpdateMatchPlace } from '@/services/matches/matchMutations';
 import { usePlaceStore } from '@/stores/usePlaceStore';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -67,6 +68,25 @@ const selectedNewPlaceId = ref<number | null>(null);
  * Reactive reference for controlling the edit place dialog visibility.
  */
 const showEditPlaceDialog = ref(false);
+
+/**
+ * Feedback message shown after attempting to update a match's place.
+ */
+const updatePlaceFeedback = ref<{ severity: 'success' | 'error'; message: string } | null>(null);
+
+/**
+ * Mutation for updating only the place of a match.
+ * Invalidates matches/places queries on success so the UI reflects the change.
+ */
+const { mutate: updateMatchPlaceMutation, isPending: isUpdatingPlace } = useUpdateMatchPlace({
+  onSuccess: () => {
+    updatePlaceFeedback.value = { severity: 'success', message: t('places.infoDialog.editPlace.success') };
+    closeEditPlaceDialog();
+  },
+  onError: () => {
+    updatePlaceFeedback.value = { severity: 'error', message: t('places.infoDialog.editPlace.error') };
+  },
+});
 
 /**
  * Computed property for loading state.
@@ -147,6 +167,7 @@ const getRelativeDate = (date: string | Date): string => {
 const openEditPlaceDialog = (match: Match): void => {
   selectedMatchForEdit.value = match;
   selectedNewPlaceId.value = null;
+  updatePlaceFeedback.value = null;
   showEditPlaceDialog.value = true;
 };
 
@@ -160,37 +181,18 @@ const closeEditPlaceDialog = (): void => {
 };
 
 /**
- * Updates the place of the selected match.
- * Calls the API to update the match and refreshes the data.
+ * Updates the place of the selected match via the matches API.
  */
-const updateMatchPlace = async (): Promise<void> => {
+const updateMatchPlace = (): void => {
   if (!selectedMatchForEdit.value || !selectedNewPlaceId.value) {
     return;
   }
 
-  try {
-    // TODO: Implement the API call to update match place
-    // const updatedMatch = await updateMatch(selectedMatchForEdit.value.id, {
-    //   placeId: selectedNewPlaceId.value
-    // });
-
-    console.log('Updating match place:', {
-      matchId: selectedMatchForEdit.value.id,
-      newPlaceId: selectedNewPlaceId.value,
-    });
-
-    // Refresh the matches data
-    await refetch();
-
-    // Close the dialog
-    closeEditPlaceDialog();
-
-    // TODO: Show success message
-    console.log('Match place updated successfully');
-  } catch (error) {
-    console.error('Error updating match place:', error);
-    // TODO: Show error message
-  }
+  updatePlaceFeedback.value = null;
+  updateMatchPlaceMutation({
+    matchId: selectedMatchForEdit.value.id,
+    placeId: selectedNewPlaceId.value,
+  });
 };
 </script>
 
@@ -300,13 +302,18 @@ const updateMatchPlace = async (): Promise<void> => {
           {{ t('places.infoDialog.editPlace.warning') }}
         </p>
       </div>
+
+      <!-- Feedback after attempting the update -->
+      <Message v-if="updatePlaceFeedback" :severity="updatePlaceFeedback.severity">
+        {{ updatePlaceFeedback.message }}
+      </Message>
     </div>
 
     <template #footer>
       <div class="dialog-footer">
         <Button :label="t('common.cancel')" severity="secondary" @click="closeEditPlaceDialog" />
         <Button :label="t('places.infoDialog.editPlace.updatePlace')" :disabled="!selectedNewPlaceId"
-          @click="updateMatchPlace" />
+          :loading="isUpdatingPlace" @click="updateMatchPlace" />
       </div>
     </template>
   </Dialog>

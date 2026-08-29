@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import type { Match, MatchSubmit } from '@/interfaces/MatchesInterfaces';
+import { useAppData } from '@/services/core/useAppData';
 import {
   getSetsForMatch,
   getSetsForMatchByPlayer,
-} from '@/services/matchServices';
-import { onMounted, onUpdated, ref, watch } from 'vue';
-import { getGamesBySet } from '@/services/gameService';
+} from '@/services/matches/matchSetsHelpers';
+import { onMounted, ref, watch } from 'vue';
+import { getGamesBySet } from '@/services/games/gameHelpers';
 import MenuBar from '../MenuBar.vue';
 import MatchCharts from './MatchCharts.vue';
 import router from '@/router';
+
+const { sets, games } = useAppData();
 
 const title = ref<string>('Información del partido');
 
@@ -37,7 +40,7 @@ const calculateSetsPuntuations = () => {
   setPuntationP1.value = 0;
   setPuntationP2.value = 0;
 
-  getSetsForMatch(matchInfoLocal.value.id).forEach(set => {
+  getSetsForMatch(sets.value, matchInfoLocal.value.id).forEach(set => {
     if (set.winner?.id === matchInfoLocal.value.player1.id) {
       setPuntationP1.value++;
     } else if (set.winner?.id === matchInfoLocal.value.player2.id) {
@@ -51,19 +54,19 @@ const gamesPuntuationsPerSetP2 = ref<{ [setId: number]: number[] }>({});
 
 const gamesBySet = ref<{ [setId: number]: any[] }>({});
 
-const calculatePuntuations = async () => {
+const calculatePuntuations = () => {
   gamesPuntuationsPerSetP1.value = {};
   gamesPuntuationsPerSetP2.value = {};
   gamesBySet.value = {};
 
-  const sets = await getSetsForMatch(matchInfoLocal.value.id);
-  for (const set of sets) {
+  const matchSets = getSetsForMatch(sets.value, matchInfoLocal.value.id);
+  for (const set of matchSets) {
     let player1GamesWon = 0;
     let player2GamesWon = 0;
 
     gamesPuntuationsPerSetP1.value[set.id] = [];
     gamesPuntuationsPerSetP2.value[set.id] = [];
-    gamesBySet.value[set.id] = await getGamesBySet(set.id);
+    gamesBySet.value[set.id] = getGamesBySet(games.value, set.id);
 
     for (const game of gamesBySet.value[set.id]) {
       if (game.winner?.id === matchInfoLocal.value.player1.id) {
@@ -80,11 +83,11 @@ const calculatePuntuations = async () => {
 };
 
 const getSetsForMatchLocal = (matchId: number) => {
-  return getSetsForMatch(matchId);
+  return getSetsForMatch(sets.value, matchId);
 };
 
 const getGamesBySetLocal = (setId: number) => {
-  return getGamesBySet(setId);
+  return getGamesBySet(games.value, setId);
 };
 
 // Recalculate when matchInfo updates
@@ -92,8 +95,8 @@ watch(() => matchInfoLocal.value, calculatePuntuations);
 watch(() => matchInfoLocal.value, calculateSetsPuntuations);
 
 // Run the calculation when the component is mounted
-onMounted(async () => {
-  await calculatePuntuations();
+onMounted(() => {
+  calculatePuntuations();
   calculateSetsPuntuations();
 });
 
@@ -134,6 +137,7 @@ console.log('player2', matchInfoLocal.value.player2);
                   <div
                     class="flex-container-result"
                     v-for="setScore in getSetsForMatchByPlayer(
+                      sets,
                       matchInfoLocal.id,
                       matchInfoLocal.player1.id
                     )"
@@ -173,6 +177,7 @@ console.log('player2', matchInfoLocal.value.player2);
                   <div
                     class="flex-container-result"
                     v-for="setScore in getSetsForMatchByPlayer(
+                      sets,
                       matchInfoLocal.id,
                       matchInfoLocal.player2.id
                     )"

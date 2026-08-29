@@ -6,10 +6,10 @@ import { useAppData } from '@/services/core/useAppData';
 import { useMatchUIStore } from '@/stores/matchUIStore';
 import type { Match } from '@/interfaces/MatchesInterfaces';
 import { emptyMatch } from '@/services/emptyObjects';
-import { getSetsResultForMatch } from '@/services/matchServices';
+import { getSetsResultForMatch } from '@/services/matches/matchSetsHelpers';
 import router from '@/router';
 
-const { matches, isLoading, matchesQuery } = useAppData();
+const { matches, sets, isLoading, matchesQuery } = useAppData();
 
 /**
  * Configuration for the data table columns.
@@ -52,7 +52,7 @@ const propertyToAccess = 'name';
  * @returns {Array} Array of the last five matches
  */
 const lastFiveMatches = computed(() => {
-  return matches.value.slice(-5).reverse() || [];
+  return matches.value.slice(-20).reverse() || [];
 });
 
 /**
@@ -122,8 +122,8 @@ const onRowSelect = (event: any) => {
     <MatchInfoDialog v-bind:visible="visibleMatchInfoDialog" :setVisible="setVisibleMatchInfoDialog"
       v-bind:matchInfo="matchInfo"></MatchInfoDialog>
     <div>
-      <DataTable :value="lastFiveMatches" size="small" :loading="isLoading" @rowSelect="onRowSelect"
-        selectionMode="single">
+      <DataTable :value="lastFiveMatches" paginator :rows="5" :rowsPerPageOptions="[5, 10, 20]" size="small"
+        :loading="isLoading" @rowSelect="onRowSelect" selectionMode="single">
         <Column v-for="col in columns" sortable>
           <template #header>
             <span>{{ col.field.header }}</span>
@@ -133,7 +133,7 @@ const onRowSelect = (event: any) => {
               {{ matchesResponse.data[col.field.value][propertyToAccess] }}
             </span>
             <span v-else>
-              {{ getSetsResultForMatch(matchesResponse.data.id) }}
+              {{ getSetsResultForMatch(sets, matchesResponse.data.id) }}
             </span>
           </template>
         </Column>

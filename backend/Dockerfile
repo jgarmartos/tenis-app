@@ -11,7 +11,7 @@ COPY . /app
 RUN mvn clean package -DskipTests
 
 # Crear una nueva imagen basada en OpenJDK 21
-FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:21-jre-alpine
 
 # Exponer el puerto que utilizará la aplicación
 EXPOSE 8080
